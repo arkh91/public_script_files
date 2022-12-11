@@ -6,7 +6,7 @@ sudo apt-get update && apt upgrade -y
 echo -e "\033[32mSystem updated.\033[m"
 
 sudo apt-get install libssl1.1  
-wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+sudo wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 echo -e "\033[35mlibssl1.1_1.1.1f-1ubuntu2_amd64.deb is downloaded.\033[m"
 sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 echo -e "\033[32mlibssl1.1_1.1.1f-1ubuntu2_amd64.deb is installed.\033[m"

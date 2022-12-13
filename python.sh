@@ -17,4 +17,4 @@ echo -e "\033[36mPython is ready!\033[m"
 python3 --version
 read -p "Press enter to continue"
 
-#sudo wget https://github.com/arkh91/public_script_files/blob/main/python.sh && chmod +x ./python.sh
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/python.sh && chmod u+x python.sh && ./python.sh

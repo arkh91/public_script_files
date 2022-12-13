@@ -20,6 +20,6 @@ echo -e "\033[36mInstallation is finished.\033[m"
 read -p "Press enter to continue"
 
 #https://www.youtube.com/watch?v=BGIHEAd35do
-#sudo wget https://github.com/arkh91/public_script_files/blob/main/v2ray.sh && chmod +x ./v2ray.sh -y
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/v2ray.sh && chmod u+x v2ray.sh && ./v2ray.sh
 
 #

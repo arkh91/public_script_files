@@ -9,7 +9,7 @@ echo -e "\033[32msoftware-properties-common installed.\033[m"
 
 sudo add-apt-repository ppa:deadsnakes/ppa -y
 
-sudo apt-get install python3.8
+sudo apt-get install python3.8 -y
 echo -e "\033[32mpython3.8.\033[m"
 
 echo -e "\033[36mPython is ready!\033[m"

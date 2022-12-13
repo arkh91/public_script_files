@@ -7,7 +7,7 @@ echo -e "\033[32mSystem updated.\033[m"
 sudo apt install software-properties-common
 echo -e "\033[32msoftware-properties-common installed.\033[m"
 
-sudo add-apt-repository ppa:deadsnakes/ppa
+sudo add-apt-repository ppa:deadsnakes/ppa -y
 
 sudo apt-get install python3.8
 echo -e "\033[32mpython3.8.\033[m"

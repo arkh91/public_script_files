@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #https://docs.python-guide.org/starting/install3/linux/
-sudo apt update
+sudo apt update -y
 echo -e "\033[32mSystem updated.\033[m"
 
 sudo apt install software-properties-common
@@ -18,3 +18,4 @@ python3 --version
 read -p "Press enter to continue"
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/python.sh && chmod u+x python.sh && ./python.sh
+#

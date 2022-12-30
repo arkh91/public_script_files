@@ -8,7 +8,7 @@ else
   sudo dpkg --configure -a
   echo -e "\033[36mUpdate the contents of the repositories\033[m" 
 
-  sudo apt-get update
+  sudo apt-get update -y
 
   echo -e "\033[36mTry to fix missing dependencies:\033[m"
 
@@ -16,7 +16,7 @@ else
 
   echo -e "\033[36m  Update all packages with new versions available:\033[m"
 
-  sudo apt-get full-upgrade
+  sudo apt-get full-upgrade -y
   Reinstall Ubuntu desktop:
   echo -e "\033[36mPython is ready!\033[m"
 

@@ -1,4 +1,6 @@
 #Auto reboot server
 #https://askubuntu.com/questions/13730/how-can-i-schedule-a-nightly-reboot
-sudo vi /etc/crontab
+#sudo vi /etc/crontab
 00 6 * * * root reboot 
+00 18 * * * root reboot
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab

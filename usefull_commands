@@ -1,0 +1,5 @@
+active connection to server
+netstat -tn | grep :18687
+
+save connection to filenme
+netstat -tn | grep :18687 >> filename

@@ -3,3 +3,6 @@ netstat -tn | grep :18687
 
 save connection to filenme
 netstat -tn | grep :18687 >> filename
+
+outline custum port
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=MANAGMENT_PORT --keys-port=ACCESS_KEY_PORT  

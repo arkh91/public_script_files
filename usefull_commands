@@ -6,3 +6,33 @@ netstat -tn | grep :18687 >> filename
 
 outline custum port
 sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=MANAGMENT_PORT --keys-port=ACCESS_KEY_PORT  
+
+Django Server Error: port is already in use:
+sudo lsof -t -i tcp:8000 | xargs kill -9
+
+https://www.youtube.com/watch?v=3NAtCKrBSpg
+
+git clone https://github.com/arkh91/outline.git
+
+sudo apt install python3-pip python3-venv
+
+
+mkdir myDjango
+python3 -m venv my_env
+source my_env/bin/activate
+
+//deactivate
+
+pip install django
+pip3 install -r requirements.txt
+
+
+django-admin startproject djangoproject .
+python manage.py migrate
+python manage.py createsuperuser 
+
+python manage.py runserver 13.53.38.253:80
+
+
+
+

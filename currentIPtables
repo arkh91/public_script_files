@@ -12,4 +12,26 @@ target     prot opt source               destination
 
 Chain POSTROUTING (policy ACCEPT)
 target     prot opt source               destination         
-root@VMID-8315:~# 
+
+
+Default iptables:
+https://kerneltalks.com/virtualization/how-to-reset-iptables-to-default-settings/
+
+Step 2 : Delete all existing rules.
+Using below set of commands, delete your currently configured rules from iptables.
+
+root@kerneltalks # iptables -F INPUT
+root@kerneltalks # iptables -F OUTPUT
+root@kerneltalks # iptables -F FORWARD
+
+Step 1 : Set accept all policy to all connections
+Using the below set of commands you will set accept rule for all types of connections.
+
+root@kerneltalks # iptables -P INPUT ACCEPT
+root@kerneltalks # iptables -P OUTPUT ACCEPT
+root@kerneltalks # iptables -P FORWARD ACCEPT
+
+Or you can do it in single command –
+root@kerneltalks # iptables -F
+
+

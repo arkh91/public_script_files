@@ -1,0 +1,15 @@
+https://www.cyberciti.biz/faq/how-to-list-all-iptables-rules-in-linux/
+
+root@VMID-8315:~# iptables -t nat -L
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination         
+root@VMID-8315:~# 

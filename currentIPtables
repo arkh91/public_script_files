@@ -34,4 +34,7 @@ root@kerneltalks # iptables -P FORWARD ACCEPT
 Or you can do it in single command –
 root@kerneltalks # iptables -F
 
+iptables status:
+iptables -t nat -L
+
 

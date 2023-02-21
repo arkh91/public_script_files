@@ -4,3 +4,6 @@
 00 6 * * * root reboot 
 00 18 * * * root reboot
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
+
+#cat /etc/crontab
+#

@@ -22,4 +22,8 @@ read -p "Press enter to continue"
 #https://www.youtube.com/watch?v=BGIHEAd35do
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/v2ray.sh && chmod u+x v2ray.sh && ./v2ray.sh
 
-#
+#after reboot
+#menu
+#15
+#5
+#yes

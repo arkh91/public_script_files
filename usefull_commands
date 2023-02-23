@@ -1,6 +1,9 @@
 active connection to server
 netstat -tn | grep :18687
 
+public ip adrdress:
+curl -4 icanhazip.com
+
 save connection to filenme
 netstat -tn | grep :18687 >> filename
 

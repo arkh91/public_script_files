@@ -36,11 +36,6 @@ download () {
 		rm Microsoft.Windows.10.Pro-22H2.19045.2673.x64.part1.rar?1677800518
 }
 
-while true
-do
-	compare
-	sleep 60m
-done
 
 compare () {
    echo 'comparing ...'
@@ -144,5 +139,10 @@ compare () {
 
 }
 
+while true
+do
+	compare
+	sleep 6s
+done
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/auto_download.sh && chmod +x auto_download.sh

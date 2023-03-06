@@ -1,4 +1,10 @@
 #!/bin/bash
+#######################################
+#				      #
+#  This code has been written by:     #
+#  https://github.com/arkh91/	      #			
+#				      #
+#######################################
 
 #now="$(date +"%r")"
 #now="$(date "+%Y%m%d%H%M")"

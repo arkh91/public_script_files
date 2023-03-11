@@ -1,6 +1,6 @@
 #!/bin/bash
 #######################################
-#				                              #
+#                                     #
 #  This code has been written by:     #
 #  https://github.com/arkh91/	        #			
 #				                              #
@@ -20,4 +20,4 @@ else
   sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=70 --keys-port=8880
 fi
 
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/newubuntu.sh && chmod u+x outline_reinstaller.sh && ./outline_reinstaller.sh
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/outline_reinstaller.sh && ./outline_reinstaller.sh

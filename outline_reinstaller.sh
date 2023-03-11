@@ -2,8 +2,8 @@
 #######################################
 #                                     #
 #  This code has been written by:     #
-#  https://github.com/arkh91/	        #			
-#				                              #
+#  https://github.com/arkh91/         #			
+#                                     #
 #######################################
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"

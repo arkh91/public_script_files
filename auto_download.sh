@@ -152,3 +152,4 @@ do
 done
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/auto_download.sh && chmod +x auto_download.sh
+#./auto_download &

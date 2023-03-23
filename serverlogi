@@ -1,0 +1,11 @@
+## Block root login to every one ##
+PermitRootLogin no
+ 
+## No more password login  ##
+PermitEmptyPasswords no
+PasswordAuthentication no
+ 
+## Okay allow root login with public ssh key for 207.6.161.68 ##
+Match Address 207.6.161.68
+        PermitRootLogin yes
+        PermitEmptyPasswords yes

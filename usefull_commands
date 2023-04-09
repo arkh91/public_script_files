@@ -14,6 +14,8 @@ sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-
 
 sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
 
+iptables -t nat -L
+
 Django Server Error: port is already in use:
 sudo lsof -t -i tcp:8000 | xargs kill -9
 

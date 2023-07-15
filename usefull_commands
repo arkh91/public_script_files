@@ -54,3 +54,6 @@ sudo docker rm YASI2
 Status:
 sudo docker stats mtproxy
 
+Remove docker
+sudo docker pull telegrammessenger/proxy:latest
+

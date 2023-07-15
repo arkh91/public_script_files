@@ -45,7 +45,7 @@ python manage.py runserver 13.53.38.253:80
 
 Telegram proxy commands
 Create a new Key:
-sudo docker run -d -p 8888:443 --name=YASI2 --restart=always -v proxy-config:/data -e SECRET=0123456789ABCDEF0123456789ABCDEF telegrammessenger/proxy:latest
+sudo docker run -d -p 8888:443 --name=YASI2 --restart=always -v proxy-config:/data -e SECRET=0123456789ABCDEF0123456789ABCDEF -e LIMIT=20000000000 telegrammessenger/proxy:latest
 
 Stop and remove a key:
 sudo docker stop YASI2

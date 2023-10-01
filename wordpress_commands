@@ -1,1 +1,7 @@
-w
+Wordpress commands:
+
+username:
+user
+
+passwor from terminal:
+cat $HOME/bitnami_application_password

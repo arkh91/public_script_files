@@ -6,3 +6,14 @@ user
 passwor from terminal:
 cat $HOME/bitnami_application_password
 9!/hv+I6Wd7Q
+
+DigintalOcean
+Update "WordPress Address (URL)" from termianl?
+
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+sudo mv wp-cli.phar /usr/local/bin/wp
+
+cd /var/www/html/your-wordpress-directory
+
+wp option --allow-root  update siteurl 'http://146.190.250.126'

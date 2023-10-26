@@ -57,3 +57,6 @@ sudo docker stats mtproxy
 Remove docker
 sudo docker pull telegrammessenger/proxy:latest
 
+Partition info/usage
+df -h /where folder is mounted
+df -h /mnt/ssd100/

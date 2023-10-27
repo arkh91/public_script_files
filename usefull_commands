@@ -60,3 +60,7 @@ sudo docker pull telegrammessenger/proxy:latest
 Partition info/usage
 df -h /where folder is mounted
 df -h /mnt/ssd100/
+
+Output:
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        50G   20G   28G  42% /

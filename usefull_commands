@@ -64,3 +64,6 @@ df -h /mnt/ssd100/
 Output:
 Filesystem      Size  Used Avail Use% Mounted on
 /dev/sda1        50G   20G   28G  42% /
+
+SSL
+sudo systemctl status certbot.time

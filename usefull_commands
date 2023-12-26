@@ -1,5 +1,7 @@
 active connection to server
 netstat -tn | grep :18687
+netstat -tn | grep ':18687.*ESTABLISHED'
+
 sudo apt-get install net-tools
 
 public ip adrdress:

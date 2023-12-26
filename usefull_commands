@@ -5,6 +5,7 @@ netstat -tn | grep ':18687.*ESTABLISHED'
 sudo apt-get install net-tools
 
 sudo lsof -i :8881
+sudo apt-get install lsof
 
 
 public ip adrdress:

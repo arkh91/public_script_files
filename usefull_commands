@@ -4,6 +4,9 @@ netstat -tn | grep ':18687.*ESTABLISHED'
 
 sudo apt-get install net-tools
 
+sudo lsof -i :8881
+
+
 public ip adrdress:
 curl -4 icanhazip.com
 

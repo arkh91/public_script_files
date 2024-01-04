@@ -20,8 +20,8 @@ fi
 # Extract the port number from the command-line argument
 port_number=$1
 
-# Run the netstat command, filter and display unique IP addresses
-netstat -tn | grep ":$port_number.*ESTABLISHED" | awk '{print $5}' | sort -u
+# Run the netstat command and use awk to filter unique IP addresses
+netstat -tn | grep ":$port_number.*ESTABLISHED" | awk '!seen[$5]++'
 
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/port.sh && chmod u+x port.sh

@@ -2,6 +2,7 @@ active connection to server
 netstat -tn | grep :18687
 netstat -tn | grep ':18687.*ESTABLISHED'
 netstat -tn | grep -E ":([1][1-9]|[2-4][0-9]{4}|550[0-2][0-9]|55030).*ESTABLISHED"
+netstat -tn | grep ':18687.*ESTABLISHED' | head -n 1 #shows the first line only
 
 sudo apt-get install net-tools
 

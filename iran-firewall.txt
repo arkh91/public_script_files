@@ -3,6 +3,7 @@
 # Source: https://www.ip2location.com/free/visitor-blocker
 # Last Generated: 10 Jan 2024 23:55:20 GMT
 # [Important] Please update this list every month
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/iran-firewall.txt
 # -------------------------------------------------------
 iptables -A INPUT -s 2.57.3.0/24 -j DROP
 iptables -A INPUT -s 2.144.0.0/14 -j DROP
@@ -1979,4 +1980,4 @@ iptables -A INPUT -s 217.219.205.128/25 -j DROP
 iptables -A INPUT -s 217.219.206.0/23 -j DROP
 iptables -A INPUT -s 217.219.208.0/20 -j DROP
 iptables -A INPUT -s 217.219.224.0/19 -j DROP
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/iran-firewall.txt
+

@@ -21,4 +21,5 @@ done < "$filename"
 #Reads a file and executes all lines that do not start with a # character in the file.
 #./Restrict_IP.sh your_file.txt
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP.sh && chmod +x Restrict_IP.sh
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/iran-firewall.txt
 

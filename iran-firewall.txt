@@ -7,7 +7,7 @@
 # -------------------------------------------------------
 #different sites 
 iptables -A INPUT -s 185.166.104.4 -j DROP #divar.ir
-
+iptables -A INPUT -s 89.235.64.67 -j DROP #bmir.ir
 
 
 

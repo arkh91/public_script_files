@@ -6,8 +6,8 @@
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/iran-firewall.txt
 # -------------------------------------------------------
 #Allowed IP's
-sudo iptables -A INPUT -s 5.125.85.203 -j ACCEPT
-sudo iptables -A INPUT -s 83.122.55.64 -j ACCEPT
+sudo iptables -A INPUT -s 5.125.85.203 -j ACCEPT #Nezhade Irancell
+sudo iptables -A INPUT -s 83.122.55.64 -j ACCEPT #Nezhade Hamrah
 
 
 

@@ -5,6 +5,16 @@
 # [Important] Please update this list every month
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/iran-firewall.txt
 # -------------------------------------------------------
+#Allowed IP's
+sudo iptables -A INPUT -s 5.125.85.203 -j ACCEPT
+sudo iptables -A INPUT -s 83.122.55.64 -j ACCEPT
+
+
+
+
+
+
+#---------------------------------------------------------
 #different sites 
 iptables -A INPUT -s 185.166.104.4 -j DROP #divar.ir
 iptables -A INPUT -s 89.235.64.67 -j DROP #bmir.ir

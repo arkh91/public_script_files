@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#######################################
+#                                     #
+#  This code has been written by:     #
+#  https://github.com/arkh91/         #                        
+#                                     #
+#######################################
+
 if [ $# -eq 0 ]; then
     echo "Usage: $0 <filename>"
     exit 1

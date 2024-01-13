@@ -1,3 +1,19 @@
+# -------------------------------------------------------
+# Free IP2Location Firewall List by Country
+# Source: https://www.ip2location.com/free/visitor-blocker
+# Last Generated: 10 Jan 2024 23:55:20 GMT
+# [Important] Please update this list every month
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/iran-firewall.txt
+# -------------------------------------------------------
+#Accept IP's
+$ 5.125.85.203 -j ACCEPT #Nezhade Irancell
+$ 83.122.55.64 -j ACCEPT #Nezhade Hamrah
+
+
+
+
+
+# -------------------------------------------------------
 103.130.144.0	103.130.144.255
 103.130.146.0	103.130.146.255
 103.215.220.0	103.215.223.255

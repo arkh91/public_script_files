@@ -1,26 +1,32 @@
 #!/bin/bash
 
+# Check if the correct number of arguments is provided
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <file_path>"
+    exit 1
+fi
+
+file_path="$1"
 
 # Check if the file exists
-if [ -f "path.txt" ]; then
-    # Read the content of path.txt and use it as an argument
-    path_argument=$(<path.txt)
-    
-    # Your code that uses the path_argument goes here
-    echo "Using path argument: $path_argument"
-    
-    # Rest of your script...
-else
-    echo "Error: path.txt does not exist."
+if [ ! -e "$file_path" ]; then
+    echo "Error: File $file_path does not exist."
     exit 1
 fi
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <path_to_file>"
+# Check if the file is readable
+if [ ! -r "$file_path" ]; then
+    echo "Error: File $file_path is not readable."
     exit 1
 fi
 
-#file_path=$1
+# Your code that uses the file_path argument goes here
+echo "Using file path argument: $file_path"
+
+
+
+
+
 
 # Check if the file exists
 #if [ ! -f "$file_path" ]; then

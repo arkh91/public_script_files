@@ -23,7 +23,18 @@ fi
 # Your code that uses the file_path argument goes here
 echo "Using file path argument: $file_path"
 
+# Iterate through each line in the file
+while IFS= read -r line; do
+    # Check if the line starts with $
+    if [[ $line == \$* ]]; then
+        # Extract the IP address from the line (assuming it's in the format $IP_ADDRESS)
+        ip_address="${line#\$}"
 
+        # Accept the connection using the extracted IP address
+        echo "Accepting connection from IP: $ip_address"
+        # Your code to accept the connection goes here
+    fi
+done < "$file_path"
 
 
 

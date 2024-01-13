@@ -32,7 +32,7 @@ while IFS= read -r line; do
 
         # Accept the connection using the extracted IP address
         echo "Accepting connection from IP: $ip_address"
-        # Your code to accept the connection goes here
+        sudo iptables -A INPUT -s $ip_address -j ACCEPT
     fi
 done < "$file_path"
 

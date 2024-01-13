@@ -26,4 +26,4 @@ while IFS= read -r line; do
 
 done < "$filename"
 
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Resctrict_IP_range.sh && chmod +x Resctrict_IP_range.sh 
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range.sh && chmod +x Restrict_IP_range.sh 

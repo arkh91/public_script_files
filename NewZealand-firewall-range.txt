@@ -4,6 +4,7 @@
 # Last Generated: 16 Jan 2024 23:55:20 GMT
 # [Important] Please update this list every month
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/NewZealand-firewall-range.txt
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range.sh && chmod +x Restrict_IP_range.sh 
 # -------------------------------------------------------
 #Begin IP Address	End IP Address	Total Count
 101.100.0.0	101.100.159.255	40,960

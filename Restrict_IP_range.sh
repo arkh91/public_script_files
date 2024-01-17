@@ -40,17 +40,4 @@ while IFS=$'\t' read -r start_ip end_ip; do
     fi
 done < "$file_path"
 
-# Iterate through each line in the file
-#while IFS= read -r line; do
-    # Check if the line starts with $
-    #if [[ $line == \$* ]]; then
-        # Extract the IP address from the line (assuming it's in the format $IP_ADDRESS)
-        #ip_address="${line#\$}"
-
-        # Accept the connection using the extracted IP address
-        #echo "Accepting connection from IP: $ip_address"
-        #sudo iptables -A INPUT -s $ip_address -j ACCEPT
-    #fi
-#done < "$file_path"
-
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range.sh && chmod +x Restrict_IP_range.sh 

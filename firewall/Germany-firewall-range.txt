@@ -1,0 +1,7 @@
+# -------------------------------------------------------
+# Free IP2Location Firewall List by Country
+# Source: https://www.ip2location.com/free/visitor-blocker
+# Last Generated: 10 Jan 2024 23:55:20 GMT
+# [Important] Please update this list every month
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/Germany-firewall-range.txt
+# -------------------------------------------------------

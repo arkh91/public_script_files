@@ -31,8 +31,8 @@ fi
 echo "Using file path argument: $file_path"
 
 # Iterate through each line in the file
-while IFS=$'\t' read -r start_ip end_ip; do
-    # Check if the line contains two IP addresses (assuming they are separated by a tab)
+while read -r start_ip end_ip _; do
+    # Check if the line contains two IP addresses
     if [[ "$start_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ && "$end_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         # Block the IP range using iptables
         echo "Blocking IP range: $start_ip - $end_ip"

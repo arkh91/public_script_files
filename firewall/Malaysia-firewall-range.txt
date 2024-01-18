@@ -3,7 +3,7 @@
 # Source: https://www.ip2location.com/free/visitor-blocker
 # Last Generated: 10 Jan 2024 23:55:20 GMT
 # [Important] Please update this list every month
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Malaysia-firewall-range.txt
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewallMalaysia-firewall-range.txt
 # -------------------------------------------------------
 #Begin IP Address	End IP Address	Total Count
 1.32.0.0	1.32.127.255	32,768

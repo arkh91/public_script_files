@@ -3,8 +3,8 @@
 # Source: https://www.ip2location.com/free/visitor-blocker
 # Last Generated: 16 Jan 2024 23:55:20 GMT
 # [Important] Please update this list every month
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/philippines-firewall-range.txt
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range2.sh && chmod +x Restrict_IP_range2.sh 
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/philippines-firewall-range.txt
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/Restrict_IP_range2.sh && chmod +x Restrict_IP_range2.sh 
 # -------------------------------------------------------
 #Begin IP Address	End IP Address	Total Count
 1.37.0.0	1.37.255.255	65,536

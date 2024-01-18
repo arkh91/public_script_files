@@ -3,7 +3,7 @@
 # Source: https://www.ip2location.com/free/visitor-blocker
 # Last Generated: 10 Jan 2024 23:55:20 GMT
 # [Important] Please update this list every month
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/China-firewall-range.txt
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/China-firewall-range.txt
 # -------------------------------------------------------
 1.0.1.0	1.0.3.255	768
 1.0.32.0	1.0.63.255	8,192

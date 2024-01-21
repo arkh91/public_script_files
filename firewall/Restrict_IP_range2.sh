@@ -37,6 +37,7 @@ while read -r start_ip end_ip _; do
         # Block the IP range using iptables
         echo "Blocking IP range: $start_ip - $end_ip"
         sudo iptables -A INPUT -m iprange --src-range "$start_ip"-"$end_ip" -j DROP
+        #sudo iptables -A INPUT -m iprange --src-range "$start_ip"-"$end_ip" -j ACCEPT
     fi
 done < "$file_path"
 

@@ -1,4 +1,12 @@
 #!/bin/bash
+
+#######################################
+#                                     #
+#  This code has been written by:     #
+#  https://github.com/arkh91/         #                        
+#                                     #
+#######################################
+
 # Function to display usage information
 function show_usage {
     echo "Usage: $0 [-h | -help] <port_number>"

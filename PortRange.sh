@@ -36,11 +36,15 @@ if [ "$1" == "-h" ] || [ "$1" == "-help" ]; then
 fi
 # Extract the port number from the command-line argument
 start_port=$1
+start_port_plus_one=$((start_port + 1))
 end_port=$2
+start_port_minus_one=$((end_port - 1))
 
 # Run the netstat command
-netstat -tn | grep -E ":($start_port|$end_port).*ESTABLISHED"
+#netstat -tn | grep -E ":($start_port|$end_port).*ESTABLISHED"
+netstat -tn | grep -E ":($start_port|$start_port_plus_one|...|$start_port_minus_one|$end_port).*ESTABLISHED"
 
+#netstat -tn | grep -E ":(44002|44003|...|54999|55000).*ESTABLISHED"
 #Sample: netstat -tn | grep ':18687.*ESTABLISHED'
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/PortRange.sh && chmod u+x PortRange.sh

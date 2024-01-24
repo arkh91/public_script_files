@@ -17,12 +17,17 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-# Check if no arg1 is provided
-if [ -z "$1" ]; then
-    echo "Error: Missing argument. Please provide arg1."
+#Check if arg1 in not provided OR arg1 is not a number OR not a number between 0 and 65535
+if [ -z "$1" ] || ! [[ "$1" =~ ^[0-9]+$ ]] || (( $1 < 0 )) || (( $1 > 65535 )); then
+    echo "Error: Invalid arg1."
     exit 1
 fi
 
+#Check if arg2 in not provided OR arg1 is not a number OR not a number between 0 and 65535 OR arg2<arg1
+if [ -z "$2" ] || ! [[ "$2" =~ ^[0-9]+$ ]] || (( $2 < 0 )) || (( $2 > 65535 )) || (( $2 < $1 )); then
+    echo "Error: Invalid arg1."
+    exit 1
+fi
 
 # Check for help options
 if [ "$1" == "-h" ] || [ "$1" == "-help" ]; then

@@ -40,9 +40,12 @@ start_port_plus_one=$((start_port + 1))
 end_port=$2
 start_port_minus_one=$((end_port - 1))
 
-# Run the netstat command
+# Run the netstat command excluding port 22
 #netstat -tn | grep -E ":($start_port|$end_port).*ESTABLISHED"
-netstat -tn | grep -E ":($start_port|$start_port_plus_one|...|$start_port_minus_one|$end_port).*ESTABLISHED"
+#netstat -tn | grep -E ":($start_port|$start_port_plus_one|...|$start_port_minus_one|$end_port).*ESTABLISHED"
+
+netstat -tn | grep -E ":($start_port|$start_port_plus_one|...|$start_port_minus_one|$end_port).*ESTABLISHED" | grep -v ":22.*ESTABLISHED"
+
 
 #netstat -tn | grep -E ":(44002|44003|...|54999|55000).*ESTABLISHED"
 #Sample: netstat -tn | grep ':18687.*ESTABLISHED'

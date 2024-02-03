@@ -77,3 +77,6 @@ Filesystem      Size  Used Avail Use% Mounted on
 
 SSL
 sudo systemctl status certbot.time
+
+sudo apt-get update -y && sudo apt upgrade -y && sudo apt-get autoclean -y && sudo apt-get clean -y && sudo apt-get autoremove -y
+sudo e4defrag /*

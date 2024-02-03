@@ -41,4 +41,4 @@ while read -r start_ip end_ip _; do
     fi
 done < "$file_path"
 
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/Restrict_IP_range2.sh && chmod +x Restrict_IP_range2.sh 
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/Restrict_IP_range.sh && chmod +x Restrict_IP_range.sh 

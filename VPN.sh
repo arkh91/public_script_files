@@ -8,7 +8,7 @@
 #######################################
 
 if [ "$EUID" -ne 0 ]
-  then echo -e "\033[31mPlease run as root\033[m" 
+  then echo -e "\033[31mPlease run as root\033[m"
   exit
 else
   echo -e "\033[32mAdding iran-firewall-range2\033[m"

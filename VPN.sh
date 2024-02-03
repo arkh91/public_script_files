@@ -11,6 +11,12 @@ if [ "$EUID" -ne 0 ]
   then echo -e "\033[31mPlease run as root\033[m"
   exit
 else
+  # Check if netstat is installed
+  if ! command -v netstat &> /dev/null; then
+    echo "netstat is not installed. Installing..."
+    sudo apt update -y
+    sudo apt install net-tools -y
+  fi  
   echo -e "\033[32mAdding iran-firewall-range2\033[m"
   sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/iran-firewall-range2.txt
   

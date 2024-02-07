@@ -17,23 +17,52 @@ else
     sudo apt update -y
     sudo apt install net-tools -y
   fi  
-  echo -e "\033[32mAdding iran-firewall-range2\033[m"
-  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/iran-firewall-range2.txt
   
+  echo -e "\033[32mAdding iran-firewall-range2\033[m"
+  # Check if the file "iran-firewall-range2.txt" is present
+  if [ -e "iran-firewall-range2.txt" ]; then
+      # Perform actions if the file is present
+      echo "The file 'iran-firewall-range2.txt' is present. Removing ..."
+      rm iran-firewall-range2.txt
+  else
+    echo "The file 'iran-firewall-range2.txt is eing redownloaded ....'  
+    sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/iran-firewall-range2.txt
+  fi
+
+
   echo -e "\033[32mAdding Port\033[m"
-  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/port.sh && chmod u+x port.sh
+  if [ ! -e "port.sh" ]; then
+    sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/port.sh && chmod a+x port.sh
+  fi
   
   echo -e "\033[32mAdding Restrict_IP_range\033[m"
-  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/Restrict_IP_range.sh && chmod +x Restrict_IP_range.sh
+  if [ ! -e "Restrict_IP_range.sh" ]; then
+    sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/Restrict_IP_range.sh && chmod a+x Restrict_IP_range.sh
+  fi
   
   echo -e "\033[32mAdding PortRange\033[m"
-  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/PortRange.sh && chmod u+x PortRange.sh
+  if [ ! -e "PortRange.sh" ]; then
+  echo "The file 'PortRange.sh' is not present."
+    sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/PortRange.sh && chmod a+x PortRange.sh
+  fi
   
-  #Install outline
+  # Check if outline is installed
+  if ! command -v outline-ss-server &> /dev/null; then
+      echo "Outline is not installed. Installing..."
+      
+      #Install outline
   sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=70 --keys-port=11000
+      echo "Outline installed successfully."
+  else
+      echo "Outline is already installed."
+  fi
+
   
   #Auto restart
-  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
+  if [ ! -e "autoreboot" ]; then
+    echo "The file 'autoreboot' is not present."
+    sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
+  fi
   
   ls
   read -p "Press enter to continue"

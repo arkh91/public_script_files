@@ -62,7 +62,13 @@ else
     sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
   fi
 
+  # Auto .bashrc
+  if [ ! -e "bashrc_bock.txt" ]; then
+    echo "The file 'bashrc_bock.txt' is not present."
+    sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/firewall/main/firewall/bashrc_bock.txt && cat bashrc_bock.txt >> /home/ubuntu/.bashrc
+  fi
+
   ls
   read -p "Press enter to continue"
 fi
-# sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh && chmod u+x VPN.sh
+# sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh && chmod u+x VPN.sh && ./VPN

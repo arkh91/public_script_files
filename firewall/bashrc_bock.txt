@@ -1,0 +1,2 @@
+#Auto Block system.
+source /home/ubuntu/Restrict_IP_range.sh /home/ubuntu/iran-firewall-range2.txt

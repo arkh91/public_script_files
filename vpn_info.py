@@ -12,7 +12,7 @@ import subprocess
 def get_vpn_info(key):
     try:
         # Run the command to get VPN information
-        command = f"outline show {key}"
+        command = "/opt/outline/outline show {key}"
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
 
         # Parse the output to extract the required information

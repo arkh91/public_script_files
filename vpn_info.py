@@ -5,7 +5,7 @@
 #  https://github.com/arkh91/         #                        
 #                                     #
 #######################################
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/vpn_info.py
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/vpn_info.py && chmod a+x vpn_info.py
 import subprocess
 
 def get_vpn_info(key):

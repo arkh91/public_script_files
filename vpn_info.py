@@ -9,10 +9,27 @@
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/vpn_info.py && chmod a+x vpn_info.py
 import subprocess
 
+def get_outline_executable_path():
+    try:
+        # Use the find command to locate the outline executable
+        result = subprocess.run(["find", "/", "-name", "outline", "-executable", "-type", "f", "-print", "2>/dev/null"], capture_output=True, text=True)
+        outline_path = result.stdout.strip()
+
+        return outline_path
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+        return None
+
 def get_vpn_info(key):
+    outline_executable_path = get_outline_executable_path()
+
+    if not outline_executable_path:
+        print("Failed to find the outline executable.")
+        return None
+
     try:
         # Run the command to get VPN information
-        command = ["/var/lib/docker/overlay2/1b6e0233aac4f11ea5cee0acbc085d71090027b35a95b2202cf991f525e8f283/merged/opt/outline/outline", "show", key]
+        command = [outline_executable_path, "show", key]
         
         result = subprocess.run(command, check=True, capture_output=True, text=True)
 

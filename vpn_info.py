@@ -9,24 +9,7 @@
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/vpn_info.py && chmod a+x vpn_info.py
 import subprocess
 
-def get_outline_executable_path():
-    try:
-        # Use the find command to locate the outline executable
-        result = subprocess.run(["which", "outline"], capture_output=True, text=True)
-        outline_path = result.stdout.strip()
-
-        return outline_path
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
-        return None
-
-def get_vpn_info(key):
-    outline_executable_path = get_outline_executable_path()
-
-    if not outline_executable_path:
-        print("Failed to find the outline executable. Make sure it is in the system's PATH.")
-        return None
-
+def get_vpn_info(key, outline_executable_path):
     try:
         # Run the command to get VPN information
         command = [outline_executable_path, "show", key]
@@ -55,8 +38,11 @@ access_key = input("Enter the access key: ")
 # Remove any trailing slashes or query parameters from the access key
 access_key = access_key.rstrip('/?')
 
+# Specify the absolute path to the outline executable
+outline_executable_path = "/opt/outline/outline"
+
 # Get VPN information
-vpn_info = get_vpn_info(access_key)
+vpn_info = get_vpn_info(access_key, outline_executable_path)
 
 if vpn_info:
     print("\nVPN Information:")

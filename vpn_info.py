@@ -52,6 +52,9 @@ def get_vpn_info(key):
 # Ask user for the access key
 access_key = input("Enter the access key: ")
 
+# Remove any trailing slashes or query parameters from the access key
+access_key = access_key.rstrip('/?')
+
 # Get VPN information
 vpn_info = get_vpn_info(access_key)
 

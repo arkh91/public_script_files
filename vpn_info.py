@@ -12,7 +12,9 @@ import subprocess
 def get_vpn_info(key):
     try:
         # Run the command to get VPN information
-        command = "/opt/outline/outline show {key}"
+        #command = "/opt/outline/outline show {key}"
+        command = "/var/lib/docker/overlay2/1b6e0233aac4f11ea5cee0acbc085d71090027b35a95b2202cf991f525e8f283/merged/opt/outline/outline show {key}"
+
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
 
         # Parse the output to extract the required information

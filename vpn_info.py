@@ -12,7 +12,7 @@ import subprocess
 def get_outline_executable_path():
     try:
         # Use the find command to locate the outline executable
-        result = subprocess.run(["find", "/", "-name", "outline", "-executable", "-type", "f", "-print", "2>/dev/null"], capture_output=True, text=True)
+        result = subprocess.run(["which", "outline"], capture_output=True, text=True)
         outline_path = result.stdout.strip()
 
         return outline_path
@@ -24,7 +24,7 @@ def get_vpn_info(key):
     outline_executable_path = get_outline_executable_path()
 
     if not outline_executable_path:
-        print("Failed to find the outline executable.")
+        print("Failed to find the outline executable. Make sure it is in the system's PATH.")
         return None
 
     try:

@@ -6,16 +6,15 @@
 #  https://github.com/arkh91/         #                        
 #                                     #
 #######################################
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/vpn_info.py && chmod a+x vpn_info.py
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/vpn_info.py && chmod a+x vpn_info.py && python3 vpn_info.py
 import subprocess
 
 def get_vpn_info(key):
     try:
         # Run the command to get VPN information
-        command = "/var/lib/docker/overlay2/1b6e0233aac4f11ea5cee0acbc085d71090027b35a95b2202cf991f525e8f283/merged/opt/outline/outline"
-        args = [command, "show", key]
+        command = "/var/lib/docker/overlay2/1b6e0233aac4f11ea5cee0acbc085d71090027b35a95b2202cf991f525e8f283/merged/opt/outline/outline show {}".format(key)
         
-        result = subprocess.run(args, check=True, capture_output=True, text=True)
+        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
 
         # Parse the output to extract the required information
         output_lines = result.stdout.split('\n')

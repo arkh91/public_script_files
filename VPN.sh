@@ -11,6 +11,14 @@ if [ "$EUID" -ne 0 ]; then
   echo -e "\033[31mPlease run as root\033[m"
   exit
 else
+  #Install python
+  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/python.sh && chmod u+x python.sh && ./python.sh
+
+  #Install nodejs
+  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/nodejs.sh && chmod u+x nodejs.sh && ./nodejs.sh
+
+
+  
   # Check if netstat is installed
   if ! command -v netstat &> /dev/null; then
     echo "netstat is not installed. Installing..."
@@ -68,11 +76,6 @@ else
     #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/bashrc_block.txt && cat bashrc_block.txt >> /home/ubuntu/.bashrc
   #fi
   
-  #Install python
-  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/python.sh && chmod u+x python.sh && ./python.sh
-
-  #Install nodejs
-  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/nodejs.sh && chmod u+x nodejs.sh && ./nodejs.sh
   
   ls
   read -p "Press enter to continue"

@@ -45,12 +45,14 @@ else
   echo -e "\033[32mAdding Restrict_IP_range\033[m"
   if [ ! -e "Restrict_IP_range.sh" ]; then
     sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/Restrict_IP_range.sh && chmod a+x Restrict_IP_range.sh
+    sleep 5s
   fi
 
   echo -e "\033[32mAdding PortRange\033[m"
   if [ ! -e "PortRange.sh" ]; then
     echo "The file 'PortRange.sh' is not present."
     sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/PortRange.sh && chmod a+x PortRange.sh
+    sleep 5s
   fi
 
   # Check if outline is installed
@@ -60,6 +62,7 @@ else
     # Install outline
     sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=70 --keys-port=11000
     echo "Outline installed successfully."
+    sleep 10s
     read -p "Press enter to continue"
   else
     echo "Outline is already installed."
@@ -69,6 +72,7 @@ else
   if [ ! -e "autoreboot" ]; then
     echo "The file 'autoreboot' is not present."
     sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
+    sleep 5s
   fi
 
   # Auto .bashrc

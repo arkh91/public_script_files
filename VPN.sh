@@ -60,7 +60,7 @@ else
     echo "Outline is not installed. Installing..."
     
     # Install outline
-    sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=70 --keys-port=11000
+    #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=70 --keys-port=11000
     echo "Outline installed successfully."
     sleep 10s
     read -p "Press enter to continue"

@@ -35,6 +35,7 @@ else
 
   # Iterate through each line in the file
   while IFS=$'\t' read -r start_ip end_ip; do
+    echo "Read line: $start_ip - $end_ip"  # Debugging line
     # Check if the line contains two IP addresses (assuming they are separated by a tab)
     if [[ "$start_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ && "$end_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         # Block the IP range using iptables
@@ -42,6 +43,7 @@ else
         sudo iptables -A INPUT -m iprange --src-range "$start_ip"-"$end_ip" -j DROP
     fi
   done < "$file_path"
+
 
   # Remove the file after processing
   filename="iran-firewall-range2.txt"
@@ -53,6 +55,6 @@ else
   fi
 fi
  
-#wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh
+#wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh && chmod a+x Restrict_IP_range_Integrated_file.sh
 #bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh)
 

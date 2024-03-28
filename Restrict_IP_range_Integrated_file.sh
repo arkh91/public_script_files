@@ -49,7 +49,7 @@ else
   else
       echo "The file removal was unsuccessful."
   fi
-  
+fi  
 
 #bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh)
 

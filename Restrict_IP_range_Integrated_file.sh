@@ -13,7 +13,7 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 else
   # Download the IP lists file
-  wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/iran-firewall-range2.txt
+  wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/iran-firewall-range2.txt -O iran-firewall-range2.txt
   if [ "$?" -eq 0 ]; then
     echo "Download successful."
   else
@@ -35,34 +35,23 @@ else
 
   # Iterate through each line in the file
   while IFS=$'\t' read -r start_ip end_ip; do
-  echo "Read line: $start_ip - $end_ip"  # Confirm the line is read correctly
-  # Check if the line contains two IP addresses (assuming they are separated by a tab)
+    # Check if the line contains two IP addresses (assuming they are separated by a tab)
     if [[ "$start_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ && "$end_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-      echo "Attempting to block IP range: $start_ip - $end_ip"  # Debug: Show the range about to be blocked
-      iptables_command="iptables -A INPUT -m iprange --src-range $start_ip-$end_ip -j DROP"
-      echo "Executing: $iptables_command"  # Debug: Show the exact command
-      eval $iptables_command
-      if [ $? -eq 0 ]; then
-        echo "Successfully blocked IP range: $start_ip - $end_ip"
-      else
-        echo "Failed to block IP range: $start_ip - $end_ip"
-      fi
-    else
-      echo "IP address format issue: $start_ip - $end_ip"  # Indicate format issue
+        # Block the IP range using iptables
+        echo "Blocking IP range: $start_ip - $end_ip"
+        iptables -A INPUT -m iprange --src-range "$start_ip"-"$end_ip" -j DROP
     fi
   done < "$file_path"
 
-
-
   # Remove the file after processing
-  filename="iran-firewall-range2.txt"
-  rm -f "$filename"
-  if [ ! -f "$filename" ]; then
+  rm -f "$file_path"
+  if [ ! -f "$file_path" ]; then
     echo "The file was successfully removed."
   else
     echo "The file removal was unsuccessful."
   fi
 fi
+
  
 #wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh && chmod a+x Restrict_IP_range_Integrated_file.sh
 #bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh)

@@ -55,4 +55,3 @@ fi
  
 #wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh && chmod a+x Restrict_IP_range_Integrated_file.sh
 #bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh)
-

@@ -35,14 +35,23 @@ else
 
   # Iterate through each line in the file
   while IFS=$'\t' read -r start_ip end_ip; do
-    echo "Read line: $start_ip - $end_ip"  # Debugging line
-    # Check if the line contains two IP addresses (assuming they are separated by a tab)
+  echo "Read line: $start_ip - $end_ip"  # Confirm the line is read correctly
+  # Check if the line contains two IP addresses (assuming they are separated by a tab)
     if [[ "$start_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ && "$end_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        # Block the IP range using iptables
-        echo "Blocking IP range: $start_ip - $end_ip"
-        sudo iptables -A INPUT -m iprange --src-range "$start_ip"-"$end_ip" -j DROP
+      echo "Attempting to block IP range: $start_ip - $end_ip"  # Debug: Show the range about to be blocked
+      iptables_command="iptables -A INPUT -m iprange --src-range $start_ip-$end_ip -j DROP"
+      echo "Executing: $iptables_command"  # Debug: Show the exact command
+      eval $iptables_command
+      if [ $? -eq 0 ]; then
+        echo "Successfully blocked IP range: $start_ip - $end_ip"
+      else
+        echo "Failed to block IP range: $start_ip - $end_ip"
+      fi
+    else
+      echo "IP address format issue: $start_ip - $end_ip"  # Indicate format issue
     fi
   done < "$file_path"
+
 
 
   # Remove the file after processing

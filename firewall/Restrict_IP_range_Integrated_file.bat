@@ -1,6 +1,5 @@
 echo Running the file...
 
-REM powershell -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/iran-firewall-range2.txt -O iran-firewall-range2.txt' -OutFile 'C:\Users\Arkh91\Documents\Restrict_IP_range_Integrated_file'"
 curl "https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/iran-firewall-range2.txt" --output "C:\Users\Arkh91\Documents\Restrict_IP_range_Integrated_file\iran-firewall-range2.txt"
 
 @echo off
@@ -21,3 +20,4 @@ pause
 
 del C:\Users\Arkh91\Documents\Restrict_IP_range_Integrated_file\iran-firewall-range2.txt
 
+REM curl "https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/Restrict_IP_range_Integrated_file.bat" --output "C:\Users\Arkh91\Documents\Restrict_IP_range_Integrated_file\iran-firewall-range2.txt"

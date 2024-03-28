@@ -7,16 +7,18 @@
 #                                     #
 #######################################
 
+# Ensure the script is run as root
 if [ "$EUID" -ne 0 ]; then
   echo -e "\033[31mPlease run as root\033[m"
-  exit
+  exit 1
 else
-  #Download the IP lists file
+  # Download the IP lists file
   wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/iran-firewall-range2.txt
   if [ "$?" -eq 0 ]; then
     echo "Download successful."
   else
     echo "Download failed."
+    exit 1
   fi
 
   # Check if the file is readable
@@ -24,9 +26,10 @@ else
     echo "The file is readable."
   else
     echo "The file is not readable or does not exist."
+    exit 1
   fi
 
-  # Your code that uses the file_path argument goes here
+  # Define the file path
   file_path="iran-firewall-range2.txt"
   echo "Using file path argument: $file_path"
 
@@ -40,17 +43,16 @@ else
     fi
   done < "$file_path"
 
-
-  filename="iran-firewall-range2.txt"  # Replace 'yourfile.txt' with your actual file name
-
-  rm -f "$filename"  # Attempt to remove the file
+  # Remove the file after processing
+  filename="iran-firewall-range2.txt"
+  rm -f "$filename"
   if [ ! -f "$filename" ]; then
-      echo "The file was successfully removed."
+    echo "The file was successfully removed."
   else
-      echo "The file removal was unsuccessful."
+    echo "The file removal was unsuccessful."
   fi
-fi  
-
+fi
+ 
 #wget https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh
 #bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/Restrict_IP_range_Integrated_file.sh)
 

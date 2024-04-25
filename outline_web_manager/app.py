@@ -16,4 +16,6 @@ def update_keys():
     return jsonify({'status': 'success'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=70)
+
+#wget https://raw.githubusercontent.com/arkh91/public_script_files/main/outline_web_manager/app.py

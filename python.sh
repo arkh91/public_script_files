@@ -4,7 +4,7 @@
 sudo apt update -y
 echo -e "\033[32mSystem updated.\033[m"
 
-sudo apt install software-properties-common -y
+sudo apt install software-properties-common python3-pip -y
 echo -e "\033[32msoftware-properties-common installed.\033[m"
 
 sudo add-apt-repository ppa:deadsnakes/ppa -y

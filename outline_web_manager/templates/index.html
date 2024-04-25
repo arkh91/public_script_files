@@ -5,9 +5,15 @@
 </head>
 <body>
     <h1>Outline Key Manager</h1>
-    <!-- Display keys -->
-    <!-- Provide a form to edit keys -->
+    {% for key in keys %}
+        <form method="post" action="/update_key">
+            <input type="hidden" name="key_id" value="{{ key['id'] }}">
+            <input type="text" name="new_name" value="{{ key['name'] }}">
+            <button type="submit">Update Key</button>
+        </form>
+    {% endfor %}
 </body>
 </html>
+
 
 <!-- wget https://raw.githubusercontent.com/arkh91/public_script_files/main/outline_web_manager/templates/index.html -->

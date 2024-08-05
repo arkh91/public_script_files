@@ -80,3 +80,6 @@ systemctl restart bind9
 systemctl enable bind9
 
 echo "DNS server setup complete. Make sure to update your domain registrar with the new nameserver information."
+
+
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/DNS/setup-dns-server.sh && chmod u+x setup-dns-server.sh

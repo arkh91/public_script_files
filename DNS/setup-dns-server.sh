@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Variables
-DOMAIN="example.com"
+DOMAIN="shahrivargan.info"
 ZONE_FILE="/etc/bind/zones/db.$DOMAIN"
 
 # Get the server's IP address (you might need to adjust this command depending on your network setup)
@@ -74,12 +74,13 @@ named-checkzone $DOMAIN $ZONE_FILE
 named-checkzone $REVERSE_IP.in-addr.arpa $REV_ZONE_FILE
 
 # Restart BIND service
-systemctl restart bind9
+systemctl restart named
 
 # Enable BIND service to start on boot
-systemctl enable bind9
+systemctl enable named
 
 echo "DNS server setup complete. Make sure to update your domain registrar with the new nameserver information."
+
 
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/DNS/setup-dns-server.sh && chmod u+x setup-dns-server.sh

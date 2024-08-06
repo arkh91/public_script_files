@@ -35,3 +35,4 @@ install_apache
 install_certbot_and_setup_ssl
 
 
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/DNS/setup_ssl.sh && chmod u+x setup_ssl.sh

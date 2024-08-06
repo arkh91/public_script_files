@@ -14,7 +14,7 @@ REV_ZONE_FILE="/etc/bind/zones/db.$REVERSE_IP"
 REVERSE_IP_PTR=$(echo $IP_ADDRESS | awk -F. '{print $4}')
 
 # Update system
-apt update && apt upgrade -y
+apt update && apt upgrade -y && apt install -y dnsutils
 
 # Install BIND
 apt install bind9 bind9utils bind9-doc -y

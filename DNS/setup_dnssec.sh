@@ -5,11 +5,31 @@ install_bind() {
     if ! command -v named > /dev/null; then
         echo "BIND is not installed. Installing BIND..."
         sudo apt update
-        sudo apt install -y bind9 bind9utils bind9-doc
+        sudo apt install -y bind9 bind9utils bind9-doc dnsutils
         echo "BIND installed successfully."
     else
         echo "BIND is already installed."
     fi
+}
+
+# Function to generate DNSSEC keys
+generate_keys() {
+    DOMAIN=$1
+    KEY_DIR="/etc/bind/keys"
+    
+    sudo mkdir -p $KEY_DIR
+
+    # Generate DNSSEC keys
+    ZSK=$(sudo dnssec-keygen -a RSASHA256 -b 2048 -n ZONE $DOMAIN)
+    KSK=$(sudo dnssec-keygen -f KSK -a RSASHA256 -b 2048 -n ZONE $DOMAIN)
+
+    # Move the keys to the key directory
+    sudo mv ${ZSK}.key ${ZSK}.private $KEY_DIR/
+    sudo mv ${KSK}.key ${KSK}.private $KEY_DIR/
+
+    # Set permissions
+    sudo chown -R bind:bind $KEY_DIR
+    sudo chmod -R 755 $KEY_DIR
 }
 
 # Function to configure DNSSEC for the domain
@@ -19,15 +39,9 @@ configure_dnssec() {
     KEY_DIR="/etc/bind/keys"
     
     sudo mkdir -p $ZONE_DIR
-    sudo mkdir -p $KEY_DIR
 
     # Generate DNSSEC keys
-    sudo dnssec-keygen -a RSASHA256 -b 2048 -n ZONE $DOMAIN
-    sudo dnssec-keygen -f KSK -a RSASHA256 -b 2048 -n ZONE $DOMAIN
-
-    # Move the keys to the key directory
-    sudo mv K$DOMAIN*.key $KEY_DIR/
-    sudo mv K$DOMAIN*.private $KEY_DIR/
+    generate_keys $DOMAIN
 
     # Sign the zone file
     sudo dnssec-signzone -o $DOMAIN -t $ZONE_DIR/db.$DOMAIN
@@ -57,10 +71,6 @@ zone \"$DOMAIN\" {
         exit 1
     fi
 
-    # Fix permissions
-    sudo chown -R bind:bind $ZONE_DIR $KEY_DIR
-    sudo chmod -R 755 $ZONE_DIR $KEY_DIR
-
     # Restart BIND service
     sudo systemctl restart bind9
 
@@ -75,6 +85,7 @@ zone \"$DOMAIN\" {
 # Main script execution
 install_bind
 configure_dnssec
+
 
 
 

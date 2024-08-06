@@ -55,3 +55,7 @@ install_bind
 configure_dnssec
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/DNS/setup_dnssec.sh && chmod u+x setup_dnssec.sh
+
+#DNSSEC keys: The script generates both a Zone Signing Key (ZSK) and a Key Signing Key (KSK) using RSA-SHA256.
+#Zone File: Make sure you have a valid zone file for your domain at /etc/bind/zones/db.shahrivargan.info.
+#DNSSEC Signatures: The script uses dnssec-signzone to sign the zone file with the generated keys.

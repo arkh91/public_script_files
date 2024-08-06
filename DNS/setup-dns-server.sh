@@ -74,11 +74,10 @@ named-checkzone $DOMAIN $ZONE_FILE
 named-checkzone $REVERSE_IP.in-addr.arpa $REV_ZONE_FILE
 
 # Restart BIND service
-systemctl restart named
+systemctl restart bind9
 
-# Enable BIND service to start on boot
-systemctl enable named
-
+# Enable the underlying BIND service to start on boot
+systemctl enable named.service
 echo "DNS server setup complete. Make sure to update your domain registrar with the new nameserver information."
 
 

@@ -42,10 +42,32 @@ zone \"$DOMAIN\" {
     auto-dnssec maintain;
     key-directory \"$KEY_DIR\";
 };
-" | sudo tee -a /etc/bind/named.conf.local
+" | sudo tee /etc/bind/named.conf.local
+
+    # Check BIND configuration
+    sudo named-checkconf /etc/bind/named.conf
+    if [ $? -ne 0 ]; then
+        echo "BIND configuration error. Please check your configuration."
+        exit 1
+    fi
+
+    sudo named-checkzone $DOMAIN $ZONE_DIR/db.$DOMAIN
+    if [ $? -ne 0 ]; then
+        echo "Zone file error. Please check your zone file."
+        exit 1
+    fi
+
+    # Fix permissions
+    sudo chown -R bind:bind $ZONE_DIR $KEY_DIR
+    sudo chmod -R 755 $ZONE_DIR $KEY_DIR
 
     # Restart BIND service
     sudo systemctl restart bind9
+
+    if [ $? -ne 0 ]; then
+        echo "Failed to restart BIND service. Check the status with 'systemctl status bind9.service'."
+        exit 1
+    fi
 
     echo "DNSSEC configuration complete for $DOMAIN."
 }
@@ -53,6 +75,7 @@ zone \"$DOMAIN\" {
 # Main script execution
 install_bind
 configure_dnssec
+
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/DNS/setup_dnssec.sh && chmod u+x setup_dnssec.sh
 

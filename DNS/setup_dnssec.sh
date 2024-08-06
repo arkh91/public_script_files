@@ -54,4 +54,4 @@ zone \"$DOMAIN\" {
 install_bind
 configure_dnssec
 
-#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh && chmod u+x VPN.sh
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/DNS/setup_dnssec.sh && chmod u+x setup_dnssec.sh

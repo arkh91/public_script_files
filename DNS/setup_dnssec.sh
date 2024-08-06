@@ -39,7 +39,7 @@ zone \"$DOMAIN\" {
     file \"$ZONE_DIR/db.$DOMAIN\";
     allow-transfer { any; };
     inline-signing yes;
-    auto-dnssec maintain;
+    dnssec-policy default;
     key-directory \"$KEY_DIR\";
 };
 " | sudo tee /etc/bind/named.conf.local
@@ -75,6 +75,7 @@ zone \"$DOMAIN\" {
 # Main script execution
 install_bind
 configure_dnssec
+
 
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/DNS/setup_dnssec.sh && chmod u+x setup_dnssec.sh

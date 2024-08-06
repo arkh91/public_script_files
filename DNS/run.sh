@@ -43,7 +43,7 @@ else
     exit 1
 fi
 
-#./run -c to generate a new link.
-#./run -r -URL to remove an existing link.
+#./run.sh -c to generate a new link.
+#./run.sh -r -URL to remove an existing link.
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/DNS/run.sh && chmod u+x run.sh

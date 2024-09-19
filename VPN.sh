@@ -19,11 +19,11 @@ else
 
 
   
-  # Check if netstat and dockeris installed
+  # Check if netstat is installed
   if ! command -v netstat &> /dev/null; then
     echo "netstat is not installed. Installing..."
     sudo apt update -y
-    sudo apt install docker-ce -y
+    #sudo apt install docker-ce -y
     sudo apt install net-tools -y
   fi
 

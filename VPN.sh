@@ -72,15 +72,15 @@ else
   # Auto restart
   if [ ! -e "autoreboot" ]; then
     echo "The file 'autoreboot' is not present."
-    #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
+    sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
     sleep 5s
   fi
 
-  # Auto .bashrc
-  #if [ ! -e "bashrc_bock.txt" ]; then
-    #echo "The file 'bashrc_bock.txt' is not present."
-    #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/bashrc_block.txt && cat bashrc_block.txt >> /home/ubuntu/.bashrc
-  #fi
+  # Auto .bashrc to block Iran IP's
+  if [ ! -e "bashrc_bock.txt" ]; then
+    echo "The file 'bashrc_bock.txt' is not present."
+    sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/bashrc_block.txt && cat bashrc_block.txt >> /home/ubuntu/.bashrc
+  fi
   
   
   ls

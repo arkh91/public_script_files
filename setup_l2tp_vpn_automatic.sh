@@ -138,4 +138,4 @@ echo "Password: $VPN_PASSWORD"
 
 
 
-#
+#sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/setup_l2tp_vpn_automatic.sh && chmod +x setup_l2tp_vpn_automatic.sh

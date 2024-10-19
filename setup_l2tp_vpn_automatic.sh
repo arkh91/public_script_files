@@ -16,9 +16,9 @@ fi
 echo "Updating system packages..."
 sudo apt-get update -y && sudo apt-get upgrade -y
 
-# Install necessary packages
+# Install necessary packages (ensure correct strongSwan package is installed)
 echo "Installing required packages..."
-sudo apt-get install strongswan xl2tpd ppp lsof ufw -y
+sudo apt-get install strongswan strongswan-pki xl2tpd ppp lsof ufw -y
 
 # Generate random VPN credentials
 VPN_IPSEC_PSK=$(generate_random_string 16)
@@ -125,9 +125,15 @@ sudo ufw allow 1701/udp
 echo "Enabling UFW firewall..."
 sudo ufw --force enable
 
-# Restart services
+# Restart services and check for correct service name
 echo "Restarting IPsec and xl2tpd services..."
-sudo systemctl restart strongswan
+if sudo systemctl restart strongswan; then
+    echo "strongSwan service restarted successfully."
+else
+    echo "strongSwan service not found, trying strongswan-starter..."
+    sudo systemctl restart strongswan-starter
+fi
+
 sudo systemctl restart xl2tpd
 
 # Output VPN connection details

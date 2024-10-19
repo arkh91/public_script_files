@@ -34,21 +34,14 @@ if ! dpkg -l | grep -q strongswan; then
     sudo apt-get install --reinstall strongswan -y
 fi
 
-# Check for strongSwan service
-if ! systemctl list-units --type=service | grep -q strong; then
-    echo "No strongSwan service found. Checking logs for any issues..."
-    journalctl -xe | grep strongswan
-
-    echo "Attempting to reinstall and enable strongSwan..."
-    sudo apt-get install --reinstall strongswan -y
-    sudo systemctl enable strongswan
-fi
-
 # Generate random VPN credentials
 VPN_IPSEC_PSK=$(generate_random_string 16)
 VPN_USER=$(generate_random_string 8)
 VPN_PASSWORD=$(generate_random_string 12)
 VPN_NETWORK='192.168.42.0/24'
+
+# Set the public IP address
+PUBLIC_IP="18.196.83.18"
 
 # Configure IPsec
 echo "Configuring IPsec..."
@@ -77,7 +70,7 @@ conn L2TP-PSK
     dpddelay=35s
     dpdtimeout=200s
     rekey=no
-    left=%defaultroute
+    left=$PUBLIC_IP
     leftprotoport=17/1701
     right=%any
     rightprotoport=17/%any
@@ -87,7 +80,7 @@ EOF
 # Configure IPsec secrets
 echo "Configuring IPsec secrets..."
 cat <<EOF | sudo tee /etc/ipsec.secrets
-: PSK "$VPN_IPSEC_PSK"
+$PUBLIC_IP : PSK "$VPN_IPSEC_PSK"
 EOF
 
 # Configure xl2tpd
@@ -95,7 +88,7 @@ echo "Configuring xl2tpd..."
 cat <<EOF | sudo tee /etc/xl2tpd/xl2tpd.conf
 [global]
 ipsec saref = yes
-listen-addr = 0.0.0.0
+listen-addr = $PUBLIC_IP
 
 [lns default]
 ip range = 192.168.42.10-192.168.42.100
@@ -167,9 +160,12 @@ sudo systemctl restart xl2tpd
 
 # Output VPN connection details
 echo "VPN setup is complete!"
+echo "Use the following details to connect:"
+echo "Public IP: $PUBLIC_IP"
 echo "IPsec PSK: $VPN_IPSEC_PSK"
 echo "Username: $VPN_USER"
 echo "Password: $VPN_PASSWORD"
+
 
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/setup_l2tp_vpn_automatic.sh && chmod +x setup_l2tp_vpn_automatic.sh

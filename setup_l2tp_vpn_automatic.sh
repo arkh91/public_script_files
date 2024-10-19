@@ -6,10 +6,22 @@ generate_random_string() {
     tr -dc 'a-zA-Z0-9' </dev/urandom | head -c $length
 }
 
+# Allow the script to be rerun and reconfigure the VPN
+FORCE_SETUP=false
+
+# Check if the argument "--force" is passed to force setup
+if [[ "$1" == "--force" ]]; then
+    FORCE_SETUP=true
+fi
+
 # Check if strongSwan and xl2tpd are already installed
 if dpkg -l | grep -q strongswan && dpkg -l | grep -q xl2tpd; then
-    echo "L2TP/IPsec VPN is already installed."
-    exit 0
+    if [ "$FORCE_SETUP" = false ]; then
+        echo "L2TP/IPsec VPN is already installed."
+        exit 0
+    else
+        echo "Forcing VPN reconfiguration..."
+    fi
 fi
 
 # Update package list and upgrade system

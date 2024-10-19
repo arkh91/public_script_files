@@ -22,15 +22,27 @@ if dpkg -l | grep -q strongswan && dpkg -l | grep -q xl2tpd; then
     else
         echo "Forcing VPN reconfiguration..."
     fi
+else
+    echo "Installing necessary packages..."
+    sudo apt-get update -y
+    sudo apt-get install strongswan strongswan-pki xl2tpd ppp lsof ufw -y
 fi
 
-# Update package list and upgrade system
-echo "Updating system packages..."
-sudo apt-get update -y && sudo apt-get upgrade -y
+# Verify that strongSwan was installed properly
+if ! dpkg -l | grep -q strongswan; then
+    echo "strongSwan package is missing. Reinstalling strongSwan..."
+    sudo apt-get install --reinstall strongswan -y
+fi
 
-# Install necessary packages (ensure correct strongSwan package is installed)
-echo "Installing required packages..."
-sudo apt-get install strongswan strongswan-pki xl2tpd ppp lsof ufw -y
+# Check for strongSwan service
+if ! systemctl list-units --type=service | grep -q strong; then
+    echo "No strongSwan service found. Checking logs for any issues..."
+    journalctl -xe | grep strongswan
+
+    echo "Attempting to reinstall and enable strongSwan..."
+    sudo apt-get install --reinstall strongswan -y
+    sudo systemctl enable strongswan
+fi
 
 # Generate random VPN credentials
 VPN_IPSEC_PSK=$(generate_random_string 16)
@@ -143,7 +155,12 @@ if sudo systemctl restart strongswan; then
     echo "strongSwan service restarted successfully."
 else
     echo "strongSwan service not found, trying strongswan-starter..."
-    sudo systemctl restart strongswan-starter
+    if sudo systemctl restart strongswan-starter; then
+        echo "strongSwan-starter service restarted successfully."
+    else
+        echo "Failed to restart any strongSwan services. Please check logs."
+        journalctl -xe | grep strongswan
+    fi
 fi
 
 sudo systemctl restart xl2tpd
@@ -153,7 +170,6 @@ echo "VPN setup is complete!"
 echo "IPsec PSK: $VPN_IPSEC_PSK"
 echo "Username: $VPN_USER"
 echo "Password: $VPN_PASSWORD"
-
 
 
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/setup_l2tp_vpn_automatic.sh && chmod +x setup_l2tp_vpn_automatic.sh

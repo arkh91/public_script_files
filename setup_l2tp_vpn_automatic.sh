@@ -6,6 +6,11 @@ generate_random_string() {
     tr -dc 'a-zA-Z0-9' </dev/urandom | head -c $length
 }
 
+# Function to get the public IP address
+get_public_ip() {
+    curl -s http://checkip.amazonaws.com
+}
+
 # Allow the script to be rerun and reconfigure the VPN
 FORCE_SETUP=false
 
@@ -25,7 +30,7 @@ if dpkg -l | grep -q strongswan && dpkg -l | grep -q xl2tpd; then
 else
     echo "Installing necessary packages..."
     sudo apt-get update -y
-    sudo apt-get install strongswan strongswan-pki xl2tpd ppp lsof ufw -y
+    sudo apt-get install strongswan strongswan-pki xl2tpd ppp lsof ufw curl -y
 fi
 
 # Verify that strongSwan was installed properly
@@ -40,8 +45,14 @@ VPN_USER=$(generate_random_string 8)
 VPN_PASSWORD=$(generate_random_string 12)
 VPN_NETWORK='192.168.42.0/24'
 
-# Set the public IP address
-PUBLIC_IP="18.196.83.18"
+# Automatically get the public IP address
+PUBLIC_IP=$(get_public_ip)
+
+# Check if public IP was successfully retrieved
+if [[ -z "$PUBLIC_IP" ]]; then
+    echo "Failed to retrieve the public IP address. Please check network connectivity."
+    exit 1
+fi
 
 # Configure IPsec
 echo "Configuring IPsec..."
@@ -165,6 +176,7 @@ echo "Public IP: $PUBLIC_IP"
 echo "IPsec PSK: $VPN_IPSEC_PSK"
 echo "Username: $VPN_USER"
 echo "Password: $VPN_PASSWORD"
+
 
 
 

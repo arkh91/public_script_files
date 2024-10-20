@@ -24,7 +24,7 @@ CONFIG_FILE="/etc/shadowsocks-libev/config.json"
 
 sudo bash -c "cat > $CONFIG_FILE" << EOL
 {
-    "server": "$PUBLIC_IP",
+    "server": "server":"0.0.0.0",
     "server_port": $SERVER_PORT,
     "password": "$PASSWORD",
     "method": "aes-256-gcm",

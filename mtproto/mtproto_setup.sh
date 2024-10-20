@@ -19,10 +19,22 @@ install_mtproto() {
     echo "Building MTProto Proxy..."
     make
 
+    # Verify if proxy build was successful
+    if [[ ! -f ./mtproto-proxy ]]; then
+        echo "Error: MTProto Proxy binary not found after build. Exiting..."
+        exit 1
+    fi
+
     # Download proxy secret and config
     echo "Downloading proxy-secret and proxy-multi.conf..."
     curl -s https://core.telegram.org/getProxySecret -o proxy-secret
     curl -s https://core.telegram.org/getProxyConfig -o proxy-multi.conf
+
+    # Verify if the necessary files were downloaded
+    if [[ ! -f proxy-secret || ! -f proxy-multi.conf ]]; then
+        echo "Error: Failed to download proxy-secret or proxy-multi.conf. Exiting..."
+        exit 1
+    fi
 
     echo "MTProto Proxy installation completed."
 }
@@ -33,13 +45,25 @@ generate_and_start_proxy() {
     echo "Generating secret key..."
     SECRET_KEY=$(head -c 16 /dev/urandom | xxd -ps)
 
+    # Check if the proxy binary exists
+    if [[ ! -f ./mtproto-proxy ]]; then
+        echo "Error: MTProto Proxy binary not found. Cannot start proxy."
+        exit 1
+    fi
+
     # Ask for the port number
     read -rp "Enter the port number to run the proxy on (default 8888): " PORT
     PORT=${PORT:-8888}
 
-    # Run the MTProto proxy
+    # Start the MTProto proxy
     echo "Starting the MTProto Proxy..."
     ./mtproto-proxy -u nobody -p "$PORT" -H 443 -S "$SECRET_KEY" --aes-pwd proxy-secret proxy-multi.conf --http-ports 80 &
+
+    # Check if the proxy started successfully
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to start MTProto Proxy. Please check the logs."
+        exit 1
+    fi
 
     # Get the server IP address
     SERVER_IP=$(curl -s http://checkip.amazonaws.com)
@@ -56,17 +80,18 @@ generate_and_start_proxy() {
 }
 
 # Check if MTProto is already installed
-if [ ! -d "MTProxy" ]; then
+if [ ! -d "$HOME/MTProxy" ]; then
     echo "MTProto not found, installing..."
     install_mtproto
 else
-    # If MTProto is already installed, navigate to the directory
-    cd MTProxy || exit
+    # Navigate to the MTProxy directory
+    cd "$HOME/MTProxy" || exit
     echo "MTProto already installed. Skipping installation."
 fi
 
 # Generate and start the proxy, key will be output at the end
 generate_and_start_proxy
+
 
 
 #wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/mtproto/mtproto_setup.sh && chmod +x mtproto_setup.sh

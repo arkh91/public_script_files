@@ -43,3 +43,4 @@ echo "Port: $SERVER_PORT"
 echo "Password: $PASSWORD"
 echo "Unique User Telegram Proxy Link: $USER_LINK"
 
+#wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/socks5/setup_socks5_telegram.sh && chmod +x setup_socks5_telegram.sh

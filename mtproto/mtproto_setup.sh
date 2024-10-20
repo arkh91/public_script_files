@@ -89,3 +89,7 @@ fi
 
 # Generate and start the proxy
 generate_and_start_proxy
+
+#wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/mtproto/mtproto_setup.sh && chmod +x mtproto_setup.sh
+
+#

@@ -31,4 +31,4 @@ sudo systemctl enable webmin
 
 echo "Webmin installation complete. You can access Webmin via https://<your-server-ip>:10000"
 
-#
+#wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/install_webmin_nginx.sh && chmod +x install_webmin_nginx.sh

@@ -55,6 +55,13 @@ else
     sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/PortRange.sh && chmod a+x PortRange.sh
     sleep 5s
   fi
+  
+  echo -e "\033[32mAdding Nginx Install file\033[m"
+  if [ ! -e "install_webmin_nginx.sh" ]; then
+    echo "The file 'install_webmin_nginx.sh' is not present."
+    sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/install_webmin_nginx.sh && chmod +x install_webmin_nginx.sh
+    sleep 5s
+  fi
 
   # Check if outline is installed
   if ! command -v outline-ss-server &> /dev/null; then

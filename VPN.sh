@@ -60,6 +60,7 @@ else
   if [ ! -e "install_webmin_nginx.sh" ]; then
     echo "The file 'install_webmin_nginx.sh' is not present."
     sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/install_webmin_nginx.sh && chmod +x install_webmin_nginx.sh
+    ./install_webmin_nginx.sh
     sleep 5s
   fi
 

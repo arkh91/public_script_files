@@ -9,6 +9,7 @@ echo "Installing required dependencies for Webmin..."
 sudo apt-get install -y libnet-ssleay-perl libauthen-pam-perl libio-pty-perl unzip
 
 # Step 3: Download Webmin (replace version number with the latest if needed)
+# https://sourceforge.net/projects/webadmin/files/webmin/
 WEBMIN_VERSION="2.100"
 echo "Downloading Webmin version $WEBMIN_VERSION..."
 wget http://prdownloads.sourceforge.net/webadmin/webmin_${WEBMIN_VERSION}_all.deb

@@ -91,8 +91,12 @@ else
   fi
 
   # Install x-ui
-  bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
-  echo "x-ui MHSanaei installed successfully."
+  if [ -d "/etc/3x-ui" ]; then
+    echo "x-ui MHSanaei installed successfully."
+  else
+    echo "x-ui MHSanaei installation not found."
+    bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
+  fi
   
   ls
   read -p "Press enter to continue"

@@ -97,8 +97,8 @@ else
   else
     echo "x-ui MHSanaei installation not found."
     #bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
-    bash <(curl -Ls https://raw.githubusercontent.com/NidukaAkalanka/x-ui-english/master/install.sh)
-    docker restart shadowbox
+    #bash <(curl -Ls https://raw.githubusercontent.com/NidukaAkalanka/x-ui-english/master/install.sh)
+    #docker restart shadowbox
   fi
   
   ls

@@ -136,22 +136,25 @@ show_datetime() {
 # Function to display the menu
 show_menu() {
     echo "*************************************"
-    echo "**Please choose an option:"
-    echo "**1. Outline VPN"
-    echo "**2. x-ui_Sanaei VPN"
-    echo "**3. x-ui_English VPN"
-    echo "**4. VPN dependencies"
-    echo "**5. Install Python"
-    echo "**6. Install NodeJS"
-    echo "**7. Exit"
     echo "*************************************"
+    echo "**Please choose an option:        ***"
+    echo "**1. Outline VPN                  ***"    
+    echo "**2. x-ui_Sanaei VPN              ***"
+    echo "**3. x-ui_English VPN             ***"
+    echo "**4. VPN dependencies             ***"
+    echo "**5. Install Python               ***"
+    echo "**6. Install NodeJS               ***"
+    echo "**7. Exit                         ***"
+    echo "*************************************"
+    echo "*************************************"
+    echo
 }
 
 # Main function to handle user input and call the appropriate function
 main() {
     while true; do
         show_menu
-        read -p "Enter your choice (1-4): " choice
+        read -p "Enter your choice (1-7): " choice
 
         case $choice in
             1)

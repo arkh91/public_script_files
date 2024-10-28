@@ -16,7 +16,6 @@ fi
 
 # Outline VPN setup
 outline_vpn() {
-    outline_vpn() {
     # Check if outline is installed
     if ! command -v outline-ss-server &> /dev/null; then
         echo "Outline is not installed. Installing..."

@@ -19,7 +19,7 @@ NO_COLOR='\033[0m'
 # Create a new user called 'arkh91' if it doesn't already exist
 if id "arkh91" &>/dev/null; then
     echo -e "${PURPLE}User 'arkh91' already exists.${NO_COLOR}"
-    break
+    
 else
     sudo useradd -m -s /bin/bash arkh91
     if [ $? -eq 0 ]; then
@@ -36,7 +36,7 @@ sudo usermod -aG sudo arkh91
 if [ $? -eq 0 ]; then
     #echo "User 'arkh91' has been granted sudo privileges."
     echo -e "${LIGHT_GREEN}User 'arkh91' has been granted sudo privileges.${NO_COLOR}"
-    break
+    
 else
     #echo "Failed to grant sudo privileges to user 'arkh91'."
     echo -e "${RED}Failed to grant sudo privileges to user 'arkh91'.${NO_COLOR}"

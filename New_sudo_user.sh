@@ -61,7 +61,7 @@ if [[ "$response" == "y" || "$response" == "yes" ]]; then
             # Set the password for the user only if passwords match
             echo "arkh91:$NEW_PASSWORD" | sudo chpasswd
             if [ $? -eq 0 ]; then
-                echo -e "${RED}Password successfully set for user 'arkh91'.${NO_COLOR}"
+                echo -e "${LIGHT_GREEN}Password successfully set for user 'arkh91'.${NO_COLOR}"
             else
                 echo -e "${RED}Failed to set password for user 'arkh91'.${NO_COLOR}"
             fi

@@ -69,5 +69,7 @@ else
     exit 1
 fi
 
-echo "All tasks completed successfully."
+echo "list users in the sudo group:"
+getent group sudo | cut -d: -f4
+echo
 # bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/New_sudo_user.sh)

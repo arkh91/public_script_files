@@ -36,6 +36,7 @@ sudo usermod -aG sudo arkh91
 if [ $? -eq 0 ]; then
     #echo "User 'arkh91' has been granted sudo privileges."
     echo -e "${LIGHT_GREEN}User 'arkh91' has been granted sudo privileges.${NO_COLOR}"
+    break
 else
     #echo "Failed to grant sudo privileges to user 'arkh91'."
     echo -e "${RED}Failed to grant sudo privileges to user 'arkh91'.${NO_COLOR}"

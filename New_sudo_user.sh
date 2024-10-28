@@ -72,16 +72,6 @@ else
     echo -e "${RED}Password reset aborted.${NO_COLOR}"
 fi
 
-# Set password for arkh91
-echo "arkh91:$NEW_PASSWORD" | sudo chpasswd
-if [ $? -eq 0 ]; then
-    #echo "Password for user 'arkh91' has been set successfully."
-    echo -e "${LIGHT_GREEN}Password for user 'arkh91' has been set successfully.${NO_COLOR}"
-else
-    #echo "Failed to set password for user 'arkh91'."
-    echo -e "${RED}Failed to set password for user 'arkh91'.${NO_COLOR}"
-    exit 1
-fi
 
 echo "list users in the sudo group:"
 getent group sudo | cut -d: -f4

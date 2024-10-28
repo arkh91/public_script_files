@@ -159,7 +159,7 @@ show_menu() {
 main() {
     while true; do
         show_menu
-        read -p "Enter your choice (1-7): " choice
+        read -p "Enter your choice (1-8): " choice
 
         case $choice in
             1)

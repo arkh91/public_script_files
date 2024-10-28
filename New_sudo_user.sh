@@ -15,43 +15,40 @@ PURPLE='\033[1;35m'
 # Reset color
 NO_COLOR='\033[0m'
 
+# Prompt for the username
+read -p "Enter the username you want to create and grant sudo access to: " USERNAME
 
-# Create a new user called 'arkh91' if it doesn't already exist
-if id "arkh91" &>/dev/null; then
-    echo -e "${PURPLE}User 'arkh91' already exists.${NO_COLOR}"
-    
+# Create a new user if it doesn't already exist
+if id "$USERNAME" &>/dev/null; then
+    echo -e "${PURPLE}User '$USERNAME' already exists.${NO_COLOR}"
 else
-    sudo useradd -m -s /bin/bash arkh91
+    sudo useradd -m -s /bin/bash "$USERNAME"
     if [ $? -eq 0 ]; then
-        echo -e "${LIGHT_GREEN}User 'arkh91' created successfully.${NO_COLOR}"
+        echo -e "${LIGHT_GREEN}User '$USERNAME' created successfully.${NO_COLOR}"
     else
-        #echo "Failed to create user 'arkh91'."
-        echo -e "${RED}Failed to create user 'arkh91'.${NO_COLOR}"
+        echo -e "${RED}Failed to create user '$USERNAME'.${NO_COLOR}"
         exit 1
     fi
 fi
 
 # Grant sudo privileges to the new user
-sudo usermod -aG sudo arkh91
+sudo usermod -aG sudo "$USERNAME"
 if [ $? -eq 0 ]; then
-    #echo "User 'arkh91' has been granted sudo privileges."
-    echo -e "${LIGHT_GREEN}User 'arkh91' has been granted sudo privileges.${NO_COLOR}"
-    
+    echo -e "${LIGHT_GREEN}User '$USERNAME' has been granted sudo privileges.${NO_COLOR}"
 else
-    #echo "Failed to grant sudo privileges to user 'arkh91'."
-    echo -e "${RED}Failed to grant sudo privileges to user 'arkh91'.${NO_COLOR}"
+    echo -e "${RED}Failed to grant sudo privileges to user '$USERNAME'.${NO_COLOR}"
     exit 1
 fi
 
 # Ask if the user wants to reset the password
-read -p "Do you want to reset the password for user 'arkh91'? (y/n): " response
+read -p "Do you want to reset the password for user '$USERNAME'? (y/n): " response
 response=${response,,} # Convert to lowercase
 
 if [[ "$response" == "y" || "$response" == "yes" ]]; then
     # Loop to ensure passwords match
     while true; do
         # Prompt for the new password
-        read -sp "Enter new password for user 'arkh91': " NEW_PASSWORD
+        read -sp "Enter new password for user '$USERNAME': " NEW_PASSWORD
         echo
         read -sp "Confirm new password: " CONFIRM_PASSWORD
         echo
@@ -59,20 +56,18 @@ if [[ "$response" == "y" || "$response" == "yes" ]]; then
         # Check if passwords match
         if [ "$NEW_PASSWORD" == "$CONFIRM_PASSWORD" ]; then
             # Set the password for the user only if passwords match
-            echo "arkh91:$NEW_PASSWORD" | sudo chpasswd
+            echo "$USERNAME:$NEW_PASSWORD" | sudo chpasswd
             if [ $? -eq 0 ]; then
-                echo -e "${LIGHT_GREEN}Password successfully set for user 'arkh91'.${NO_COLOR}"
+                echo -e "${LIGHT_GREEN}Password successfully set for user '$USERNAME'.${NO_COLOR}"
             else
-                echo -e "${RED}Failed to set password for user 'arkh91'.${NO_COLOR}"
+                echo -e "${RED}Failed to set password for user '$USERNAME'.${NO_COLOR}"
             fi
             break
         else
-            # Error message in red if passwords do not match
             echo -e "${RED}Passwords do not match. Please try again.${NO_COLOR}"
         fi
     done
 else
-    #echo "Password reset aborted."
     echo -e "${RED}Password reset aborted.${NO_COLOR}"
 fi
 

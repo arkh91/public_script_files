@@ -6,6 +6,8 @@
 #  https://github.com/arkh91/         #                        
 #                                     #
 #######################################
+
+
 # Define light green color
 LIGHT_GREEN='\033[1;32m'
 RED='\033[1;31m'
@@ -68,4 +70,4 @@ else
 fi
 
 echo "All tasks completed successfully."
-
+# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/New_sudo_user.sh)

@@ -43,22 +43,34 @@ else
     exit 1
 fi
 
-# Loop to ensure passwords match
-while true; do
-    # Prompt for the new password
-    read -sp "Enter new password for user 'arkh91': " NEW_PASSWORD
-    echo
-    read -sp "Confirm new password: " CONFIRM_PASSWORD
-    echo
+# Ask if the user wants to reset the password
+read -p "Do you want to reset the password for user 'arkh91'? (y/n): " response
+response=${response,,} # Convert to lowercase
 
-    # Check if passwords match
-    if [ "$NEW_PASSWORD" == "$CONFIRM_PASSWORD" ]; then
-        break
-    else
-        #echo "Passwords do not match. Please try again."
-        echo -e "${RED}Passwords do not match. Please try again.${NO_COLOR}"
-    fi
-done
+if [[ "$response" == "y" || "$response" == "yes" ]]; then
+    # Loop to ensure passwords match
+    while true; do
+        # Prompt for the new password
+        read -sp "Enter new password for user 'arkh91': " NEW_PASSWORD
+        echo
+        read -sp "Confirm new password: " CONFIRM_PASSWORD
+        echo
+
+        # Check if passwords match
+        if [ "$NEW_PASSWORD" == "$CONFIRM_PASSWORD" ]; then
+            echo -e "${LIGHT_GREEN}Password successfully set for user 'arkh91'.${NO_COLOR}"
+            # Set the password for the user
+            echo "arkh91:$NEW_PASSWORD" | sudo chpasswd
+            break
+        else
+            # Error message in red if passwords do not match
+            echo -e "${RED}Passwords do not match. Please try again.${NO_COLOR}"
+        fi
+    done
+else
+    #echo "Password reset aborted."
+    echo -e "${RED}Password reset aborted.${NO_COLOR}"
+fi
 
 # Set password for arkh91
 echo "arkh91:$NEW_PASSWORD" | sudo chpasswd

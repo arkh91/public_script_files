@@ -126,6 +126,10 @@ Install_NodeJS (){
 
 }
 
+#7
+New_sudo_user(){
+  bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/New_sudo_user.sh)
+}
 
 # Function to display the current date and time
 show_datetime() {
@@ -144,7 +148,8 @@ show_menu() {
     echo "**4. VPN dependencies             ***"
     echo "**5. Install Python               ***"
     echo "**6. Install NodeJS               ***"
-    echo "**7. Exit                         ***"
+    echo "**7. New sudo user                ***"
+    echo "**8. Exit                         ***"
     echo "*************************************"
     echo "*************************************"
     echo
@@ -177,6 +182,10 @@ main() {
                 Install_NodeJS
                 ;;
             7)
+                New_sudo_user
+                ;;
+            8)
+                echo
                 echo "Exiting... Goodbye!"
                 break
                 ;;

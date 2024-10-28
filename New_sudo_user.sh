@@ -19,6 +19,7 @@ NO_COLOR='\033[0m'
 # Create a new user called 'arkh91' if it doesn't already exist
 if id "arkh91" &>/dev/null; then
     echo -e "${PURPLE}User 'arkh91' already exists.${NO_COLOR}"
+    break
 else
     sudo useradd -m -s /bin/bash arkh91
     if [ $? -eq 0 ]; then

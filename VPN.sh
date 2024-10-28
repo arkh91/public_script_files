@@ -16,20 +16,30 @@ fi
 
 # Outline VPN setup
 outline_vpn() {
+    outline_vpn() {
     # Check if outline is installed
-  if ! command -v outline-ss-server &> /dev/null; then
-    echo "Outline is not installed. Installing..."
-    
-    # Install outline
-    #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=11000
-    sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111
-    echo "Outline installed successfully."
-    echo
-    #read -p "Press enter to continue"
-  else
-    echo "Outline is already installed."
-  fi
+    if ! command -v outline-ss-server &> /dev/null; then
+        echo "Outline is not installed. Installing..."
+        
+        # Install outline
+        #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=11000
+        sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111
+        echo "Outline installed successfully."
+        echo
+    else
+        echo "Outline is already installed."
+        read -p "Would you like to reinstall it? (y/n): " outline
+        if [[ "$outline" == "y" || "$outline" == "Y" ]]; then
+            echo "Reinstalling Outline..."
+            # Reinstall outline
+            sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111
+            echo "Outline reinstalled successfully."
+        else
+            echo "Skipping reinstallation."
+        fi
+    fi
 }
+
 
 # Install x-ui Sanaei
 x-ui_Sanaei() {

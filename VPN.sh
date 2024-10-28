@@ -10,16 +10,50 @@
 if [ "$EUID" -ne 0 ]; then
   echo -e "\033[31mPlease run as root\033[m"
   exit
-else
-  #Install python
-  sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/python.sh && chmod u+x python.sh && ./python.sh
-
-  #Install nodejs
-  #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/nodejs.sh && chmod u+x nodejs.sh && ./nodejs.sh
+fi
 
 
-  
-  # Check if netstat is installed
+
+# Outline VPN setup
+outline_vpn() {
+    # Check if outline is installed
+  if ! command -v outline-ss-server &> /dev/null; then
+    echo "Outline is not installed. Installing..."
+    
+    # Install outline
+    #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=11000
+    sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111
+    echo "Outline installed successfully."
+    echo
+    #read -p "Press enter to continue"
+  else
+    echo "Outline is already installed."
+  fi
+}
+
+# Install x-ui Sanaei
+x-ui_Sanaei() {
+  if [ -d "/etc/3x-ui" ]; then
+    echo "x-ui MHSanaei installed successfully."
+  else
+    echo "x-ui MHSanaei installation not found."
+    bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
+    docker restart shadowbox
+  fi
+}
+
+x-ui_English() {
+  if [ -d "/etc/3x-ui" ]; then
+    echo "x-ui MHSanaei installed successfully."
+  else
+    echo "x-ui MHSanaei installation not found."
+    bash <(curl -Ls https://raw.githubusercontent.com/NidukaAkalanka/x-ui-english/master/install.sh)
+    docker restart shadowbox
+  fi
+}
+
+VPN_dependencies()  {
+ # Check if netstat is installed
   if ! command -v netstat &> /dev/null; then
     echo "netstat is not installed. Installing..."
     sudo apt update -y
@@ -64,19 +98,7 @@ else
     sleep 5s
   fi
 
-  # Check if outline is installed
-  if ! command -v outline-ss-server &> /dev/null; then
-    echo "Outline is not installed. Installing..."
-    
-    # Install outline
-    #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=11000
-    sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111
-    echo "Outline installed successfully."
-    sleep 10s
-    #read -p "Press enter to continue"
-  else
-    echo "Outline is already installed."
-  fi
+  
 
   # Auto restart
   if [ ! -e "autoreboot" ]; then
@@ -90,19 +112,81 @@ else
     echo "The file 'bashrc_bock.txt' is not present."
     #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/bashrc_block.txt && cat bashrc_block.txt >> /home/ubuntu/.bashrc
   fi
+}
 
-  # Install x-ui
-  if [ -d "/etc/3x-ui" ]; then
-    echo "x-ui MHSanaei installed successfully."
-  else
-    echo "x-ui MHSanaei installation not found."
-    #bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
-    #bash <(curl -Ls https://raw.githubusercontent.com/NidukaAkalanka/x-ui-english/master/install.sh)
-    #docker restart shadowbox
-  fi
-  
-  ls
-  read -p "Press enter to continue"
-fi
+Install_python (){
+  #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/python.sh && chmod u+x python.sh && ./python.sh
+  bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/python.sh)
+}
+
+
+Install_NodeJS (){
+  #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/nodejs.sh && chmod u+x nodejs.sh && ./nodejs.sh
+  bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/nodejs.sh)
+
+}
+
+
+# Function to display the current date and time
+show_datetime() {
+    echo "Current date and time: $(date)"
+}
+
+
+# Function to display the menu
+show_menu() {
+    echo "*************************************"
+    echo "**Please choose an option:"
+    echo "**1. Outline VPN"
+    echo "**2. x-ui_Sanaei VPN"
+    echo "**3. x-ui_English VPN"
+    echo "**4. VPN dependencies"
+    echo "**5. Install Python"
+    echo "**6. Install NodeJS"
+    echo "**7. Exit"
+    echo "*************************************"
+}
+
+# Main function to handle user input and call the appropriate function
+main() {
+    while true; do
+        show_menu
+        read -p "Enter your choice (1-4): " choice
+
+        case $choice in
+            1)
+                outline_vpn
+                ;;
+            2)
+                x-ui_Sanaei
+                ;;
+            3)
+                x-ui_English
+                ;;
+
+            4)
+                VPN_dependencies
+                ;;
+            5)
+                Install_python
+                ;;
+            6)
+                Install_NodeJS
+                ;;
+            7)
+                echo "Exiting... Goodbye!"
+                break
+                ;;
+            *)
+                echo "Invalid option. Please enter a number between 1 and 7."
+                ;;
+        esac
+    done
+}
+
+# Execute the main function
+main
+
+
 # sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh && chmod u+x VPN.sh #&& ./VPN.sh
 # bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh)

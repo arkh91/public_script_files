@@ -25,10 +25,18 @@ outline_vpn() {
         #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111
         #worked
         #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 | tee /opt/outline/installed.txt
-        sudo sh -c 'bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 2>&1 | tee /opt/outline/installed.txt'
+        filename="/opt/outline/installed.txt"
+        counter=1
         
-        
-        echo -e "\033[0;35mThe installation_output is stored in /opt/outline/installation_output\033[0m"
+        # Find the next available filename
+        while [ -e "$filename" ]; do
+          filename="/opt/outline/installed$counter.txt"
+          counter=$((counter + 1))
+        done
+
+        # Run the command and save output to the available filename
+        sudo sh -c 'bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 2>&1 | tee '"$filename"
+        echo -e "\033[0;35mThe installation output is stored in $filename\033[0m"
         echo "Outline installed successfully."
         echo
     else

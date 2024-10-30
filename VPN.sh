@@ -314,6 +314,7 @@ outline_vpn_install_portAnddomain (){
 }
 
 Check_Outline_VPN_Status(){
+  echo "Check_Outline_VPN_Status"
   # Get the uptime in days, hours, and minutes
   uptime_days=$(uptime -p | grep -oP '(?<=up )(\d+) days' | grep -oP '\d+')
   uptime_days=${uptime_days:-0}  # Default to 0 if no "days" present

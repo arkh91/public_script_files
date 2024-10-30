@@ -319,8 +319,14 @@ check_outline_status(){
   # Capture uptime output
   uptime_output=$(uptime)
 
-  # Extract days if present, otherwise default to 0 days
-  uptime_days=$(echo "$uptime_output" | grep -oP '\d+(?= days)' || echo 0)
+  # Check if "days" is in the uptime output
+  if echo "$uptime_output" | grep -q "days"; then
+    # Extract the number of days
+    uptime_days=$(echo "$uptime_output" | sed -n 's/.*up \([0-9]\+\) days.*/\1/p')
+  else
+    # Set to 0 if no "days" present
+    uptime_days=0
+  fi
 
   # Determine color based on uptime
   if (( uptime_days < 2 )); then
@@ -333,10 +339,8 @@ check_outline_status(){
 
   # Output uptime with color
   echo -e "${color}Uptime: $uptime_days days\033[0m"
-  #sleep (20)
-  #continue
-  #outline_vpn_menu
 }
+
 
 
 

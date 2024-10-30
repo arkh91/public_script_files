@@ -333,7 +333,7 @@ check_outline_status(){
 
   # Output uptime with color
   echo -e "${color}Uptime: $uptime_days days\033[0m"
-  sleep (20)
+  #sleep (20)
   continue
   #outline_vpn_menu
 }

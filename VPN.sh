@@ -192,12 +192,13 @@ outline_vpn_menu() {
         echo "***********************************************************"
         echo "Outline VPN Menu:                                       ***"
         echo "**1) Install Outline VPN                                ***"
-        echo "**2) Install Outline VPN with custome port and domain"  ***"
+        echo "**2) Install Outline VPN with custom port and domain    ***"
         echo "**3) Check Outline VPN Status                           ***"
         echo "**4) Return to Main Menu                                ***"
         echo "**                                                      ***"
         echo "***********************************************************"
         echo "***********************************************************"
+
         
         read -p "Choose an option: " outline_choice
         case $outline_choice in

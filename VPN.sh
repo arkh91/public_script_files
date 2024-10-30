@@ -305,75 +305,8 @@ outline_vpn_install_portAnddomain (){
     break
 done
 
-# Your further code for Outline VPN setup goes here
-echo "Setting up Outline VPN with port: $port and domain: $domain"
-This script will:
-
-Prompt for a port number and validate that it's between 1024 and 65535.
-Prompt for a domain and validate its basic format.
-Offer options to retry input or cancel the script if an invalid input is given.
-Proceed only when both inputs are valid.
-
-
-
-
-
-You said:
-This is the code if both args are valid
-
-sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh ---api-port=11111 --keys-port=port --domain=domain | tee /opt/outline/installed.txt
-ChatGPT said:
-ChatGPT
-Here's the updated script that incorporates the provided command if both arguments (port and domain) are valid. This script dynamically replaces port and domain in the command.
-
-bash
-Copy code
-#!/bin/bash
-
-while true; do
-    # Prompt for port number
-    read -p "Please enter a port number (between 1024 and 65535): " port
-    # Check if port is a valid number within range
-    if [[ $port =~ ^[0-9]+$ ]] && ((port >= 1024 && port <= 65535)); then
-        echo "Port $port is valid."
-    else
-        echo "Invalid port. Please enter a number between 1024 and 65535."
-        echo "Do you want to try again? (y/n)"
-        read -p "Choice: " choice
-        if [[ $choice == "n" ]]; then
-            echo "Operation cancelled."
-            exit 1
-        else
-            continue
-        fi
-    fi
-
-    # Prompt for domain
-    read -p "Please enter your domain (e.g., example.com): " domain
-    # Simple regex for a valid domain (basic format check)
-    if [[ $domain =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-        echo "Domain $domain is valid."
-    else
-        echo "Invalid domain format. Please enter a valid domain (e.g., example.com)."
-        echo "Do you want to try again? (y/n)"
-        read -p "Choice: " choice
-        if [[ $choice == "n" ]]; then
-            echo "Operation cancelled."
-            exit 1
-        else
-            continue
-        fi
-    fi
-
-    # If both port and domain are valid, break out of loop
-    echo "Both port and domain are valid. Proceeding..."
-    break
-done
-
 # Run Outline VPN installation command with valid arguments
 sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=$port --domain=$domain | tee /opt/outline/installed.txt
-}
-
 
 # Execute the main function
 main

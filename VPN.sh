@@ -209,7 +209,7 @@ outline_vpn_menu() {
                 outline_vpn_install_portAnddomain
                 ;;
             3)
-                Check_Outline_VPN_Status
+                check_outline_status
                 ;;
             4)
                 main
@@ -313,7 +313,7 @@ outline_vpn_install_portAnddomain (){
   sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=$port --domain=$domain | tee /opt/outline/installed.txt
 }
 
-Check_Outline_VPN_Status(){
+check_outline_status(){
   echo "Check_Outline_VPN_Status"
   # Get the uptime in days, hours, and minutes
   uptime_days=$(uptime -p | grep -oP '(?<=up )(\d+) days' | grep -oP '\d+')

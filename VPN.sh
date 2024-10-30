@@ -139,8 +139,9 @@ show_menu() {
 
 # Main function to handle user input and call the appropriate function
 main() {
-    clear
+    
     while true; do
+        clear
         show_menu
         read -p "Enter your choice (1-8): " choice
 

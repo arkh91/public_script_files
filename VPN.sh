@@ -123,15 +123,17 @@ show_datetime() {
 show_menu() {
     echo "*************************************"
     echo "*************************************"
+    echo "*************************************"
     echo "**Please choose an option:        ***"
-    echo "**1. Outline VPN                  ***"    
-    echo "**2. x-ui_Sanaei VPN              ***"
-    echo "**3. x-ui_English VPN             ***"
-    echo "**4. VPN dependencies             ***"
-    echo "**5. Install Python               ***"
-    echo "**6. Install NodeJS               ***"
-    echo "**7. New sudo user                ***"
-    echo "**8. Exit                         ***"
+    echo "** 1) Outline VPN                 ***"    
+    echo "** 2) x-ui_Sanaei VPN             ***"
+    echo "** 3) x-ui_English VPN            ***"
+    echo "** 4) VPN dependencies            ***"
+    echo "** 5) Install Python              ***"
+    echo "** 6) Install NodeJS              ***"
+    echo "** 7) New sudo user               ***"
+    echo "** 8) Exit                        ***"
+    echo "*************************************"
     echo "*************************************"
     echo "*************************************"
     echo
@@ -176,7 +178,7 @@ main() {
                 exit 1
                 ;;
             *)
-                echo "Invalid option. Please enter a number between 1 and 7."
+                echo "Invalid option. Please enter a number between 1 and 8."
                 ;;
         esac
     done
@@ -186,15 +188,16 @@ main() {
 outline_vpn_menu() {
     clear
     while true; do
-        echo "*************************************"
-        echo "*************************************"
+        echo "******************************************************"
+        echo "******************************************************"
         echo "Outline VPN Menu:"
         echo "1) Install Outline VPN"
-        echo "2) Install Outline VPN with port and domain"
+        echo "2) Install Outline VPN with custome port and domain"
         echo "3) Check Outline VPN Status"
         echo "4) Return to Main Menu"
-        echo "*************************************"
-        echo "*************************************"
+        echo
+        echo "******************************************************"
+        echo "******************************************************"
         
         read -p "Choose an option: " outline_choice
         case $outline_choice in

@@ -315,11 +315,11 @@ outline_vpn_install_portAnddomain (){
 
 check_outline_status(){
   echo "Check_Outline_VPN_Status"
-  
+
   # Get the uptime in days
-  uptime_days=$(uptime -p | grep -o '[0-9]\+ days' | grep -o '[0-9]\+')
-  uptime_days=${uptime_days:-0}  # Default to 0 if no "days" present
-  
+  uptime_output=$(uptime -p)
+  uptime_days=$(echo "$uptime_output" | grep -oP '\d+(?= days)' || echo 0)
+
   # Determine color based on uptime
   if (( uptime_days < 2 )); then
       color="\033[0;32m" # Green for less than 2 days
@@ -328,10 +328,11 @@ check_outline_status(){
   else
       color="\033[0;31m" # Red for more than 4 days
   fi
-  
+
   # Output uptime with color
   echo -e "${color}Uptime: $uptime_days days\033[0m"
 }
+
 
 
 

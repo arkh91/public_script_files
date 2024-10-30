@@ -314,8 +314,9 @@ outline_vpn_install_portAnddomain (){
 }
 
 Check_Outline_VPN_Status(){
-  # Get the uptime in days
-  uptime_days=$(awk '{print int($1/86400)}' /proc/uptime)
+  # Get the uptime in days, hours, and minutes
+  uptime_days=$(uptime -p | grep -oP '(?<=up )(\d+) days' | grep -oP '\d+')
+  uptime_days=${uptime_days:-0}  # Default to 0 if no "days" present
   
   # Determine color based on uptime
   if (( uptime_days < 2 )); then

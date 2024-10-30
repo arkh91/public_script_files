@@ -209,8 +209,7 @@ outline_vpn_menu() {
                 outline_vpn_install_portAnddomain
                 ;;
             3)
-                echo "Checking Outline VPN Status..."
-                # Add status check logic here
+                Check_Outline_VPN_Status
                 ;;
             4)
                 main
@@ -313,6 +312,24 @@ outline_vpn_install_portAnddomain (){
   # Run Outline VPN installation command with valid arguments
   sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=$port --domain=$domain | tee /opt/outline/installed.txt
 }
+
+Check_Outline_VPN_Status(){
+  # Get the uptime in days
+  uptime_days=$(awk '{print int($1/86400)}' /proc/uptime)
+  
+  # Determine color based on uptime
+  if (( uptime_days < 2 )); then
+      color="\033[0;32m" # Green for less than 2 days
+  elif (( uptime_days >= 2 && uptime_days <= 4 )); then
+      color="\033[0;33m" # Yellow for 2-4 days
+  else
+      color="\033[0;31m" # Red for more than 4 days
+  fi
+  
+  # Output uptime with color
+  echo -e "${color}Uptime: $uptime_days days\033[0m"
+}
+
 
 # Execute the main function
 main

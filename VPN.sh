@@ -184,7 +184,42 @@ main() {
     done
 }
 
+# Outline VPN submenu
+outline_vpn_menu() {
+    while true; do
+        clear
+        echo "***********************************************************"
+        echo "***********************************************************"
+        echo "Outline VPN Menu:                                       ***"
+        echo "**1) Install Outline VPN                                ***"
+        echo "**2) Install Outline VPN with custom port and domain    ***"
+        echo "**3) Check Outline VPN Status                           ***"
+        echo "**4) Return to Main Menu                                ***"
+        echo "**                                                      ***"
+        echo "***********************************************************"
+        echo "***********************************************************"
 
+        
+        read -p "Choose an option: " outline_choice
+        case $outline_choice in
+            1)
+                outline_vpn_install
+                ;;
+            2)
+                outline_vpn_install_portAnddomain
+                ;;
+            3)
+                check_outline_status
+                ;;
+            4)
+                main
+                ;;
+            *)
+                echo "Invalid option. Please enter a number between 1 and 4."
+                ;;
+        esac
+    done
+}
 
 # Outline VPN setup
 outline_vpn_install() {
@@ -303,42 +338,7 @@ check_outline_status(){
   #outline_vpn_menu
 }
 
-# Outline VPN submenu
-outline_vpn_menu() {
-    while true; do
-        clear
-        echo "***********************************************************"
-        echo "***********************************************************"
-        echo "Outline VPN Menu:                                       ***"
-        echo "**1) Install Outline VPN                                ***"
-        echo "**2) Install Outline VPN with custom port and domain    ***"
-        echo "**3) Check Outline VPN Status                           ***"
-        echo "**4) Return to Main Menu                                ***"
-        echo "**                                                      ***"
-        echo "***********************************************************"
-        echo "***********************************************************"
 
-        
-        read -p "Choose an option: " outline_choice
-        case $outline_choice in
-            1)
-                outline_vpn_install
-                ;;
-            2)
-                outline_vpn_install_portAnddomain
-                ;;
-            3)
-                check_outline_status
-                ;;
-            4)
-                main
-                ;;
-            *)
-                echo "Invalid option. Please enter a number between 1 and 4."
-                ;;
-        esac
-    done
-}
 
 
 # Execute the main function

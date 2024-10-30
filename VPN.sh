@@ -275,9 +275,8 @@ outline_vpn_install_portAnddomain (){
         echo "Port $port is valid."
     else
         echo "Invalid port. Please enter a number between 1024 and 65535."
-        echo "Do you want to try again? (y/n)"
-        read -p "Choice: " choice
-        if [[ $choice == "n" ]]; then
+        read -p "Do you want to try again? (y/n)" portTry
+        if [[ $portTry == "n" ]]; then
             echo "Operation cancelled."
             exit 1
         else
@@ -292,9 +291,8 @@ outline_vpn_install_portAnddomain (){
         echo "Domain $domain is valid."
     else
         echo "Invalid domain format. Please enter a valid domain (e.g., example.com)."
-        echo "Do you want to try again? (y/n)"
-        read -p "Choice: " choice
-        if [[ $choice == "n" ]]; then
+        read -p "Do you want to try again? (y/n)" domainTry
+        if [[ $domainTry == "n" ]]; then
             echo "Operation cancelled."
             exit 1
         else

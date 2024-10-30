@@ -13,47 +13,6 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 
-
-# Outline VPN setup
-outline_vpn() {
-    # Check if outline is installed
-    if ! command -v outline-ss-server &> /dev/null; then
-        echo "Outline is not installed. Installing..."
-        
-        # Install outline
-        #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=11000
-        #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111
-        #worked
-        #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 | tee /opt/outline/installed.txt
-        filename="/opt/outline/installed.txt"
-        counter=1
-        
-        # Find the next available filename
-        while [ -e "$filename" ]; do
-          filename="/opt/outline/installed$counter.txt"
-          counter=$((counter + 1))
-        done
-
-        # Run the command and save output to the available filename
-        sudo sh -c 'bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 2>&1 | tee '"$filename"
-        echo -e "\033[0;35mThe installation output is stored in $filename\033[0m"
-        echo "Outline installed successfully."
-        echo
-    else
-        echo "Outline is already installed."
-        read -p "Would you like to reinstall it? (y/n): " outline
-        if [[ "$outline" == "y" || "$outline" == "Y" ]]; then
-            echo "Reinstalling Outline..."
-            # Reinstall outline
-            sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111
-            echo "Outline reinstalled successfully."
-        else
-            echo "Skipping reinstallation."
-        fi
-    fi
-}
-
-
 # Install x-ui Sanaei
 x-ui_Sanaei() {
   if [ -d "/etc/3x-ui" ]; then
@@ -186,7 +145,8 @@ main() {
 
         case $choice in
             1)
-                outline_vpn
+                outline_vpn_menu
+                
                 ;;
             2)
                 x-ui_Sanaei
@@ -218,6 +178,202 @@ main() {
         esac
     done
 }
+
+# Outline VPN submenu
+outline_vpn_menu() {
+    clear
+    while true; do
+        echo "*************************************"
+        echo "*************************************"
+        echo "Outline VPN Menu:"
+        echo "1) Install Outline VPN"
+        echo "2) Install Outline VPN with port and domain"
+        echo "3) Check Outline VPN Status"
+        echo "4) Return to Main Menu"
+        echo "*************************************"
+        echo "*************************************"
+        
+        read -p "Choose an option: " outline_choice
+        case $outline_choice in
+            1)
+                outline_vpn_install
+                ;;
+            2)
+                outline_vpn_install_portAnddomain
+                ;;
+            3)
+                echo "Checking Outline VPN Status..."
+                # Add status check logic here
+                ;;
+            4)
+                main
+                ;;
+            *)
+                echo "Invalid option. Please enter a number between 1 and 4."
+                ;;
+        esac
+    done
+}
+
+# Outline VPN setup
+outline_vpn_install() {
+    # Check if outline is installed
+    if [ -d "/opt/outline" ]; then
+        echo "Outline is not installed. Installing..."
+        
+        # Install outline
+        #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=11000
+        #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111
+        #worked
+        #sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 | tee /opt/outline/installed.txt
+        filename="/opt/outline/installed.txt"
+        counter=1
+        
+        # Find the next available filename
+        while [ -e "$filename" ]; do
+          filename="/opt/outline/installed$counter.txt"
+          counter=$((counter + 1))
+        done
+
+        # Run the command and save output to the available filename
+        sudo sh -c 'bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 2>&1 | tee '"$filename"
+        echo -e "\033[0;35mThe installation output is stored in $filename\033[0m"
+        echo "Outline installed successfully."
+        echo
+    else
+        echo "Outline is already installed."
+        read -p "Would you like to reinstall it? (y/n): " outline
+        if [[ "$outline" == "y" || "$outline" == "Y" ]]; then
+            echo "Reinstalling Outline..."
+            filename="/opt/outline/installed.txt"
+        counter=1
+        
+        # Find the next available filename
+        while [ -e "$filename" ]; do
+          filename="/opt/outline/installed$counter.txt"
+          counter=$((counter + 1))
+        done
+
+        # Run the command and save output to the available filename
+        sudo sh -c 'bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 2>&1 | tee '"$filename"
+        echo -e "\033[0;35mThe installation output is stored in $filename\033[0m"
+            echo "Outline reinstalled successfully."
+        else
+            echo "Skipping reinstallation."
+        fi
+    fi
+}
+
+outline_vpn_install_portAnddomain (){
+  while true; do
+    # Prompt for port number
+    read -p "Please enter a port number (between 1024 and 65535): " port
+    # Check if port is a valid number within range
+    if [[ $port =~ ^[0-9]+$ ]] && ((port >= 1024 && port <= 65535)); then
+        echo "Port $port is valid."
+    else
+        echo "Invalid port. Please enter a number between 1024 and 65535."
+        echo "Do you want to try again? (y/n)"
+        read -p "Choice: " choice
+        if [[ $choice == "n" ]]; then
+            echo "Operation cancelled."
+            exit 1
+        else
+            continue
+        fi
+    fi
+
+    # Prompt for domain
+    read -p "Please enter your domain (e.g., example.com): " domain
+    # Simple regex for a valid domain (basic format check)
+    if [[ $domain =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+        echo "Domain $domain is valid."
+    else
+        echo "Invalid domain format. Please enter a valid domain (e.g., example.com)."
+        echo "Do you want to try again? (y/n)"
+        read -p "Choice: " choice
+        if [[ $choice == "n" ]]; then
+            echo "Operation cancelled."
+            exit 1
+        else
+            continue
+        fi
+    fi
+
+    # If both port and domain are valid, break out of loop
+    echo "Both port and domain are valid. Proceeding..."
+    break
+done
+
+# Your further code for Outline VPN setup goes here
+echo "Setting up Outline VPN with port: $port and domain: $domain"
+This script will:
+
+Prompt for a port number and validate that it's between 1024 and 65535.
+Prompt for a domain and validate its basic format.
+Offer options to retry input or cancel the script if an invalid input is given.
+Proceed only when both inputs are valid.
+
+
+
+
+
+You said:
+This is the code if both args are valid
+
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh ---api-port=11111 --keys-port=port --domain=domain | tee /opt/outline/installed.txt
+ChatGPT said:
+ChatGPT
+Here's the updated script that incorporates the provided command if both arguments (port and domain) are valid. This script dynamically replaces port and domain in the command.
+
+bash
+Copy code
+#!/bin/bash
+
+while true; do
+    # Prompt for port number
+    read -p "Please enter a port number (between 1024 and 65535): " port
+    # Check if port is a valid number within range
+    if [[ $port =~ ^[0-9]+$ ]] && ((port >= 1024 && port <= 65535)); then
+        echo "Port $port is valid."
+    else
+        echo "Invalid port. Please enter a number between 1024 and 65535."
+        echo "Do you want to try again? (y/n)"
+        read -p "Choice: " choice
+        if [[ $choice == "n" ]]; then
+            echo "Operation cancelled."
+            exit 1
+        else
+            continue
+        fi
+    fi
+
+    # Prompt for domain
+    read -p "Please enter your domain (e.g., example.com): " domain
+    # Simple regex for a valid domain (basic format check)
+    if [[ $domain =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+        echo "Domain $domain is valid."
+    else
+        echo "Invalid domain format. Please enter a valid domain (e.g., example.com)."
+        echo "Do you want to try again? (y/n)"
+        read -p "Choice: " choice
+        if [[ $choice == "n" ]]; then
+            echo "Operation cancelled."
+            exit 1
+        else
+            continue
+        fi
+    fi
+
+    # If both port and domain are valid, break out of loop
+    echo "Both port and domain are valid. Proceeding..."
+    break
+done
+
+# Run Outline VPN installation command with valid arguments
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=$port --domain=$domain | tee /opt/outline/installed.txt
+}
+
 
 # Execute the main function
 main

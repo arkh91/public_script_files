@@ -186,8 +186,8 @@ main() {
 
 # Outline VPN submenu
 outline_vpn_menu() {
-    clear
     while true; do
+        clear
         echo "******************************************************"
         echo "******************************************************"
         echo "Outline VPN Menu:"

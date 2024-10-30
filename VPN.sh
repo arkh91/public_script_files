@@ -171,7 +171,8 @@ main() {
             8)
                 echo
                 echo "Exiting... Goodbye!"
-                break
+                #break
+                exit 1
                 ;;
             *)
                 echo "Invalid option. Please enter a number between 1 and 7."

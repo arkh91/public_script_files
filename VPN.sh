@@ -313,20 +313,24 @@ outline_vpn_install_portAnddomain (){
   sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/arkh91/outline-server/refs/heads/master/src/server_manager/install_scripts/install_server.sh)" install_server.sh --api-port=11111 --keys-port=$port --domain=$domain | tee /opt/outline/installed.txt
 }
 
+
+
+
 check_outline_status(){
   echo "Check_Outline_VPN_Status"
 
-  # Capture uptime output
+  # Capture uptime output and display it for debugging
   uptime_output=$(uptime)
+  echo "Raw uptime output: $uptime_output"
 
-  # Check if "days" is in the uptime output
+  # Attempt to extract days; if none, set to 0
   if echo "$uptime_output" | grep -q "days"; then
-    # Extract the number of days
-    uptime_days=$(echo "$uptime_output" | sed -n 's/.*up \([0-9]\+\) days.*/\1/p')
+    uptime_days=$(echo "$uptime_output" | awk '{for(i=1;i<=NF;i++) if ($i ~ /^[0-9]+$/ && $(i+1) == "days") print $i}')
   else
-    # Set to 0 if no "days" present
     uptime_days=0
   fi
+
+  echo "Parsed uptime days: $uptime_days"  # Debugging output to verify parsing
 
   # Determine color based on uptime
   if (( uptime_days < 2 )); then
@@ -340,6 +344,7 @@ check_outline_status(){
   # Output uptime with color
   echo -e "${color}Uptime: $uptime_days days\033[0m"
 }
+
 
 
 

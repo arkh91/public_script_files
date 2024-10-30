@@ -195,7 +195,7 @@ outline_vpn_menu() {
         echo "**2) Install Outline VPN with custome port and domain"  ***"
         echo "**3) Check Outline VPN Status"                          ***"
         echo "**4) Return to Main Menu"                               ***"
-        echo "**                                                      ***"
+        echo "***                                                     ***"
         echo "***********************************************************"
         echo "***********************************************************"
         

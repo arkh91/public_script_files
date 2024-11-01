@@ -124,20 +124,24 @@ show_menu() {
     echo "***********************************************************"
     echo "***********************************************************"
     echo "***********************************************************"
-    echo "**Please choose an option:                              ***"
-    echo "** 1) Outline VPN                                       ***"    
-    echo "** 2) x-ui_Sanaei VPN                                   ***"
-    echo "** 3) x-ui_English VPN                                  ***"
-    echo "** 4) VPN dependencies                                  ***"
-    echo "** 5) Install Python                                    ***"
-    echo "** 6) Install NodeJS                                    ***"
-    echo "** 7) New sudo user                                     ***"
-    echo "** 8) Exit                                              ***"
+    echo "** 🌟 Welcome to the Arkh91 VPN Setup Hub! 🌟          **"
+    echo "** Choose an option to supercharge your server:         **"
+    echo "**                                                     **"
+    echo "** 1) 🚀 Launch Outline VPN                             **"    
+    echo "** 2) 🔥 Activate x-ui_Sanaei VPN                        **"
+    echo "** 3) 🌐 Set Up x-ui_English VPN                         **"
+    echo "** 4) 🔧 Install VPN Dependencies                       **"
+    echo "** 5) 🐍 Install Python                                 **"
+    echo "** 6) 🌍 Install NodeJS                                 **"
+    echo "** 7) 👤 Create a New Sudo User                         **"
+    echo "** 8) ❌ Exit - Done for Now                             **"
+    echo "**                                                     **"
     echo "***********************************************************"
     echo "***********************************************************"
     echo "***********************************************************"
     echo
 }
+
 
 # Main function to handle user input and call the appropriate function
 main() {

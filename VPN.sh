@@ -142,27 +142,26 @@ show_menu() {
     echo "#*****++++=-===+#%#%%%%%%@@%%%%%%%@@%###***+++*%@%*******##"
     echo "%#########%#####%%%%%%%%%%%%%%%%@@@@@@@@@%%@%%@@@@%%%%%%%%%"
     echo "** Welcome to the Arkh91 VPN Setup Hub!                 **"
-    echo "** Choose an option to supercharge your server:         **"
-    echo "**                                                     **"
-    echo "** 1) Launch Outline VPN                               **"    
-    echo "** 2) Activate x-ui_Sanaei VPN                         **"
-    echo "** 3) Set Up x-ui_English VPN                          **"
-    echo "** 4) Install VPN Dependencies                         **"
-    echo "** 5) Install Python                                   **"
-    echo "** 6) Install NodeJS                                   **"
-    echo "** 7) Create a New Sudo User                           **"
-    echo "** 8) Exit - Done for Now                              **"
-    echo "**                                                     **"
-    echo "**                                                     **"
-    echo "***********************************************************"
-    echo "***********************************************************"
+    echo "**                                                      **"
+    echo "** 1) Launch Outline VPN                                **"    
+    echo "** 2) Activate x-ui_Sanaei VPN                          **"
+    echo "** 3) Set Up x-ui_English VPN                           **"
+    echo "** 4) Install VPN Dependencies                          **"
+    echo "** 5) Install Python                                    **"
+    echo "** 6) Install NodeJS                                    **"
+    echo "** 7) Create a New Sudo User                            **"
+    echo "** 8) Exit - Done for Now                               **"
+    echo "**                                                      **"
+    echo "**                                                      **"
+    echo "**********************************************************"
+    echo "**********************************************************"
     echo
 }
 
 
 # Main function to handle user input and call the appropriate function
 main() {
-    
+    alias_vpn
     while true; do
         clear
         show_menu
@@ -370,7 +369,23 @@ check_outline_status(){
 }
 check_outline_status
 
-
+alias_vpn(){
+  # Define the alias line to check
+  alias_line="alias VPN='bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh)'"
+  
+  # Check if the alias already exists in .bashrc
+  if ! grep -Fxq "$alias_line" ~/.bashrc; then
+      # If alias doesn't exist, add it to the end of .bashrc
+      echo "$alias_line" >> ~/.bashrc
+      echo "Alias added to .bashrc."
+  
+      # Source the .bashrc to apply the changes
+      source ~/.bashrc
+      echo ".bashrc sourced to apply changes."
+  else
+      echo "Alias already exists in .bashrc."
+  fi
+}
 
 
 

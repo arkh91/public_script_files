@@ -173,7 +173,9 @@ main() {
                 ;;
             8)
                 echo
-                echo "Exiting... Goodbye!"
+                #echo "Exiting... Goodbye!"
+                echo -e "\033[0;35mExiting... Goodbye!\033[0m"
+                echo
                 #break
                 exit 1
                 ;;
@@ -212,6 +214,9 @@ outline_vpn_menu() {
                 check_outline_status
                 ;;
             4)
+              echo "Test"
+                ;;
+            5)
                 main
                 ;;
             *)
@@ -343,7 +348,7 @@ check_outline_status(){
 
   # Output uptime with color
   echo -e "${color}Uptime: $uptime_days days\033[0m"
-  EOF
+EOF
 }
 
 

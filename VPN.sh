@@ -370,6 +370,8 @@ check_outline_status(){
 check_outline_status
 
 alias_vpn() {
+  echo "alias"
+: << 'alias'
   # Define the alias line to check
   alias_line="alias VPN='bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh)'"
   
@@ -392,6 +394,7 @@ alias_vpn() {
   else
       echo "Alias already exists in .bashrc."
   fi
+alias  
 }
 
 

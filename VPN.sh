@@ -318,7 +318,7 @@ outline_vpn_install_portAnddomain (){
 
 check_outline_status(){
   echo "Check_Outline_VPN_Status"
-
+  : << 'EOF'
   # Capture uptime output and display it for debugging
   uptime_output=$(uptime)
   echo "Raw uptime output: $uptime_output"
@@ -343,6 +343,7 @@ check_outline_status(){
 
   # Output uptime with color
   echo -e "${color}Uptime: $uptime_days days\033[0m"
+  EOF
 }
 
 

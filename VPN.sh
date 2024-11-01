@@ -369,7 +369,7 @@ check_outline_status(){
 }
 check_outline_status
 
-alias_vpn(){
+alias_vpn() {
   # Define the alias line to check
   alias_line="alias VPN='bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh)'"
   
@@ -378,7 +378,14 @@ alias_vpn(){
       # If alias doesn't exist, add it to the end of .bashrc
       echo "$alias_line" >> ~/.bashrc
       echo "Alias added to .bashrc."
-  
+      
+      # Verify if the alias was successfully added
+      if grep -Fxq "$alias_line" ~/.bashrc; then
+          echo "Alias successfully added to .bashrc."
+      else
+          echo "Failed to add alias to .bashrc. Please check file permissions."
+      fi
+      
       # Source the .bashrc to apply the changes
       source ~/.bashrc
       echo ".bashrc sourced to apply changes."
@@ -386,6 +393,7 @@ alias_vpn(){
       echo "Alias already exists in .bashrc."
   fi
 }
+
 
 
 

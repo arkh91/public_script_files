@@ -201,7 +201,7 @@ outline_vpn_menu() {
         echo "***********************************************************"
         echo "***********************************************************"
 
-        
+        echo
         read -p "Choose an option: " outline_choice
         case $outline_choice in
             1)

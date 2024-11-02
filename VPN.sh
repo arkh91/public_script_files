@@ -275,7 +275,8 @@ outline_vpn_menu() {
 # Outline VPN setup
 outline_vpn_install() {
     # Check if outline is installed
-    if [ -d "/opt/outline" ]; then
+    if [ ! -d "/opt/outline" ]; then
+        mkdir -p /opt/outline
         echo "Outline is not installed. Installing..."
         
         # Install outline

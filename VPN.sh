@@ -298,6 +298,9 @@ outline_vpn_install() {
         echo -e "\033[0;35mThe installation output is stored in $filename\033[0m"
         echo "Outline installed successfully."
         echo
+        echo "Press Enter to continue..."
+        read
+        
     else
         echo "Outline is already installed."
         read -p "Would you like to reinstall it? (y/n): " outline

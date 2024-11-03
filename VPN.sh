@@ -70,6 +70,19 @@ VPN_dependencies()  {
     sudo apt install net-tools -y
   fi
 
+    # Check if cron is installed
+  if ! dpkg -l | grep -q cron; then
+      echo "Cron is not installed. Installing..."
+      sudo apt update
+      sudo apt install -y cron
+      
+      # Start and enable the cron service
+      echo "Starting and enabling the cron service..."
+      sudo systemctl start cron
+      sudo systemctl enable cron
+  fi
+
+
   echo -e "\033[32mAdding iran-firewall-range2\033[m"
   # Check if the file "iran-firewall-range2.txt" is present
   if [ -e "iran-firewall-range2.txt" ]; then

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#######################################
+#                                     #
+#  This code has been written by:     #
+#  https://github.com/arkh91/         #                        
+#                                     #
+#######################################
+
 # Step 1: Fix any broken dependencies
 echo "Fixing broken dependencies..."
 sudo apt --fix-broken install -y
@@ -30,6 +37,9 @@ sudo systemctl start webmin
 echo "Enabling Webmin on boot..."
 sudo systemctl enable webmin
 
-echo "Webmin installation complete. You can access Webmin via https://<your-server-ip>:10000"
+echo -e "\e[32mWebmin installation complete. You can access Webmin via https://<your-server-ip>:10000\e[0m"
+
+# Step 8: Removing the file
+sudo rm webmin_${WEBMIN_VERSION}_all.deb
 
 #wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/install_webmin_nginx.sh && chmod +x install_webmin_nginx.sh

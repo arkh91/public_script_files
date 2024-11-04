@@ -186,7 +186,7 @@ show_menu() {
     echo "** Welcome to the Arkh91 VPN Setup Hub!                 **"
     echo "**                                                      **"
     echo "** 1) Launch Outline VPN                                **"    
-    echo "** 2) Activate x-ui_Sanaei VPN                          **"
+    echo "** 2) Set Up x-ui_Sanaei VPN                            **"
     echo "** 3) Set Up x-ui_English VPN                           **"
     echo "** 4) Install VPN Dependencies                          **"
     echo "** 5) Install Python                                    **"

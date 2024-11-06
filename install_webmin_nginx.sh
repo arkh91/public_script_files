@@ -37,7 +37,8 @@ sudo systemctl start webmin
 echo "Enabling Webmin on boot..."
 sudo systemctl enable webmin
 
-echo -e "\e[32mWebmin installation complete. You can access Webmin via https://<your-server-ip>:10000\e[0m"
+echo -e "\e[32mWebmin installation complete.\e[0m"
+echo -e "\e[32mYou can access Webmin via https://<your-server-ip>:10000\e[0m"
 
 # Step 8: Removing the file
 sudo rm webmin_${WEBMIN_VERSION}_all.deb

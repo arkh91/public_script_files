@@ -49,3 +49,5 @@ if [[ $? -eq 0 ]]; then
 else
   echo "There was an error setting up the SSL certificate."
 fi
+
+#bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/SSL_setup.sh)

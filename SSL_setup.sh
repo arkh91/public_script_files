@@ -32,14 +32,14 @@ if [[ "$confirm" != "y" ]]; then
   exit 1
 fi
 
-# Install certbot if it's not installed
+# Install certbot and Apache plugin if they're not installed
 if ! command -v certbot &> /dev/null; then
-  echo "Certbot not found. Installing certbot..."
-  sudo apt update
-  sudo apt install -y certbot
+  echo "Certbot not found. Installing certbot and the Apache plugin..."
+  sudo apt update -y
+  sudo apt install -y certbot python3-certbot-apache
 fi
 
-# Request SSL certificate
+# Request SSL certificate with Apache plugin
 echo "Requesting SSL certificate for $domain..."
 sudo certbot --apache -d "$domain" --email "$email" --agree-tos --non-interactive --redirect
 
@@ -49,5 +49,6 @@ if [[ $? -eq 0 ]]; then
 else
   echo "There was an error setting up the SSL certificate."
 fi
+
 
 #bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/SSL_setup.sh)

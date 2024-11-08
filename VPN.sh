@@ -192,7 +192,8 @@ show_menu() {
     echo "** 5) Install Python                                    **"
     echo "** 6) Install NodeJS                                    **"
     echo "** 7) Create a New Sudo User                            **"
-    echo "** 8) Exit - Done for Now                               **"
+    echo "** 8) SSL setup                                         **"
+    echo "** 9) Exit - Done for Now                               **"
     echo "**                                                      **"
     echo "**                                                      **"
     echo "**********************************************************"
@@ -234,6 +235,9 @@ main() {
                 New_sudo_user
                 ;;
             8)
+                bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/SSL_setup.sh)
+                ;;
+            9)
                 echo
                 #echo "Exiting... Goodbye!"
                 echo -e "\033[0;35mExiting... Goodbye!\033[0m"

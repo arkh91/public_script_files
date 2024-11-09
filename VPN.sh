@@ -219,7 +219,7 @@ main() {
         # Check if a choice was entered, otherwise display "Still waiting..."
         if [ -z "$choice" ]; then
             echo -e "\nStill waiting for your command..."
-            sleep 2  # Give a brief pause to allow the user to see the message
+            sleep 3  # Give a brief pause to allow the user to see the message
             continue  # Go back to the start of the loop to show the menu again
         fi
 

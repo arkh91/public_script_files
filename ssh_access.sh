@@ -13,6 +13,9 @@ ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ""
 # Display fingerprint of the public key
 ssh-keygen -lf ~/.ssh/id_rsa.pub
 
+#uncomment the line #PasswordAuthentication yes
+sudo sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
 # Restart SSH service
 sudo service ssh restart
 

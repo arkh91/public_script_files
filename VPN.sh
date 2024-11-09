@@ -208,7 +208,7 @@ echo1
 
 # Main function to handle user input and call the appropriate function
 main() {
-    alias_vpn
+    
     while true; do
         clear
         show_menu
@@ -438,6 +438,8 @@ check_outline_status
 
 
 # Execute the main function
+echo "Executing alias_vpn ..."
+alias_vpn
 main
 
 

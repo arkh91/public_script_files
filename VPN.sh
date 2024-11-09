@@ -163,6 +163,7 @@ show_datetime() {
 
 # Function to display the menu
 show_menu() {
+: << 'echo1'
     echo "@@@%%%%%%%%%%%##########*#*#######%%%##%%%%##%%**#%%##%%@@@"
     echo "@%%%%%%%#####*******+*###***++**###%%%%%%*+**++*#****#%%%%%"
     echo "@%##########%%#*#*+==========+++***###%#+=+*++++++*****#%%%"
@@ -182,22 +183,23 @@ show_menu() {
     echo "*+++===---:::-=**##*++#*--------=+*##*+=+#%%%#*++++++++=+++"
     echo "++====---:::::=#%%%%@%%#**+++====++*#*=---==++#%#=====+++++"
     echo "#*****++++=-===+#%#%%%%%%@@%%%%%%%@@%###***+++*%@%*******##"
+echo1
     echo "%#########%#####%%%%%%%%%%%%%%%%@@@@@@@@@%%@%%@@@@%%%%%%%%%"
-    echo "** Welcome to the Arkh91 VPN Setup Hub!                 **"
-    echo "**                                                      **"
-    echo "** 1) Launch Outline VPN                                **"    
-    echo "** 2) Set Up x-ui_Sanaei VPN                            **"
-    echo "** 3) Set Up x-ui_English VPN                           **"
-    echo "** 4) Install VPN Dependencies                          **"
-    echo "** 5) Install Python                                    **"
-    echo "** 6) Install NodeJS                                    **"
-    echo "** 7) Create a New Sudo User                            **"
-    echo "** 8) SSL setup                                         **"
-    echo "** 9) Exit - Done for Now                               **"
-    echo "**                                                      **"
-    echo "**                                                      **"
-    echo "**********************************************************"
-    echo "**********************************************************"
+    echo "** Welcome to the Arkh91 VPN Setup Hub!                  **"
+    echo "**                                                       **"
+    echo "** 1) Launch Outline VPN                                 **"    
+    echo "** 2) Set Up x-ui_Sanaei VPN                             **"
+    echo "** 3) Set Up x-ui_English VPN                            **"
+    echo "** 4) Install VPN Dependencies                           **"
+    echo "** 5) Install Python                                     **"
+    echo "** 6) Install NodeJS                                     **"
+    echo "** 7) Create a New Sudo User                             **"
+    echo "** 8) SSL setup                                          **"
+    echo "** 9) Exit - Done for Now                                **"
+    echo "**                                                       **"
+    echo "**                                                       **"
+    echo "***********************************************************"
+    echo "***********************************************************"
     echo
 }
 
@@ -208,7 +210,7 @@ main() {
     while true; do
         clear
         show_menu
-        read -p "Enter your choice (1-8): " choice
+        read -p "Enter your choice (1-9): " choice
 
         case $choice in
             1)

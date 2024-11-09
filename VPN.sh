@@ -189,7 +189,7 @@ echo1
     echo "***********************************************************"
     echo "** Welcome to the Arkh91 VPN Setup Hub!                  **"
     echo "**                                                       **"
-    echo "** 1) Launch Outline VPN                                 **"    
+    echo "** 1) Set Up Outline VPN                                 **"    
     echo "** 2) Set Up x-ui_Sanaei VPN                             **"
     echo "** 3) Set Up x-ui_English VPN                            **"
     echo "** 4) Install VPN Dependencies                           **"
@@ -212,7 +212,14 @@ main() {
     while true; do
         clear
         show_menu
-        read -p "Enter your choice (1-9): " choice
+        # Add a timeout of 30 seconds to the read command
+        read -t 30 -p "Enter your choice (1-9): " choice
+        
+        # Check if a choice was entered, otherwise display "Still waiting..."
+        if [ -z "$choice" ]; then
+            echo -e "\nStill waiting for your command..."
+            continue  # Go back to the start of the loop to show the menu again
+        fi
 
         case $choice in
             1)

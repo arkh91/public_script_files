@@ -18,3 +18,4 @@ sudo service ssh restart
 
 echo -e "\e[32mSSH key generated, fingerprint displayed, and SSH service restarted.\e[0m"
 
+#bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/SSL_setup.sh)

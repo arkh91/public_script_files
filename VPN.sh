@@ -230,24 +230,31 @@ main() {
         case $choice in
             1)
                 outline_vpn_menu
+                read -p "Press enter to continue"
                 ;;
             2)
                 x-ui_Sanaei
+                read -p "Press enter to continue"
                 ;;
             3)
                 x-ui_English
+                read -p "Press enter to continue"
                 ;;
             4)
                 VPN_dependencies
+                read -p "Press enter to continue"
                 ;;
             5)
                 Install_python
+                read -p "Press enter to continue"
                 ;;
             6)
                 Install_NodeJS
+                read -p "Press enter to continue"
                 ;;
             7)
                 New_sudo_user
+                read -p "Press enter to continue"
                 ;;
             8)
                 bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/SSL_setup.sh)

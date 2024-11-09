@@ -129,6 +129,7 @@ VPN_dependencies()  {
     echo "The file 'autoreboot' is not present."
     sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
     sleep 5s
+    rm autoreboot
   fi
 
   # Auto .bashrc to block Iran IP's

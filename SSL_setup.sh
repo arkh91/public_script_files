@@ -46,9 +46,12 @@ sudo certbot --apache -d "$domain" --email "$email" --agree-tos --non-interactiv
 # Confirm completion and display paths in green
 if [[ $? -eq 0 ]]; then
   GREEN='\033[0;32m'
+  UWhite='\033[4;37m'
   NC='\033[0m' # No Color
-  echo -e "${GREEN}Certificate is saved at:${NC} /etc/letsencrypt/live/$domain/fullchain.pem"
-  echo -e "${GREEN}Key is saved at:${NC}         /etc/letsencrypt/live/$domain/privkey.pem"
+  echo -e "${UWhite}Certificate is saved at:${NC}"
+  echo -e "${GREEN}/etc/letsencrypt/live/$domain/fullchain.pem${NC}"
+  echo -e "${UWhite}Key is saved at:${NC}"
+  echo -e "${GREEN}/etc/letsencrypt/live/$domain/privkey.pem${NC}"
   echo "SSL certificate setup completed successfully for $domain."
 else
   echo "There was an error setting up the SSL certificate."

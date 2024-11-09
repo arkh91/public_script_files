@@ -236,6 +236,7 @@ main() {
                 ;;
             8)
                 bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/SSL_setup.sh)
+                read -p "Press enter to continue"
                 ;;
             9)
                 echo

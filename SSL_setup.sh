@@ -53,6 +53,7 @@ if [[ $? -eq 0 ]]; then
   echo -e "${UWhite}Key is saved at:${NC}"
   echo -e "${GREEN}/etc/letsencrypt/live/$domain/privkey.pem${NC}"
   echo "SSL certificate setup completed successfully for $domain."
+  echo
 else
   echo "There was an error setting up the SSL certificate."
 fi

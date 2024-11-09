@@ -136,6 +136,10 @@ VPN_dependencies()  {
     echo "The file 'bashrc_bock.txt' is not present."
     #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/firewall/bashrc_block.txt && cat bashrc_block.txt >> /home/ubuntu/.bashrc
   fi
+  
+  #ssh remote access
+  bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/ssh_access.sh)
+  
 }
 
 Install_python (){

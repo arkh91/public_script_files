@@ -212,19 +212,20 @@ main() {
     while true; do
         clear
         show_menu
+        
         # Add a timeout of 30 seconds to the read command
         read -t 30 -p "Enter your choice (1-9): " choice
         
         # Check if a choice was entered, otherwise display "Still waiting..."
         if [ -z "$choice" ]; then
             echo -e "\nStill waiting for your command..."
+            sleep 2  # Give a brief pause to allow the user to see the message
             continue  # Go back to the start of the loop to show the menu again
         fi
 
         case $choice in
             1)
                 outline_vpn_menu
-                
                 ;;
             2)
                 x-ui_Sanaei
@@ -232,7 +233,6 @@ main() {
             3)
                 x-ui_English
                 ;;
-
             4)
                 VPN_dependencies
                 ;;
@@ -251,18 +251,18 @@ main() {
                 ;;
             9)
                 echo
-                #echo "Exiting... Goodbye!"
                 echo -e "\033[0;35mExiting... Goodbye!\033[0m"
                 echo
-                #break
                 exit 1
                 ;;
             *)
-                echo "Invalid option. Please enter a number between 1 and 8."
+                echo "Invalid option. Please enter a number between 1 and 9."
+                sleep 2  # Give a brief pause before re-displaying the menu
                 ;;
         esac
     done
 }
+
 
 # Outline VPN submenu
 outline_vpn_menu() {

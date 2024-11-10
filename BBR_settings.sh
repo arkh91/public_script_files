@@ -51,40 +51,41 @@ disable_bbr() {
     echo "BBR disabled."
 }
 bbr_menu (){
-  while true; do
-    # Menu options
-    echo "***********************************************************"
-    echo "***********************************************************"
-    echo "** BBR Installation and Management Script                **"
-    echo "** 1) Install BBR                                        **"
-    echo "** 2) Enable BBR                                         **"  
-    echo "** 3) Disable BBR                                        **"
-    echo "** 4) Back                                               **"
-    echo "**                                                       **"
-    echo "***********************************************************"
-    echo "***********************************************************"
-    echo
-    
-    read -p "Choose an option: " bbr_option
-    
-    case $bbr_option in
-        1)
-            install_bbr
-            ;;
-        2)
-            enable_bbr
-            ;;
-        3)
-            disable_bbr
-            ;;
-        4)
-            bash <(curl -Ls https://bit.ly/arkh91_VPN)
-            ;;
-        *)
-            echo "Invalid option."
-            ;;
-    esac
-  done
+    clear
+    while true; do
+        # Menu options
+        echo "***********************************************************"
+        echo "***********************************************************"
+        echo "** BBR Installation and Management Script                **"
+        echo "** 1) Install BBR                                        **"
+        echo "** 2) Enable BBR                                         **"  
+        echo "** 3) Disable BBR                                        **"
+        echo "** 4) Back                                               **"
+        echo "**                                                       **"
+        echo "***********************************************************"
+        echo "***********************************************************"
+        echo
+        
+        read -p "Choose an option: " bbr_option
+        
+        case $bbr_option in
+            1)
+                install_bbr
+                ;;
+            2)
+                enable_bbr
+                ;;
+            3)
+                disable_bbr
+                ;;
+            4)
+                bash <(curl -Ls https://bit.ly/arkh91_VPN)
+                ;;
+            *)
+                echo "Invalid option."
+                ;;
+        esac
+      done
 }
 
 

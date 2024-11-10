@@ -460,3 +460,4 @@ main
 
 # sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh && chmod u+x VPN.sh && ./VPN.sh
 # bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh)
+# bash <(curl -Ls https://bit.ly/arkh91_VPN)

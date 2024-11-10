@@ -2,40 +2,38 @@
 
 # Function to check if BBR is already installed
 check_bbr_installed() {
-    if lsmod | grep -q "bbr"; then
-        echo "BBR is already enabled."
+    if grep -q "tcp_bbr" /proc/sys/net/ipv4/tcp_available_congestion_control; then
+        echo "BBR is already installed."
         return 0
     else
         return 1
     fi
 }
 
-# Install BBR
+# Install BBR if not already installed
 install_bbr() {
-    echo "Installing BBR..."
-    
-    # Check the kernel version
-    kernel_version=$(uname -r | awk -F '.' '{print $1 "." $2}')
-    if (( $(echo "$kernel_version < 4.9" | bc -l) )); then
-        echo "Kernel version is below 4.9. Please upgrade your kernel to use BBR."
-        exit 1
-    fi
-
-    # Enable BBR in sysctl
-    sysctl_config="/etc/sysctl.conf"
-    echo "net.core.default_qdisc=fq" | sudo tee -a $sysctl_config
-    echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a $sysctl_config
-
-    # Apply settings
-    sudo sysctl -p
-
-    # Verify BBR
     if check_bbr_installed; then
-        echo "BBR installed and enabled successfully."
+        echo "BBR is already installed. Skipping installation."
     else
-        echo "BBR installation failed."
+        echo "Installing BBR..."
+        
+        # Check the kernel version
+        kernel_version=$(uname -r | awk -F '.' '{print $1 "." $2}')
+        if (( $(echo "$kernel_version < 4.9" | bc -l) )); then
+            echo "Kernel version is below 4.9. Please upgrade your kernel to use BBR."
+            exit 1
+        fi
+
+        # Load BBR module
+        modprobe tcp_bbr
+
+        # Persist the module for future reboots
+        echo "tcp_bbr" | sudo tee -a /etc/modules-load.d/bbr.conf
+
+        echo "BBR has been installed, but it is not enabled."
     fi
 }
+
 
 # Enable BBR
 enable_bbr() {

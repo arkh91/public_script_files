@@ -22,8 +22,11 @@ WEBMIN_VERSION="2.202"
 echo "Downloading Webmin version $WEBMIN_VERSION..."
 wget http://prdownloads.sourceforge.net/webadmin/webmin_${WEBMIN_VERSION}_all.deb
 step3
-# Fetch the latest Webmin version number from the Webmin source repository
-WEBMIN_VERSION=$(curl -s https://sourceforge.net/projects/webadmin/files/latest/download | grep -oP 'webmin_\K([0-9.]+)')
+# Fetch the latest release information from GitHub's API
+latest_release=$(curl -s https://api.github.com/repos/webmin/webmin/releases/latest)
+
+# Extract the tag name, which corresponds to the version number
+WEBMIN_VERSION=$(echo $latest_release | grep -oP '"tag_name": "\K(.*?)(?=")')
 
 # Check if version number was successfully fetched
 if [ -z "$WEBMIN_VERSION" ]; then

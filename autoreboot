@@ -2,6 +2,8 @@
 #https://askubuntu.com/questions/13730/how-can-i-schedule-a-nightly-reboot
 #sudo vi /etc/crontab
 00 6 * * * root reboot 
+#script to run daily at 6:05 AM after the reboot
+5 6 * * * /root/Restrict_IP_range.sh /root/iran-firewall-range2.txt
 #00 18 * * * root reboot
 #sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/main/autoreboot && cat autoreboot >> /etc/crontab
 

@@ -81,7 +81,7 @@ bbr_menu (){
                 ;;
             4)
                 bash <(curl -Ls https://bit.ly/arkh91_VPN)
-                exit 1
+                exit 0
                 ;;
             *)
                 echo "Invalid option."

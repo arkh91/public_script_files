@@ -57,6 +57,7 @@ bbr_menu (){
         echo "***********************************************************"
         echo "***********************************************************"
         echo "** BBR Installation and Management Script                **"
+        echo "**                                                       **"
         echo "** 1) Install BBR                                        **"
         echo "** 2) Enable BBR                                         **"  
         echo "** 3) Disable BBR                                        **"
@@ -80,6 +81,7 @@ bbr_menu (){
                 ;;
             4)
                 bash <(curl -Ls https://bit.ly/arkh91_VPN)
+                exit 1
                 ;;
             *)
                 echo "Invalid option."

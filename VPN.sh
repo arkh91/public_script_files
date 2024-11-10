@@ -65,6 +65,7 @@ x-ui_English() {
 }
 
 VPN_dependencies()  {
+    sudo apt install -y speedtest-cli
  # Check if netstat is installed
   if ! command -v netstat &> /dev/null; then
     echo "netstat is not installed. Installing..."

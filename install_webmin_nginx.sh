@@ -16,10 +16,23 @@ echo "Installing required dependencies for Webmin..."
 sudo apt-get install -y libnet-ssleay-perl libauthen-pam-perl libio-pty-perl unzip
 
 # Step 3: Download Webmin (replace version number with the latest if needed)
+: << 'step3'
 # https://sourceforge.net/projects/webadmin/files/webmin/
 WEBMIN_VERSION="2.202"
 echo "Downloading Webmin version $WEBMIN_VERSION..."
 wget http://prdownloads.sourceforge.net/webadmin/webmin_${WEBMIN_VERSION}_all.deb
+step3
+# Fetch the latest Webmin version number from the Webmin source repository
+WEBMIN_VERSION=$(curl -s https://sourceforge.net/projects/webadmin/files/latest/download | grep -oP 'webmin_\K([0-9.]+)')
+
+# Check if version number was successfully fetched
+if [ -z "$WEBMIN_VERSION" ]; then
+    echo "Error: Unable to retrieve the latest Webmin version."
+    exit 1
+fi
+echo "Downloading Webmin version $WEBMIN_VERSION..."
+wget http://prdownloads.sourceforge.net/webadmin/webmin_${WEBMIN_VERSION}_all.deb
+
 
 # Step 4: Install Webmin
 echo "Installing Webmin..."

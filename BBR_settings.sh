@@ -37,22 +37,29 @@ install_bbr() {
 
 # Enable BBR
 enable_bbr() {
-    echo "Enabling BBR..."
-    sysctl -w net.core.default_qdisc=fq
-    sysctl -w net.ipv4.tcp_congestion_control=bbr
-    echo "BBR enabled."
+    # If BBR is not installed, install and enable it
+    if ! check_bbr_installed; then
+        echo "BBR not detected. Please install it."
+    else
+        echo "Enabling BBR..."
+        sysctl -w net.core.default_qdisc=fq
+        sysctl -w net.ipv4.tcp_congestion_control=bbr
+        echo "BBR enabled."
 }
 
 # Disable BBR
 disable_bbr() {
-    echo "Disabling BBR..."
-    sysctl -w net.ipv4.tcp_congestion_control=cubic  # Set to a default like 'cubic'
-    sysctl -w net.core.default_qdisc=pfifo_fast
-    echo "BBR disabled."
+    if ! check_bbr_installed; then
+        echo "BBR not detected. Please install it."
+    else
+        echo "Disabling BBR..."
+        sysctl -w net.ipv4.tcp_congestion_control=cubic  # Set to a default like 'cubic'
+        sysctl -w net.core.default_qdisc=pfifo_fast
+        echo "BBR disabled."
 }
 bbr_menu (){
-    clear
     while true; do
+        clear
         # Menu options
         echo "***********************************************************"
         echo "***********************************************************"

@@ -13,32 +13,35 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 alias_vpn() {
-  echo "alias"
-#: << 'alias'
-  # Define the alias line to check
-  alias_line="alias VPN='bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh)'"
-  
-  # Check if the alias already exists in .bashrc
-  if ! grep -Fxq "$alias_line" ~/.bashrc; then
-      # If alias doesn't exist, add it to the end of .bashrc
-      echo "$alias_line" >> ~/.bashrc
-      echo "Alias added to .bashrc."
+  echo "alias_vpn function running..."
+
+  # Define the function directly as a multiline string
+  function_definition='VPN() {
+    bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh)
+  }'
+
+  # Check if the function definition already exists in .bashrc
+  if ! grep -Fxq "$function_definition" ~/.bashrc; then
+      # If the function doesn't exist, add it to the end of .bashrc
+      echo "$function_definition" >> ~/.bashrc
+      echo "Function VPN script added to .bashrc."
       
-      # Verify if the alias was successfully added
-      if grep -Fxq "$alias_line" ~/.bashrc; then
-          echo "Alias successfully added to .bashrc."
+      # Verify if the function was successfully added
+      if grep -Fxq "$function_definition" ~/.bashrc; then
+          echo "Function successfully added to .bashrc."
       else
-          echo "Failed to add alias to .bashrc. Please check file permissions."
+          echo -e "\e[31mFailed to add function to .bashrc. Please check file permissions.\e[0m"
       fi
       
       # Source the .bashrc to apply the changes
       source ~/.bashrc
-      echo ".bashrc sourced to apply changes."
+      echo -e "\e[94m.bashrc sourced to apply changes.\e[0m"
   else
-      echo "Alias already exists in .bashrc."
-  fi
-#alias  
+      echo -e "\e[31mFunction run_vpn_script already exists in .bashrc.\e[0m"
+  fi  
 }
+
+
 
 # Install x-ui Sanaei
 x-ui_Sanaei() {

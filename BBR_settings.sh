@@ -29,7 +29,7 @@ install_bbr() {
 
         # Persist the module for future reboots
         echo "tcp_bbr" | sudo tee -a /etc/modules-load.d/bbr.conf
-
+        echo
         echo "BBR has been installed, but it is not enabled."
     fi
 }
@@ -39,24 +39,27 @@ install_bbr() {
 enable_bbr() {
     # If BBR is not installed, install and enable it
     if ! check_bbr_installed; then
-        echo "BBR not detected. Please install it."
+        echo -e "\e[91mBBR not detected. Please install it.\e[0m"
     else
         echo "Enabling BBR..."
         sysctl -w net.core.default_qdisc=fq
         sysctl -w net.ipv4.tcp_congestion_control=bbr
         echo "BBR enabled."
+    fi
 }
 
 # Disable BBR
 disable_bbr() {
     if ! check_bbr_installed; then
-        echo "BBR not detected. Please install it."
+        echo -e "\e[91mBBR not detected. Please install it.\e[0m"
     else
         echo "Disabling BBR..."
         sysctl -w net.ipv4.tcp_congestion_control=cubic  # Set to a default like 'cubic'
         sysctl -w net.core.default_qdisc=pfifo_fast
         echo "BBR disabled."
+    fi
 }
+
 bbr_menu (){
     while true; do
         clear

@@ -82,12 +82,15 @@ bbr_menu (){
         case $bbr_option in
             1)
                 install_bbr
+                read -p "Press enter to continue"
                 ;;
             2)
                 enable_bbr
+                read -p "Press enter to continue"
                 ;;
             3)
                 disable_bbr
+                read -p "Press enter to continue"
                 ;;
             4)
                 bash <(curl -Ls https://bit.ly/arkh91_VPN)

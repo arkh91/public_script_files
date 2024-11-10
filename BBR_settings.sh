@@ -91,3 +91,5 @@ bbr_menu (){
 
 
 bbr_menu
+
+# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/BBR_settings.sh)

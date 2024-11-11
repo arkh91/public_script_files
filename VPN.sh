@@ -236,21 +236,26 @@ enable_bbr() {
         #echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
         sudo sysctl -p
         #echo -e "\nnet.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
-        loading_bar 60 0.1  # Example: 60 steps and 0.1-second delay
+        loading_bar 60 0.2  # Example: 60 steps and 0.1-second delay
         # Check the current TCP congestion control setting
         #current_congestion_control=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
         #current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
-    fi
-    # Verify if it's set to "bbr"
-    # Check the current TCP congestion control setting
-    current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
-    if [ "$current_congestion_control" = "bbr" ]; then
+        # Verify if it's set to "bbr"
+        # Check the current TCP congestion control setting
+        current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
+        if [ "$current_congestion_control" = "bbr" ]; then
+            echo
+            echo -e "\e[92mBBR is successfully enabled.\e[0m"
+            echo
+        else
+            echo -e "\e[91mBBR is not enabled. Please try again later.\e[0m"
+        fi
+    else
         echo
         echo -e "\e[92mBBR is already enabled.\e[0m"
         echo
-    else
-        echo -e "\e[91mBBR is not enabled. Please try again later.\e[0m"
     fi
+    
 }
 
 # Disable BBR

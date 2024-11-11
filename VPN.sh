@@ -240,7 +240,8 @@ enable_bbr() {
         #echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
         sudo sysctl -p
         #echo -e "\nnet.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
-        loading_bar 40 0.1 3
+        loading_bar 40 0.1 5
+        echo
         # Check the current TCP congestion control setting
         #current_congestion_control=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
         #current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
@@ -284,7 +285,8 @@ disable_bbr() {
         # net.core.default_qdisc=pfifo_fast && net.ipv4.tcp_congestion_control=cubic
         #echo "net.core.default_qdisc=pfifo_fast" | sudo tee -a /etc/sysctl.conf
         #echo "net.ipv4.tcp_congestion_control=cubic" | sudo tee -a /etc/sysctl.conf
-        loading_bar 40 0.1 3
+        loading_bar 40 0.1 5
+        echo
         # Reload sysctl settings
         sudo sysctl -p
         echo

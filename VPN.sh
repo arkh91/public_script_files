@@ -14,8 +14,9 @@ fi
 
 # Function to display loading bar
 loading_bar() {
-    local steps=50     # Total length of the loading bar
-    local delay=0.05   # Delay between updates (in seconds)
+    # Set default values if no arguments are provided
+    local steps=${1:-50}    # Total length of the loading bar (default is 50)
+    local delay=${2:-0.05}  # Delay between updates (in seconds, default is 0.05)
 
     # Loading bar loop
     for ((i = 1; i <= steps; i++)); do
@@ -235,7 +236,7 @@ enable_bbr() {
         #echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
         sudo sysctl -p
         #echo -e "\nnet.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
-        loading_bar
+        loading_bar 60 0.1  # Example: 60 steps and 0.1-second delay
         # Check the current TCP congestion control setting
         #current_congestion_control=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
         #current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
@@ -267,13 +268,14 @@ disable_bbr() {
 
         #echo -e "\e[92mRemoving net.core.default_qdisc=pfifo_fast && net.ipv4.tcp_congestion_control=cubic\e[0m"
         # Remove BBR settings from /etc/sysctl.conf and replace with cubic and pfifo_fast for persistence
-        sudo sed -i '/net.core.default_qdisc=fq/d' /etc/sysctl.conf
-        sudo sed -i '/net.ipv4.tcp_congestion_control=bbr/d' /etc/sysctl.conf
-        
+        #sudo sed -i '/net.core.default_qdisc=fq/d' /etc/sysctl.conf
+        #sudo sed -i '/net.ipv4.tcp_congestion_control=bbr/d' /etc/sysctl.conf
+        sudo sh -c 'printf "\nnet.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr\n" >> /etc/sysctl.conf'
+
         # net.core.default_qdisc=pfifo_fast && net.ipv4.tcp_congestion_control=cubic
         #echo "net.core.default_qdisc=pfifo_fast" | sudo tee -a /etc/sysctl.conf
         #echo "net.ipv4.tcp_congestion_control=cubic" | sudo tee -a /etc/sysctl.conf
-        loading_bar
+        loading_bar 60 0.1  # Example: 60 steps and 0.1-second delay
         # Reload sysctl settings
         sudo sysctl -p
         echo
@@ -622,6 +624,7 @@ check_outline_status
 # Execute the main function
 echo "Executing alias_vpn ..."
 alias_vpn
+loading_bar 60 0.1  # Example: 60 steps and 0.1-second delay
 main
 
 

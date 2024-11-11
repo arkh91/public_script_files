@@ -224,6 +224,7 @@ enable_bbr() {
     if [ "$current_congestion_control" = "bbr" ]; then
         echo
         echo -e "\e[92mBBR is already enabled.\e[0m"
+        echo
     else
         echo -e "\e[91mBBR is not enabled. Please try again later.\e[0m"
     fi
@@ -253,8 +254,9 @@ disable_bbr() {
         
         # Reload sysctl settings
         sudo sysctl -p
-
+        echo
         echo -e "\e[91mBBR is disabled and cleared.\e[0m"
+        echo
     fi
 }
 

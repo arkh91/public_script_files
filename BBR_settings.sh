@@ -84,12 +84,12 @@ bbr_menu (){
                 read -p "Press enter to continue"
                 ;;
             3)
-                if curl -s --head --request GET https://bit.ly/arkh91_VPN | grep "200 OK" > /dev/null; then
+                #if curl -s --head --request GET https://bit.ly/arkh91_VPN | grep "200 OK" > /dev/null; then
                     bash <(curl -Ls https://bit.ly/arkh91_VPN)
-                else
-                    echo -e "\e[91mFailed to access the URL. Please check your internet connection or the URL.\e[0m"
-                fi
-                exit 0
+                #else
+                    #echo -e "\e[91mFailed to access the URL. Please check your internet connection or the URL.\e[0m"
+                #fi
+                #exit 0
                 ;;
             *)
                 echo "Invalid option."

@@ -12,6 +12,27 @@ if [ "$EUID" -ne 0 ]; then
   exit
 fi
 
+# Function to display loading bar
+loading_bar() {
+    local steps=50     # Total length of the loading bar
+    local delay=0.05   # Delay between updates (in seconds)
+
+    # Loading bar loop
+    for ((i = 1; i <= steps; i++)); do
+        # Calculate the progress percentage
+        local percent=$((i * 100 / steps))
+        # Create the loading bar with "#" for filled sections and spaces for remaining
+        local bar=$(printf "%-${steps}s" "#" | tr ' ' '#')
+        # Display the loading bar with percentage and overwrite the line
+        printf "\r[%-${steps}s] %d%%" "${bar:0:i}" "$percent"
+        # Delay for smooth animation
+        sleep "$delay"
+    done
+
+    # Final message after completion
+    #echo -e "\nLoading complete!"
+}
+
 alias_vpn() {
   echo "alias_vpn function running..."
 
@@ -209,11 +230,12 @@ enable_bbr() {
         exit 1        
     elif ! grep -q "net.core.default_qdisc=fq" /etc/sysctl.conf || ! grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf; then
         echo "Enabling BBR."
-        echo "net.core.default_qdisc=fq" | sudo tee -a /etc/sysctl.conf
-        echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
+        sudo printf "\nnet.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr\n" >> /etc/sysctl.conf
+        #echo "net.core.default_qdisc=fq" | sudo tee -a /etc/sysctl.conf
+        #echo "net.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
         sudo sysctl -p
         #echo -e "\nnet.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
-
+        loading_bar
         # Check the current TCP congestion control setting
         #current_congestion_control=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
         #current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
@@ -251,7 +273,7 @@ disable_bbr() {
         # net.core.default_qdisc=pfifo_fast && net.ipv4.tcp_congestion_control=cubic
         #echo "net.core.default_qdisc=pfifo_fast" | sudo tee -a /etc/sysctl.conf
         #echo "net.ipv4.tcp_congestion_control=cubic" | sudo tee -a /etc/sysctl.conf
-        
+        loading_bar
         # Reload sysctl settings
         sudo sysctl -p
         echo

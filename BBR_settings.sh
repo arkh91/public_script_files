@@ -18,15 +18,18 @@ enable_bbr() {
         # Check the current TCP congestion control setting
         #current_congestion_control=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
         #current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
-    fi
-    # Verify if it's set to "bbr"
-    # Check the current TCP congestion control setting
-    current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
-    if [ "$current_congestion_control" = "bbr" ]; then
-        echo -e "\e[92mBBR is already enabled.\e[0m"
+        # Verify if it's set to "bbr"
+        # Check the current TCP congestion control setting
+        current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
+        if [ "$current_congestion_control" = "bbr" ]; then
+            echo -e "\e[92mBBR is enabled.\e[0m"
+        else
+            echo -e "\e[91mBBR is not enabled. Please try again later.\e[0m"
+        fi
     else
-        echo -e "\e[91mBBR is not enabled. Please try again later.\e[0m"
+        echo -e "\e[92mBBR is already enabled.\e[0m"
     fi
+    
 }
 
 # Disable BBR
@@ -89,7 +92,7 @@ bbr_menu (){
                 #else
                     #echo -e "\e[91mFailed to access the URL. Please check your internet connection or the URL.\e[0m"
                 #fi
-                #exit 0
+                exit 0
                 ;;
             *)
                 echo "Invalid option."

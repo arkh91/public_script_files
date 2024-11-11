@@ -51,7 +51,7 @@ disable_bbr() {
         # Reload sysctl settings
         sudo sysctl -p
 
-        echo "BBR disabled."
+        echo -e "\e[91mBBR disabled.\e[0m"
     fi
 }
 

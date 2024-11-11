@@ -64,6 +64,41 @@ x-ui_English() {
   fi
 }
 
+xui() {
+    while true; do
+        clear
+        echo "***********************************************************"
+        echo "***********************************************************"
+        echo "**   X-UI Installation and Management Script             **"
+        echo "**                                                       **"
+        echo "**1) x-ui Sanaei VPN                                     **"
+        echo "**2) x-ui English VPN                                    **"
+        echo "**3) Back                                                **"
+        echo "**                                                       **"
+        echo "***********************************************************"
+        echo "***********************************************************"
+        echo
+
+        read -p "Choose an option: " xui_choice
+        case $xui_choice in
+            1)
+                x-ui_English
+                read -p "Press enter to continue"
+                ;;
+            2)
+                x-ui_English
+                read -p "Press enter to continue"
+                ;;
+            3)
+                main
+                ;;
+            *)
+                echo "Invalid option. Please enter a number between 1 and 3."
+                ;;
+        esac
+    done
+}
+
 VPN_dependencies()  {
     sudo apt install -y speedtest-cli
  # Check if netstat is installed
@@ -199,9 +234,9 @@ echo1
     echo "** Welcome to the Arkh91 VPN Setup Hub!                  **"
     echo "**                                                       **"
     echo "** 1) Set Up Outline VPN                                 **"    
-    echo "** 2) Set Up x-ui_Sanaei VPN                             **"
-    echo "** 3) Set Up x-ui_English VPN                            **"
-    echo "** 4) Install VPN Dependencies                           **"
+    echo "** 2) Set Up x-ui VPN                                    **"
+    echo "** 3) Install VPN Dependencies                           **"
+    echo "** 4) BBR Management                                     **"
     echo "** 5) Install Python                                     **"
     echo "** 6) Install NodeJS                                     **"
     echo "** 7) Create a New Sudo User                             **"
@@ -238,15 +273,16 @@ main() {
                 read -p "Press enter to continue"
                 ;;
             2)
-                x-ui_Sanaei
+                xui
                 read -p "Press enter to continue"
                 ;;
             3)
-                x-ui_English
+                VPN_dependencies
                 read -p "Press enter to continue"
                 ;;
             4)
-                VPN_dependencies
+                #BBR
+                bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/BBR_settings.sh)
                 read -p "Press enter to continue"
                 ;;
             5)

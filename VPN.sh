@@ -280,10 +280,12 @@ bbr_menu (){
             1)
                 enable_bbr
                 read -p "Press enter to continue"
+                main
                 ;;
             2)
                 disable_bbr
                 read -p "Press enter to continue"
+                main
                 ;;
             3)
                 #if curl -s --head --request GET https://bit.ly/arkh91_VPN | grep "200 OK" > /dev/null; then

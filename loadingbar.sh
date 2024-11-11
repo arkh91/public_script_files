@@ -24,4 +24,4 @@ loading_bar() {
 # Call the loading bar function
 loading_bar
 
-# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh)
+# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/loadingbar.sh)

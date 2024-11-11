@@ -222,6 +222,7 @@ enable_bbr() {
     # Check the current TCP congestion control setting
     current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
     if [ "$current_congestion_control" = "bbr" ]; then
+        echo
         echo -e "\e[92mBBR is already enabled.\e[0m"
     else
         echo -e "\e[91mBBR is not enabled. Please try again later.\e[0m"

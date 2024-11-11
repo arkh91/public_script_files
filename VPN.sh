@@ -15,8 +15,12 @@ fi
 # Function to display loading bar
 loading_bar() {
     # Set default values if no arguments are provided
-    local steps=${1:-50}    # Total length of the loading bar (default is 50)
-    local delay=${2:-0.05}  # Delay between updates (in seconds, default is 0.05)
+    local steps=${1:-50}         # Total length of the loading bar (default is 50)
+    local delay=${2:-0.05}       # Delay between updates (in seconds, default is 0.05)
+    local left_margin=${3:-0}    # Left margin (number of spaces to the left, default is 0)
+
+    # Generate the left margin spaces
+    local margin=$(printf "%${left_margin}s")
 
     # Loading bar loop
     for ((i = 1; i <= steps; i++)); do
@@ -24,8 +28,8 @@ loading_bar() {
         local percent=$((i * 100 / steps))
         # Create the loading bar with "#" for filled sections and spaces for remaining
         local bar=$(printf "%-${steps}s" "#" | tr ' ' '#')
-        # Display the loading bar with percentage and overwrite the line
-        printf "\r[%-${steps}s] %d%%" "${bar:0:i}" "$percent"
+        # Display the loading bar with percentage and overwrite the line with left margin
+        printf "\r%s[%-${steps}s] %d%%" "$margin" "${bar:0:i}" "$percent"
         # Delay for smooth animation
         sleep "$delay"
     done
@@ -629,7 +633,8 @@ check_outline_status
 # Execute the main function
 echo "Executing alias_vpn ..."
 alias_vpn
-loading_bar 60 0.4  # Example: 60 steps and 0.1-second delay
+# Call the loading bar function with custom steps, delay, and left margin
+loading_bar 40 0.1 3  # Example: 60 steps, 0.1-second delay, 3 spaces left margin
 main
 
 

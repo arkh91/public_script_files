@@ -37,15 +37,26 @@ install_bbr() {
 
 
 # Enable BBR
+#https://wiki.crowncloud.net/?How_to_enable_BBR_on_Ubuntu_20_04
 enable_bbr() {
     # If BBR is not installed, install and enable it
     if ! check_bbr_installed; then
         echo -e "\e[91mBBR not detected. Please install it.\e[0m"
     else
         echo "Enabling BBR..."
-        sysctl -w net.core.default_qdisc=fq
-        sysctl -w net.ipv4.tcp_congestion_control=bbr
-        echo "BBR enabled."
+        echo -e "\nnet.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr" | sudo tee -a /etc/sysctl.conf
+        sudo sysctl -p
+
+        # Check the current TCP congestion control setting
+        current_congestion_control=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
+        #current_congestion_control=$(sysctl -n net.ipv4.tcp_congestion_control)
+        
+        # Verify if it's set to "bbr"
+        if [ "$current_congestion_control" = "bbr" ]; then
+            echo "BBR is enabled."
+        else
+            echo -e "\e[91mBBR is not enabled. Please try again later.\e[0m"
+        fi
     fi
 }
 

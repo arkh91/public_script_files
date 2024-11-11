@@ -629,7 +629,7 @@ check_outline_status
 # Execute the main function
 echo "Executing alias_vpn ..."
 alias_vpn
-loading_bar 60 0.1  # Example: 60 steps and 0.1-second delay
+loading_bar 60 0.4  # Example: 60 steps and 0.1-second delay
 main
 
 

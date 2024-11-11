@@ -31,15 +31,30 @@ enable_bbr() {
 
 # Disable BBR
 disable_bbr() {
-    if ! check_bbr_installed; then
-        echo -e "\e[91mBBR not detected. Please install it.\e[0m"
+    # Check if BBR settings are present in /etc/sysctl.conf
+    if ! grep -q "net.core.default_qdisc=fq" /etc/sysctl.conf || ! grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf; then
+        echo -e "\e[91mBBR not detected.\e[0m"
+        exit 1
     else
         echo "Disabling BBR..."
-        sysctl -w net.ipv4.tcp_congestion_control=cubic  # Set to a default like 'cubic'
-        sysctl -w net.core.default_qdisc=pfifo_fast
+        
+        # Temporarily set TCP congestion control to cubic and default qdisc to pfifo_fast
+        sudo sysctl -w net.ipv4.tcp_congestion_control=cubic
+        sudo sysctl -w net.core.default_qdisc=pfifo_fast
+
+        # Remove BBR settings from /etc/sysctl.conf and replace with cubic and pfifo_fast for persistence
+        sudo sed -i '/net.core.default_qdisc=fq/d' /etc/sysctl.conf
+        sudo sed -i '/net.ipv4.tcp_congestion_control=bbr/d' /etc/sysctl.conf
+        echo "net.core.default_qdisc=pfifo_fast" | sudo tee -a /etc/sysctl.conf
+        echo "net.ipv4.tcp_congestion_control=cubic" | sudo tee -a /etc/sysctl.conf
+        
+        # Reload sysctl settings
+        sudo sysctl -p
+
         echo "BBR disabled."
     fi
 }
+
 
 bbr_menu (){
     while true; do

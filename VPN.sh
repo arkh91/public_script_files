@@ -268,9 +268,9 @@ disable_bbr() {
 
         #echo -e "\e[92mRemoving net.core.default_qdisc=pfifo_fast && net.ipv4.tcp_congestion_control=cubic\e[0m"
         # Remove BBR settings from /etc/sysctl.conf and replace with cubic and pfifo_fast for persistence
-        #sudo sed -i '/net.core.default_qdisc=fq/d' /etc/sysctl.conf
-        #sudo sed -i '/net.ipv4.tcp_congestion_control=bbr/d' /etc/sysctl.conf
-        sudo sh -c 'printf "\nnet.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr\n" >> /etc/sysctl.conf'
+        sudo sed -i '/net.core.default_qdisc=fq/d' /etc/sysctl.conf
+        sudo sed -i '/net.ipv4.tcp_congestion_control=bbr/d' /etc/sysctl.conf
+        #sudo sh -c 'printf "\nnet.core.default_qdisc=fq\nnet.ipv4.tcp_congestion_control=bbr\n" >> /etc/sysctl.conf'
 
         # net.core.default_qdisc=pfifo_fast && net.ipv4.tcp_congestion_control=cubic
         #echo "net.core.default_qdisc=pfifo_fast" | sudo tee -a /etc/sysctl.conf

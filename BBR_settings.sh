@@ -2,10 +2,11 @@
 
 # Function to check if BBR is already installed
 check_bbr_installed() {
-    if grep -q "tcp_bbr" /proc/sys/net/ipv4/tcp_available_congestion_control; then
+    if grep -qw "bbr" /proc/sys/net/ipv4/tcp_available_congestion_control; then
         echo "BBR is already installed."
         return 0
     else
+        echo "BBR is not installed."
         return 1
     fi
 }

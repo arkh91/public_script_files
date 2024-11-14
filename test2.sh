@@ -42,3 +42,6 @@ get_distro_release() {
 
 # Call the function
 get_distro_release
+
+# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/test2.sh)
+

@@ -42,7 +42,3 @@ get_distro_release() {
 
 # Call the function
 get_distro_release
-
-
-# Call the function
-get_distro_release

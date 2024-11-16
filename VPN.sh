@@ -479,9 +479,11 @@ outline_vpn_menu() {
         case $outline_choice in
             1)
                 outline_vpn_install
+                read -p "Press enter to continue"
                 ;;
             2)
                 outline_vpn_install_portAnddomain
+                read -p "Press enter to continue"
                 ;;
             #3)
                 #check_outline_status

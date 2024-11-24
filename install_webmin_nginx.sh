@@ -54,6 +54,12 @@ echo "Enabling Webmin on boot..."
 sudo systemctl enable webmin
 
 echo -e "\e[32mWebmin installation complete.\e[0m"
+
+#wget https://drive.google.com/file/d/1PmMVA5jxbxcWBsiPTwZhwaaVm6q74ahN/view?usp=sharing
+#wget https://drive.google.com/file/d/1PmMVA5jxbxcWBsiPTwZhwaaVm6q74ahN/view?usp=sharing/bandwidth.wbm
+wget -O bandwidth.wbm.gz "https://drive.google.com/uc?id=1PmMVA5jxbxcWBsiPTwZhwaaVm6q74ahN&export=download"
+
+
 echo -e "\e[32mYou can access Webmin via https://<your-server-ip>:10000\e[0m"
 
 # Step 8: Removing the file

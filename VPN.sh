@@ -41,31 +41,35 @@ loading_bar() {
 alias_vpn() {
   echo "alias_vpn function running..."
 
-  # Define the function directly as a multiline string
-  function_definition='VPN() {
-    bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/main/VPN.sh)
-  }'
+  # Define the alias directly as a string
+  aliasdefinition="alias VPN='bash <(curl -Ls https://bit.ly/arkh91_VPN)'"
 
-  # Check if the function definition already exists in .bashrc
-  if ! grep -Fxq "$function_definition" ~/.bashrc; then
-      # If the function doesn't exist, add it to the end of .bashrc
-      echo "$function_definition" >> ~/.bashrc
-      echo "Function VPN script added to .bashrc."
+  # Check if .bashrc exists
+  if [[ ! -f ~/.bashrc ]]; then
+    echo -e "\e[31mError: .bashrc file not found.\e[0m"
+    return 1
+  fi
+
+  # Check if the alias definition already exists in .bashrc
+  if ! grep -Fxq "$aliasdefinition" ~/.bashrc; then
+      # If the alias doesn't exist, add it to the end of .bashrc
+      echo "$aliasdefinition" >> ~/.bashrc
+      echo "Alias vpnsetup added to .bashrc."
       
-      # Verify if the function was successfully added
-      if grep -Fxq "$function_definition" ~/.bashrc; then
-          echo "Function successfully added to .bashrc."
+      # Verify if the alias was successfully added
+      if grep -Fxq "$aliasdefinition" ~/.bashrc; then
+          echo "Alias successfully added to .bashrc."
+          source ~/.bashrc
+          echo -e "\e[94mSourced ~/.bashrc' to apply changes.\e[0m"
       else
-          echo -e "\e[31mFailed to add function to .bashrc. Please check file permissions.\e[0m"
+          echo -e "\e[31mFailed to add alias to .bashrc. Please check file permissions.\e[0m"
       fi
       
-      # Source the .bashrc to apply the changes
-      source ~/.bashrc
-      echo -e "\e[94m.bashrc sourced to apply changes.\e[0m"
   else
-      echo -e "\e[31mFunction run_vpn_script already exists in .bashrc.\e[0m"
+      echo -e "\e[31mAlias vpnsetup already exists in .bashrc.\e[0m"
   fi  
 }
+
 
 
 

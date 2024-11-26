@@ -39,11 +39,11 @@ loading_bar() {
 }
 
 alias_vpn() {
-  echo "alias_vpn function running..."
-
+  #echo "alias_vpn function running..."
+  echo
   # Define the alias directly as a string
   aliasdefinition="alias VPN='bash <(curl -Ls https://bit.ly/arkh91_VPN)'"
-
+  echo
   # Check if .bashrc exists
   if [[ ! -f ~/.bashrc ]]; then
     echo -e "\e[31mError: .bashrc file not found.\e[0m"

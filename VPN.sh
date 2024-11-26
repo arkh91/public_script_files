@@ -639,7 +639,7 @@ check_outline_status
 
 
 # Execute the main function
-echo "Executing alias_vpn ..."
+#echo "Executing alias_vpn ..."
 alias_vpn
 # Call the loading bar function with custom steps, delay, and left margin
 loading_bar 40 0.1 3  # Example: 60 steps, 0.1-second delay, 3 spaces left margin

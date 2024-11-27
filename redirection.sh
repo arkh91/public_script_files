@@ -31,6 +31,7 @@ valid_port() {
 get_valid_input() {
     local prompt="$1"
     local validation_fn="$2"
+    local error_message="$3"
     local input
     while true; do
         read -p "$prompt" input
@@ -38,25 +39,42 @@ get_valid_input() {
             echo "$input"
             return 0
         else
-            echo "Invalid input. Please try again."
+            echo "$error_message"
         fi
     done
 }
 
-# Get the arguments interactively if not provided
-if [ "$#" -ne 3 ]; then
-    echo -e "\033[0;31mArguments not provided or invalid. Please enter the following values.\033[0m"
-    echo
-    
-    # Get middle IP, destination IP, and port interactively
-    middle_ip=$(get_valid_input "Enter middle IP address: " valid_ip)
-    destination_ip=$(get_valid_input "Enter destination IP address: " valid_ip)
-    port=$(get_valid_input "Enter port (1-65535): " valid_port)
-else
-    # If arguments are provided, use them
+# Check each argument individually and request re-entry if invalid
+echo "Checking provided arguments..."
+if [[ $# -ne 3 ]]; then
+    echo -e "\033[0;31mArguments not valid. Please enter the following values.\033[0m"
+    echo "1. Middle IP address"
+    echo "2. Destination IP address"
+    echo "3. Port number"
+fi
+
+# Validate or prompt for middle IP
+if [[ $# -ge 1 && valid_ip "$1" ]]; then
     middle_ip="$1"
+else
+    echo "Error: Invalid middle IP address: $1"
+    middle_ip=$(get_valid_input "Enter middle IP address: " valid_ip "Invalid middle IP address. Please try again.")
+fi
+
+# Validate or prompt for destination IP
+if [[ $# -ge 2 && valid_ip "$2" ]]; then
     destination_ip="$2"
+else
+    echo "Error: Invalid destination IP address: $2"
+    destination_ip=$(get_valid_input "Enter destination IP address: " valid_ip "Invalid destination IP address. Please try again.")
+fi
+
+# Validate or prompt for port
+if [[ $# -ge 3 && valid_port "$3" ]]; then
     port="$3"
+else
+    echo "Error: Invalid port number: $3"
+    port=$(get_valid_input "Enter port (1-65535): " valid_port "Invalid port number. Please try again.")
 fi
 
 # Enable IP forwarding
@@ -66,7 +84,10 @@ sysctl net.ipv4.ip_forward=1
 iptables -t nat -A PREROUTING -p tcp --dport "$port" -j DNAT --to-destination "$middle_ip"
 iptables -t nat -A PREROUTING -p tcp --dport "$port" -j DNAT --to-destination "$destination_ip"
 iptables -t nat -A POSTROUTING -j MASQUERADE
-
 echo
-echo -e "\033[0;32mIptables rules applied successfully.\033[0m"
+echo -e "\033[0;32mIptables rules applied successfully with the following settings:\033[0m"
+echo "Middle IP: $middle_ip"
+echo "Destination IP: $destination_ip"
+echo "Port: $port"
+echo
 read -p "Press enter to continue"

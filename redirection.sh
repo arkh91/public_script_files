@@ -44,36 +44,34 @@ get_valid_input() {
     done
 }
 
-# Check each argument individually and request re-entry if invalid
-echo "Checking provided arguments..."
-if [[ $# -ne 3 ]]; then
-    echo -e "\033[0;31mArguments not valid. Please enter the following values.\033[0m"
-    echo "1. Middle IP address"
-    echo "2. Destination IP address"
-    echo "3. Port number"
-fi
+# Check if arguments are provided or ask for input
+if [[ "$#" -eq 3 ]]; then
+    # Validate provided arguments
+    if valid_ip "$1"; then
+        middle_ip="$1"
+    else
+        echo "Error: Invalid middle IP address: $1"
+        middle_ip=$(get_valid_input "Enter middle IP address: " valid_ip "Invalid middle IP address. Please try again.")
+    fi
 
-# Validate or prompt for middle IP
-if [[ $# -ge 1 && valid_ip "$1" ]]; then
-    middle_ip="$1"
+    if valid_ip "$2"; then
+        destination_ip="$2"
+    else
+        echo "Error: Invalid destination IP address: $2"
+        destination_ip=$(get_valid_input "Enter destination IP address: " valid_ip "Invalid destination IP address. Please try again.")
+    fi
+
+    if valid_port "$3"; then
+        port="$3"
+    else
+        echo "Error: Invalid port number: $3"
+        port=$(get_valid_input "Enter port (1-65535): " valid_port "Invalid port number. Please try again.")
+    fi
 else
-    echo "Error: Invalid middle IP address: $1"
+    # Prompt for inputs interactively
+    echo "Please enter the required values:"
     middle_ip=$(get_valid_input "Enter middle IP address: " valid_ip "Invalid middle IP address. Please try again.")
-fi
-
-# Validate or prompt for destination IP
-if [[ $# -ge 2 && valid_ip "$2" ]]; then
-    destination_ip="$2"
-else
-    echo "Error: Invalid destination IP address: $2"
     destination_ip=$(get_valid_input "Enter destination IP address: " valid_ip "Invalid destination IP address. Please try again.")
-fi
-
-# Validate or prompt for port
-if [[ $# -ge 3 && valid_port "$3" ]]; then
-    port="$3"
-else
-    echo "Error: Invalid port number: $3"
     port=$(get_valid_input "Enter port (1-65535): " valid_port "Invalid port number. Please try again.")
 fi
 
@@ -89,5 +87,3 @@ echo -e "\033[0;32mIptables rules applied successfully with the following settin
 echo "Middle IP: $middle_ip"
 echo "Destination IP: $destination_ip"
 echo "Port: $port"
-echo
-read -p "Press enter to continue"

@@ -519,8 +519,8 @@ echo1
     echo "** 2) Set Up x-ui VPN                                    **"
     echo "** 3) Install VPN Dependencies                           **"
     echo "** 4) BBR Management                                     **"
-    echo "** 5) Install Python                                     **"
-    echo "** 6) Install NodeJS                                     **"
+    echo "** 5) Other tools                                        **"
+    echo "** 6)                                                    **"
     echo "** 7) Create a New Sudo User                             **"
     echo "** 8) SSL setup                                          **"
     echo "** 9) Exit - Done for Now                                **"
@@ -569,11 +569,11 @@ main() {
                 read -p "Press enter to continue"
                 ;;
             5)
-                Install_python
+                other_tools
                 read -p "Press enter to continue"
                 ;;
             6)
-                Install_NodeJS
+                
                 read -p "Press enter to continue"
                 ;;
             7)

@@ -87,3 +87,9 @@ echo -e "\033[0;32mIptables rules applied successfully with the following settin
 echo "Middle IP: $middle_ip"
 echo "Destination IP: $destination_ip"
 echo "Port: $port"
+
+
+
+# sudo wget https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/redirection.sh && chmod u+x redirection.sh && ./redirection.sh
+# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/redirection.sh)
+# bash <(curl -Ls https://bit.ly/arkh91_VPN)

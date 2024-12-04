@@ -78,10 +78,24 @@ fi
 # Enable IP forwarding
 sysctl net.ipv4.ip_forward=1
 
-# Apply the iptables rules
-iptables -t nat -A PREROUTING -p tcp --dport "$port" -j DNAT --to-destination "$middle_ip"
-iptables -t nat -A PREROUTING -p tcp --dport "$port" -j DNAT --to-destination "$destination_ip"
-iptables -t nat -A POSTROUTING -j MASQUERADE
+# Create nftables rules
+nft flush ruleset
+
+nft add table ip nat
+
+nft add chain ip nat prerouting { type nat hook prerouting priority 0 \; }
+nft add chain ip nat postrouting { type nat hook postrouting priority 100 \; }
+
+# Add port forwarding rule in the prerouting chain
+nft add rule ip nat prerouting ip daddr "$middle_ip" tcp dport "$port" dnat to "$destination_ip:$port"
+
+# Add masquerade rule in the postrouting chain to ensure proper NAT
+nft add rule ip nat postrouting ip daddr "$destination_ip" masquerade
+
+# Save the nftables configuration
+nft list ruleset > /etc/nftables.conf
+
+
 echo
 echo -e "\033[0;32mIptables rules applied successfully with the following settings:\033[0m"
 echo "Middle IP: $middle_ip"

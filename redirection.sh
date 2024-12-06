@@ -75,26 +75,36 @@ else
     port=$(get_valid_input "Enter port (1-65535): " valid_port "Invalid port number. Please try again.")
 fi
 
-# Enable IP forwarding
-sysctl net.ipv4.ip_forward=1
+# Download and install Xray
+curl -L https://raw.githubusercontent.com/XTLS/Xray-install/main/install-release.sh | bash
 
-# Create nftables rules
-nft flush ruleset
+# Configuration file
+cat <<EOF > /etc/xray/config.json
+{
+  "inbounds": [
+    {
+      "port": $port,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "$destination_ip",
+        "port": 0,
+        "network": "tcp,udp",
+        "timeout": 0,
+        "followRedirect": false
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
+EOF
 
-nft add table ip nat
-
-nft add chain ip nat prerouting { type nat hook prerouting priority 0 \; }
-nft add chain ip nat postrouting { type nat hook postrouting priority 100 \; }
-
-# Add port forwarding rule in the prerouting chain
-nft add rule ip nat prerouting ip daddr "$middle_ip" tcp dport "$port" dnat to "$destination_ip:$port"
-
-# Add masquerade rule in the postrouting chain to ensure proper NAT
-nft add rule ip nat postrouting ip daddr "$destination_ip" masquerade
-
-# Save the nftables configuration
-nft list ruleset > /etc/nftables.conf
-
+# Start Xray service
+systemctl restart xray
 
 echo
 echo -e "\033[0;32mIptables rules applied successfully with the following settings:\033[0m"

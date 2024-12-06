@@ -23,7 +23,10 @@
 
 54.77.187.179  @Allowed  #Ireland-ZoneA
 
+91.223.169.44  @Allowed  #Sweden-kamatera
 91.223.169.199  @Blocked  #Sweden-kamatera
+
+
 
 185.181.11.114  @Blocked  #UK-kamatera
 194.37.82.34  @Blocked  #UK-kamatera

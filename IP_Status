@@ -26,7 +26,7 @@
 
 54.77.187.179  @Allowed  #Ireland-ZoneA
 
-91.223.169.44  @Allowed  #Sweden-kamatera
+91.223.169.44  @Blocked  #Sweden-kamatera
 91.223.169.199  @Blocked  #Sweden-kamatera
 
 154.205.148.36  @Blocked  #Turkey-Lightnode

@@ -131,7 +131,10 @@ xui() {
 
 VPN_dependencies()  {
     sudo apt install -y speedtest-cli
- # Check if netstat is installed
+    
+    # ssh keepalive
+    bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/configure_ssh_keepalive.sh)
+   # Check if netstat is installed
   if ! command -v netstat &> /dev/null; then
     echo "netstat is not installed. Installing..."
     sudo apt update -y
@@ -606,6 +609,7 @@ outline_vpn_menu() {
         echo "***********************************************************"
         echo "***********************************************************"
         echo "Outline VPN Menu:                                       ***"
+        echo "**                                                      ***"
         echo "**1) Install Outline VPN                                ***"
         echo "**2) Install Outline VPN with custom port and domain    ***"
         #echo "**3) Check Outline VPN Status                           ***"

@@ -451,7 +451,8 @@ other_tools (){
         echo "** 1) Install Python                                     **"
         echo "** 2) Install NodeJS                                     **"
         echo "** 3) port forwarding                                    **"
-        echo "** 4) Back                                               **"
+        echo "** 4) MySQL backup                                       **"
+        echo "** 5) Back                                               **"
         echo "**                                                       **"
         echo "***********************************************************"
         echo "***********************************************************"
@@ -475,8 +476,12 @@ other_tools (){
                 main
                 ;;
             4)
+                bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/mysql_backup_setup.sh)
                 main
-              ;;
+                ;;
+            5)
+                main
+                ;;
             *)
                 echo "Invalid option."
                 ;;

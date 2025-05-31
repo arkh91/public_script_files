@@ -477,6 +477,7 @@ other_tools (){
                 ;;
             4)
                 bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/mysql_backup_setup.sh)
+                read -p "Press enter to continue"
                 main
                 ;;
             5)

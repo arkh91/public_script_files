@@ -40,15 +40,26 @@ cat << 'EOF' > "$SCRIPT_PATH"
 
 BACKUP_DIR="/var/backups/mysql"
 TIMESTAMP=$(date +%m%d%Y_%H%M%S)
-DBS=$(mysql --defaults-file=/root/.my.cnf -e 'SHOW DATABASES;' | grep -Ev "(Database|information_schema|performance_schema|mysql|sys)")
+TEMP_SQL_FILE="/tmp/mysql-$TIMESTAMP.sql"
+BACKUP_FILE="$BACKUP_DIR/mysql-$TIMESTAMP.sql.gz"
+LOG_FILE="/var/log/mysql_backup.log"
 
 mkdir -p "$BACKUP_DIR"
-BACKUP_FILE="$BACKUP_DIR/mysql-$TIMESTAMP.sql.gz"
 
-for db in $DBS; do
-  mysqldump --defaults-file=/root/.my.cnf "$db"
-done | gzip > "$BACKUP_FILE"
+# List all non-system databases
+DBS=$(mysql --defaults-file=/root/.my.cnf -e 'SHOW DATABASES;' | grep -Ev "(Database|information_schema|performance_schema|mysql|sys)")
 
+# Dump all user databases to a temp file
+if mysqldump --defaults-file=/root/.my.cnf --databases $DBS > "$TEMP_SQL_FILE"; then
+    gzip "$TEMP_SQL_FILE"
+    mv "$TEMP_SQL_FILE.gz" "$BACKUP_FILE"
+    echo -e "$(date '+%F %T') - Backup successful: $BACKUP_FILE" >> "$LOG_FILE"
+else
+    echo -e "$(date '+%F %T') - Backup FAILED." >> "$LOG_FILE"
+    rm -f "$TEMP_SQL_FILE"
+fi
+
+# Remove backups older than 7 days
 find "$BACKUP_DIR" -type f -name "mysql-*.sql.gz" -mtime +7 -delete
 EOF
 

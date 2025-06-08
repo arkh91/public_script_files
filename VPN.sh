@@ -452,7 +452,7 @@ other_tools (){
         echo "** 2) Install NodeJS                                     **"
         echo "** 3) port forwarding                                    **"
         echo "** 4) MySQL backup                                       **"
-        echo "** 5) Auto Rebbot                                        **"
+        echo "** 5) Auto Reboot                                        **"
         echo "** 6) Back                                               **"
         echo "**                                                       **"
         echo "***********************************************************"

@@ -452,7 +452,8 @@ other_tools (){
         echo "** 2) Install NodeJS                                     **"
         echo "** 3) port forwarding                                    **"
         echo "** 4) MySQL backup                                       **"
-        echo "** 5) Back                                               **"
+        echo "** 5) Auto Rebbot                                        **"
+        echo "** 6) Back                                               **"
         echo "**                                                       **"
         echo "***********************************************************"
         echo "***********************************************************"
@@ -481,9 +482,15 @@ other_tools (){
                 main
                 ;;
             5)
+                bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/autoreboot.sh)
+                read -p "Press enter to continue"
+                main
+                ;;
+            6)
                 main
                 ;;
             *)
+            
                 echo "Invalid option."
                 ;;
         esac

@@ -11,7 +11,7 @@ YELLOW="\e[33m"
 RESET="\e[0m"
 
 # Variables
-BACKUP_DIR="/var/backups/mysql"
+BACKUP_DIR="/root/backups/mysql"
 SCRIPT_PATH="/root/mysql_backup.sh"
 CRON_LOG="/var/log/mysql_backup.log"
 MY_CNF="/root/.my.cnf"

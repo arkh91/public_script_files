@@ -44,7 +44,8 @@ echo "⏳ Updating timezone to $ZONE..."
 timedatectl set-timezone "$ZONE"
 
 if [ $? -eq 0 ]; then
-  echo "✅ Timezone updated successfully to $(timedatectl | grep 'Time zone')"
+  echo "✅ Timezone updated successfully to:"
+  echo "$(timedatectl | grep 'Time zone')"
 else
   echo "❌ Failed to update timezone."
 fi

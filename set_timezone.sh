@@ -6,36 +6,39 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-# Timezones with descriptions
-declare -A TIMEZONES=(
-  [01]="America/Los_Angeles (Pacific Time - Los Angeles)"
-  [02]="America/New_York (Eastern Time - New York)"
-  [03]="America/Chicago (Central Time - Chicago)"
-  [04]="America/Denver (Mountain Time - Denver)"
-  [05]="Europe/London (London)"
-  [06]="Europe/Paris (Paris)"
-  [07]="Europe/Berlin (Berlin)"
-  [08]="Asia/Tehran (Tehran)"
-  [09]="Asia/Tokyo (Tokyo)"
-  [10]="Asia/Shanghai (Shanghai)"
-  [11]="Asia/Kolkata (India Standard Time - Mumbai)"
-  [12]="Australia/Sydney (Sydney)"
+# Indexed list of timezones and labels
+TIMEZONE_OPTIONS=(
+  "America/Los_Angeles (Pacific Time - Los Angeles)"
+  "America/New_York (Eastern Time - New York)"
+  "America/Chicago (Central Time - Chicago)"
+  "America/Denver (Mountain Time - Denver)"
+  "Europe/London (London)"
+  "Europe/Paris (Paris)"
+  "Europe/Berlin (Berlin)"
+  "Asia/Tehran (Tehran)"
+  "Asia/Tokyo (Tokyo)"
+  "Asia/Shanghai (Shanghai)"
+  "Asia/Kolkata (India Standard Time - Mumbai)"
+  "Australia/Sydney (Sydney)"
 )
 
-# Display sorted options
 echo "🌐 Select a timezone to set on this server:"
-for i in $(seq 1 12); do
-  echo "  $i) ${TIMEZONES[$i]}"
+for i in "${!TIMEZONE_OPTIONS[@]}"; do
+  index=$((i + 1))
+  echo "  $index) ${TIMEZONE_OPTIONS[$i]}"
 done
 
-read -p "Enter a number (1-12): " CHOICE
+read -p "Enter a number (1-${#TIMEZONE_OPTIONS[@]}): " CHOICE
 
-ZONE=$(echo "${TIMEZONES[$CHOICE]}" | awk '{print $1}')
-
-if [ -z "$ZONE" ]; then
+# Validate input
+if ! [[ "$CHOICE" =~ ^[0-9]+$ ]] || [ "$CHOICE" -lt 1 ] || [ "$CHOICE" -gt ${#TIMEZONE_OPTIONS[@]} ]; then
   echo "❌ Invalid choice. Exiting."
   exit 1
 fi
+
+# Extract timezone name (first word before space)
+SELECTED="${TIMEZONE_OPTIONS[$((CHOICE - 1))]}"
+ZONE="${SELECTED%% *}"
 
 echo "⏳ Updating timezone to $ZONE..."
 timedatectl set-timezone "$ZONE"

@@ -453,7 +453,8 @@ other_tools (){
         echo "** 3) port forwarding                                    **"
         echo "** 4) MySQL backup                                       **"
         echo "** 5) Auto Reboot                                        **"
-        echo "** 6) Back                                               **"
+        echo "** 6) Set timezone                                       **"
+        echo "** 7) Back                                               **"
         echo "**                                                       **"
         echo "***********************************************************"
         echo "***********************************************************"
@@ -487,10 +488,14 @@ other_tools (){
                 main
                 ;;
             6)
+                bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/set_timezone.sh)
+                read -p "Press enter to continue"
+                main
+                ;;
+            7)
                 main
                 ;;
             *)
-            
                 echo "Invalid option."
                 ;;
         esac

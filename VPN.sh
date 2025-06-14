@@ -112,7 +112,7 @@ xui() {
         read -p "Choose an option: " xui_choice
         case $xui_choice in
             1)
-                x-ui_English
+                x-ui_Sanaei
                 read -p "Press enter to continue"
                 ;;
             2)

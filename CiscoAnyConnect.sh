@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# CiscoAnyConnect.sh
+# CiscoAnyConnect.sh test
 # OpenConnect VPN (ocserv) manager with interactive menu
 # Features:
 # - Install VPN server

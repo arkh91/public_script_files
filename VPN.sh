@@ -79,7 +79,7 @@ x-ui_Sanaei() {
     echo "x-ui MHSanaei installed successfully."
   else
     echo "x-ui MHSanaei installation not found."
-    bash <(curl -Ls https://raw.githubusercontent.com/MHSanaei/3x-ui/refs/tags/v2.6.0/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/MHSanaei/3x-ui/refs/tags/v2.6.2/install.sh)
     docker restart shadowbox
   fi
 }

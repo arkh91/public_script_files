@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Fixed email
-EMAIL="test@gmail.com"
+EMAIL="arkh91@gmail.com"
 
 # Ask for domain
 read -rp "Enter your domain name (e.g., dns.example.com): " DOMAIN

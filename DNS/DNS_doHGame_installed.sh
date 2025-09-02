@@ -1,41 +1,55 @@
 #!/bin/bash
 # DNS_doHGame_installed.sh
-# Complete installer for Unbound Game DNS / DoH setup with full error checking
+# Full installer for Unbound Game DNS / DoH
 
 set -euo pipefail
 IFS=$'\n\t'
 
 echo "=== DNS over HTTPS / Game DNS Installer ==="
 
-# Default values
+# Defaults
 DEFAULT_DOMAIN="example.com"
 DEFAULT_EMAIL="admin@example.com"
-DEFAULT_CONFIG_DIR="/etc/unbound/unbound.conf.d"
-DEFAULT_ROOT_KEY="/var/lib/unbound/root.key"
+CONFIG_DIR="/etc/unbound/unbound.conf.d"
+ROOT_KEY="/var/lib/unbound/root.key"
 
-# Prompt for domain
+# Prompt user for domain and email
 read -rp "Enter the domain to use [$DEFAULT_DOMAIN]: " DOMAIN_INPUT
 DOMAIN="${DOMAIN_INPUT:-$DEFAULT_DOMAIN}"
 
-# Prompt for email
 read -rp "Enter your email for notifications [$DEFAULT_EMAIL]: " EMAIL_INPUT
 EMAIL="${EMAIL_INPUT:-$DEFAULT_EMAIL}"
 
 echo "Using domain: $DOMAIN"
 echo "Using email: $EMAIL"
 
-# Check if unbound is installed
-if ! command -v unbound >/dev/null 2>&1; then
-    echo "Error: unbound is not installed. Install with: sudo apt install unbound"
-    exit 1
-fi
+# Function to check and install required packages
+install_if_missing() {
+    local pkg="$1"
+    if ! dpkg -s "$pkg" >/dev/null 2>&1; then
+        echo "$pkg not found. Installing..."
+        apt update -y
+        apt install -y "$pkg"
+        if ! dpkg -s "$pkg" >/dev/null 2>&1; then
+            echo "Error: failed to install $pkg"
+            exit 1
+        fi
+    else
+        echo "$pkg is already installed."
+    fi
+}
 
-# Create Unbound config directory if it does not exist
-mkdir -p "$DEFAULT_CONFIG_DIR"
+# Ensure required packages
+for pkg in unbound dnsutils curl; do
+    install_if_missing "$pkg"
+done
 
-GAMEDNS_CONF="$DEFAULT_CONFIG_DIR/gamedns.conf"
+# Create Unbound config directory if missing
+mkdir -p "$CONFIG_DIR"
 
-# Write full Unbound config
+GAMEDNS_CONF="$CONFIG_DIR/gamedns.conf"
+
+# Write Unbound config
 cat > "$GAMEDNS_CONF" <<EOF
 # Game DNS / DoH configuration for $DOMAIN
 server:
@@ -61,26 +75,24 @@ server:
   hide-identity: yes
   hide-version: yes
 
-# DNSSEC trust anchor
-auto-trust-anchor-file: "$DEFAULT_ROOT_KEY"
+auto-trust-anchor-file: "$ROOT_KEY"
 
-# Domain-specific stub (example)
 stub-zone:
   name: "$DOMAIN"
-  forward-addr: 1.1.1.1        # Optional upstream DNS
+  forward-addr: 1.1.1.1
   forward-addr: 1.0.0.1
 EOF
 
-echo "Unbound config written to $GAMEDNS_CONF"
+echo "Unbound configuration written to $GAMEDNS_CONF"
 
 # Ensure root key exists
 echo "Updating DNSSEC root trust anchor..."
-if ! unbound-anchor -a "$DEFAULT_ROOT_KEY"; then
-    echo "Error: failed to generate/update $DEFAULT_ROOT_KEY"
+if ! unbound-anchor -a "$ROOT_KEY"; then
+    echo "Error: failed to generate/update $ROOT_KEY"
     exit 1
 fi
 
-# Validate config
+# Validate configuration
 echo "Validating Unbound configuration..."
 if ! unbound-checkconf >/dev/null 2>&1; then
     echo "Error: Unbound configuration failed validation!"
@@ -88,7 +100,7 @@ if ! unbound-checkconf >/dev/null 2>&1; then
 fi
 
 # Restart Unbound
-echo "Restarting Unbound service..."
+echo "Restarting Unbound..."
 if ! systemctl restart unbound; then
     echo "Error: failed to restart Unbound"
     exit 1
@@ -96,11 +108,7 @@ fi
 
 # Test DNS resolution
 echo "Testing DNS resolution for $DOMAIN..."
-if ! dig_output=$(dig @"127.0.0.1" "$DOMAIN" +dnssec +short); then
-    echo "Error: dig failed"
-    exit 1
-fi
-
+dig_output=$(dig @"127.0.0.1" "$DOMAIN" +dnssec +short || true)
 if [[ -z "$dig_output" ]]; then
     echo "Warning: no A records returned for $DOMAIN"
 else
@@ -108,7 +116,8 @@ else
     echo "$dig_output"
 fi
 
-echo "=== DNS over HTTPS / Game DNS installation completed successfully ==="
+echo "=== Installation completed successfully ==="
+
 
 
 

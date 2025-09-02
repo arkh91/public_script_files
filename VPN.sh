@@ -1,11 +1,11 @@
 #!/bin/bash
 
-#######################################
-#                                     #
-#  This code has been written by:     #
-#  https://github.com/arkh91/         #                        
-#                                     #
-#######################################
+#################################################
+#                                               #
+#  This code has been written by:               #
+#  https://github.com/arkh91/                   #                        
+#  bash <(curl -Ls https://bit.ly/arkh91_VPN)   #                                   #
+#################################################
 
 if [ "$EUID" -ne 0 ]; then
   echo -e "\033[31mPlease run as root\033[m"

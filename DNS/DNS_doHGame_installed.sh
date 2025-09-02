@@ -334,3 +334,7 @@ echo "Create keys manually:"
 echo "   curl -s -X POST http://127.0.0.1:8787/keys -H 'Content-Type: application/json' -d '{\"expires_in_hours\":72, \"note\":\"test\"}' | jq"
 echo
 echo "=============================="
+
+
+
+# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/DNS/DNS_doHGame_installed.sh)

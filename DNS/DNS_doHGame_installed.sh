@@ -26,7 +26,15 @@ install_dependencies() {
     log "Installing dependencies..."
     apt-get update -qq
     apt-get install -y unbound dnsutils || error_exit "Failed to install required packages"
-}
+    apt-get install -y curl wget unzip ufw jq sqlite3 ca-certificates gnupg lsb-release \
+      nginx unbound certbot python3-certbot-nginx
+
+    # Node.js 18
+    if ! command -v node >/dev/null 2>&1; then
+      echo "[*] Installing Node.js 18..."
+      curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+      apt-get install -y nodejs build-essential
+    }
 
 # -------------------------
 # Ask for domain/email

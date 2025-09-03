@@ -11,7 +11,9 @@ ROOT_KEY="/var/lib/unbound/root.key"
 log() { echo -e "\e[32m[+] $1\e[0m"; }
 error_exit() { echo -e "\e[31m[!] $1\e[0m"; exit 1; }
 
-# Root 
+# -------------------------
+# Ensure script runs as root
+# ------------------------- 
 run_as_root() {
     if [[ $EUID -ne 0 ]]; then
       echo "Run as root (sudo)."
@@ -25,16 +27,17 @@ fi
 install_dependencies() {
     log "Installing dependencies..."
     apt-get update -qq
-    apt-get install -y unbound dnsutils || error_exit "Failed to install required packages"
-    apt-get install -y curl wget unzip ufw jq sqlite3 ca-certificates gnupg lsb-release \
-      nginx unbound certbot python3-certbot-nginx
+    apt-get install -y unbound dnsutils curl wget unzip ufw jq \
+        ca-certificates gnupg lsb-release nginx certbot python3-certbot-nginx || \
+        error_exit "Failed to install required packages"
 
-    # Node.js 18
+    # Node.js 18 LTS
     if ! command -v node >/dev/null 2>&1; then
-      echo "[*] Installing Node.js 18..."
-      curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-      apt-get install -y nodejs build-essential
-    }
+        log "Installing Node.js 18..."
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+        apt-get install -y nodejs build-essential || error_exit "Failed installing Node.js"
+    fi
+}
 
 # -------------------------
 # Ask for domain/email
@@ -80,6 +83,7 @@ server:
     hide-version: yes
     auto-trust-anchor-file: "$ROOT_KEY"
 EOF
+    log "Unbound config saved to $UNBOUND_CONF_FILE"
 }
 
 # -------------------------

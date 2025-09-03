@@ -11,6 +11,14 @@ ROOT_KEY="/var/lib/unbound/root.key"
 log() { echo -e "\e[32m[+] $1\e[0m"; }
 error_exit() { echo -e "\e[31m[!] $1\e[0m"; exit 1; }
 
+# Root 
+run_as_root() {
+    if [[ $EUID -ne 0 ]]; then
+      echo "Run as root (sudo)."
+      exit 1
+fi
+}
+
 # -------------------------
 # Install dependencies
 # -------------------------
@@ -93,6 +101,7 @@ validate_and_restart() {
 # Main
 # -------------------------
 main() {
+    run_as_root
     install_dependencies
     get_domain_email
     configure_unbound

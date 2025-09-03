@@ -91,8 +91,10 @@ EOF
 # -------------------------
 setup_dnssec() {
     log "Updating DNSSEC root trust anchor..."
-    rm -f "$ROOT_KEY"
-    unbound-anchor -a "$ROOT_KEY" || error_exit "Failed to update DNSSEC root key"
+    mkdir -p /var/lib/unbound
+    chown unbound:unbound /var/lib/unbound
+    chmod 755 /var/lib/unbound
+    unbound-anchor -a "$ROOT_KEY" -v || error_exit "Failed to update DNSSEC root key"
 }
 
 # -------------------------

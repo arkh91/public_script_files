@@ -58,6 +58,12 @@ configure_unbound() {
     log "Writing Unbound configuration to $UNBOUND_CONF_FILE"
     mkdir -p "$UNBOUND_CONF_DIR"
 
+    # Prevent duplicate trust anchor declarations
+    if [ -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf ]; then
+        rm -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
+        log "Removed default root-auto-trust-anchor-file.conf to avoid duplicate trust anchors"
+    fi
+
     cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
     verbosity: 0
@@ -85,6 +91,7 @@ server:
 EOF
     log "Unbound config saved to $UNBOUND_CONF_FILE"
 }
+
 
 # -------------------------
 # Setup DNSSEC trust anchor

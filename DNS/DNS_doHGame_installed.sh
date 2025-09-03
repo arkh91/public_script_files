@@ -1,122 +1,108 @@
 #!/bin/bash
-# DNS_doHGame_installed.sh
-# Full installer for Unbound Game DNS / DoH
-
 set -euo pipefail
-IFS=$'\n\t'
 
-echo "=== DNS over HTTPS / Game DNS Installer ==="
-
-# Defaults
-DEFAULT_DOMAIN="example.com"
-DEFAULT_EMAIL="admin@example.com"
-CONFIG_DIR="/etc/unbound/unbound.conf.d"
+UNBOUND_CONF_DIR="/etc/unbound/unbound.conf.d"
+UNBOUND_CONF_FILE="$UNBOUND_CONF_DIR/gamedns.conf"
 ROOT_KEY="/var/lib/unbound/root.key"
 
-# Prompt user for domain and email
-read -rp "Enter the domain to use [$DEFAULT_DOMAIN]: " DOMAIN_INPUT
-DOMAIN="${DOMAIN_INPUT:-$DEFAULT_DOMAIN}"
+# -------------------------
+# Helper Functions
+# -------------------------
+log() { echo -e "\e[32m[+] $1\e[0m"; }
+error_exit() { echo -e "\e[31m[!] $1\e[0m"; exit 1; }
 
-read -rp "Enter your email for notifications [$DEFAULT_EMAIL]: " EMAIL_INPUT
-EMAIL="${EMAIL_INPUT:-$DEFAULT_EMAIL}"
+# -------------------------
+# Install dependencies
+# -------------------------
+install_dependencies() {
+    log "Installing dependencies..."
+    apt-get update -qq
+    apt-get install -y unbound dnsutils || error_exit "Failed to install required packages"
+}
 
-echo "Using domain: $DOMAIN"
-echo "Using email: $EMAIL"
+# -------------------------
+# Ask for domain/email
+# -------------------------
+get_domain_email() {
+    read -rp "Enter your domain name: " DOMAIN
+    read -rp "Enter your email address: " EMAIL
 
-# Function to check and install required packages
-install_if_missing() {
-    local pkg="$1"
-    if ! dpkg -s "$pkg" >/dev/null 2>&1; then
-        echo "$pkg not found. Installing..."
-        apt update -y
-        apt install -y "$pkg"
-        if ! dpkg -s "$pkg" >/dev/null 2>&1; then
-            echo "Error: failed to install $pkg"
-            exit 1
-        fi
-    else
-        echo "$pkg is already installed."
+    if [[ -z "$DOMAIN" || -z "$EMAIL" ]]; then
+        error_exit "Domain and email cannot be empty."
     fi
 }
 
-# Ensure required packages
-for pkg in unbound dnsutils curl; do
-    install_if_missing "$pkg"
-done
+# -------------------------
+# Configure Unbound
+# -------------------------
+configure_unbound() {
+    log "Writing Unbound configuration to $UNBOUND_CONF_FILE"
+    mkdir -p "$UNBOUND_CONF_DIR"
 
-# Create Unbound config directory if missing
-mkdir -p "$CONFIG_DIR"
-
-GAMEDNS_CONF="$CONFIG_DIR/gamedns.conf"
-
-# Write Unbound config
-cat > "$GAMEDNS_CONF" <<EOF
-# Game DNS / DoH configuration for $DOMAIN
+    cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
-  verbosity: 1
-  num-threads: 2
-  interface: 127.0.0.1
-  port: 53
-  do-ip4: yes
-  do-ip6: no
-  do-udp: yes
-  do-tcp: yes
-  prefetch: yes
-  prefetch-key: yes
-  cache-min-ttl: 60
-  cache-max-ttl: 86400
-  so-reuseport: yes
-  harden-dnssec-stripped: yes
-  rrset-cache-size: 256m
-  msg-cache-size: 128m
-  outgoing-num-tcp: 64
-  incoming-num-tcp: 64
-  unwanted-reply-threshold: 10000
-  hide-identity: yes
-  hide-version: yes
-
-auto-trust-anchor-file: "$ROOT_KEY"
-
-stub-zone:
-  name: "$DOMAIN"
-  forward-addr: 1.1.1.1
-  forward-addr: 1.0.0.1
+    verbosity: 0
+    num-threads: 2
+    interface: 127.0.0.1
+    port: 53
+    do-ip4: yes
+    do-ip6: no
+    do-udp: yes
+    do-tcp: yes
+    prefetch: yes
+    prefetch-key: yes
+    cache-min-ttl: 60
+    cache-max-ttl: 86400
+    so-reuseport: yes
+    harden-dnssec-stripped: yes
+    rrset-cache-size: 256m
+    msg-cache-size: 128m
+    outgoing-num-tcp: 64
+    incoming-num-tcp: 64
+    unwanted-reply-threshold: 10000
+    hide-identity: yes
+    hide-version: yes
+    auto-trust-anchor-file: "$ROOT_KEY"
 EOF
+}
 
-echo "Unbound configuration written to $GAMEDNS_CONF"
+# -------------------------
+# Setup DNSSEC trust anchor
+# -------------------------
+setup_dnssec() {
+    log "Updating DNSSEC root trust anchor..."
+    rm -f "$ROOT_KEY"
+    unbound-anchor -a "$ROOT_KEY" || error_exit "Failed to update DNSSEC root key"
+}
 
-# Ensure root key exists
-echo "Updating DNSSEC root trust anchor..."
-if ! unbound-anchor -a "$ROOT_KEY"; then
-    echo "Error: failed to generate/update $ROOT_KEY"
-    exit 1
-fi
+# -------------------------
+# Validate and restart Unbound
+# -------------------------
+validate_and_restart() {
+    log "Validating Unbound configuration..."
+    if ! unbound-checkconf; then
+        error_exit "Unbound configuration failed validation!"
+    fi
 
-# Validate configuration
-echo "Validating Unbound configuration..."
-if ! unbound-checkconf >/dev/null 2>&1; then
-    echo "Error: Unbound configuration failed validation!"
-    exit 1
-fi
+    log "Restarting Unbound service..."
+    systemctl restart unbound || error_exit "Failed to restart Unbound"
+    systemctl enable unbound
+}
 
-# Restart Unbound
-echo "Restarting Unbound..."
-if ! systemctl restart unbound; then
-    echo "Error: failed to restart Unbound"
-    exit 1
-fi
+# -------------------------
+# Main
+# -------------------------
+main() {
+    install_dependencies
+    get_domain_email
+    configure_unbound
+    setup_dnssec
+    validate_and_restart
+    log "Installation complete. Unbound is running with DNSSEC enabled."
+}
 
-# Test DNS resolution
-echo "Testing DNS resolution for $DOMAIN..."
-dig_output=$(dig @"127.0.0.1" "$DOMAIN" +dnssec +short || true)
-if [[ -z "$dig_output" ]]; then
-    echo "Warning: no A records returned for $DOMAIN"
-else
-    echo "Success: DNS resolved for $DOMAIN:"
-    echo "$dig_output"
-fi
+main "$@"
 
-echo "=== Installation completed successfully ==="
 
 
 

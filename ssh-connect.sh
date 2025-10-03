@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Common SSH password
-PASSWORD="xxx"
+PASSWORD="xxxx"
 
 # Server list (alias => user@host)
 declare -A SERVERS
@@ -16,14 +16,43 @@ SERVERS["uk38"]="root@uk.uk38dir.krp2025.online"
 SERVERS["us08"]="root@us08dir.krp2025.online"
 SERVERS["uae11"]="root@uae11dir.krp2025.online"
 SERVERS["ger27"]="arkh91@ger27dir.krp2025.online"
-SERVERS["fin"]="root@fin.fin01dir.krp2025.online"	
+SERVERS["fin"]="root@fin.fin01dir.krp2025.online"
 
-read -p "Enter server name (in, ir, it, sp, fin, s84, tur, uk38, us08, ger27, UAE11): " name
+# Helper: print available servers
+print_servers() {
+    echo -n "Available servers: "
+    local first=1
+    for k in "${!SERVERS[@]}"; do
+        if [[ $first -eq 1 ]]; then
+            echo -n "$k"
+            first=0
+        else
+            echo -n ", $k"
+        fi
+    done | sort -u
+    echo
+}
 
-if [[ -z "${SERVERS[$name]}" ]]; then
-    echo "❌ Unknown server name: $name"
-    exit 1
+# If an argument was provided, try to use it; otherwise prompt
+name="$1"
+
+if [[ -n "$name" ]]; then
+    if [[ -z "${SERVERS[$name]}" ]]; then
+        echo "⚠️  Argument '$name' is not a known server."
+        name=""
+    fi
 fi
 
-echo "🛠️ Connecting to ${SERVERS[$name]}..."
+# Prompt until a valid server name is provided
+while [[ -z "$name" ]]; do
+    print_servers
+    read -p "Enter server name: " name
+    name="${name// /}"   # trim spaces
+    if [[ -z "${SERVERS[$name]}" ]]; then
+        echo "❌ Unknown server name: '$name'. Please try again."
+        name=""
+    fi
+done
+
+echo "🛠️  Connecting to ${SERVERS[$name]}..."
 sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no "${SERVERS[$name]}"

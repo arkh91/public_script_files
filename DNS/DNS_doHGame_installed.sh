@@ -6,7 +6,7 @@ UNBOUND_CONF_DIR="/etc/unbound/unbound.conf.d"
 UNBOUND_CONF_FILE="$UNBOUND_CONF_DIR/gamedns.conf"
 ROOT_KEY="/var/lib/unbound/root.key"
 DOH_PORT="3000"
-DOH_SERVICE="doh-proxy"
+DOH_SERVICE="dohnut"
 DOH_USER="dohproxy"
 # =================================================
 
@@ -128,48 +128,51 @@ validate_and_restart_unbound() {
     log "Restarting Unbound..."
     systemctl restart unbound
     systemctl enable unbound
+    sleep 2  # Give it time to start
     log "Unbound is running and enabled."
 }
 
 # -------------------------
-# [NEW] Setup DoH Proxy (Node.js)
+# Setup DoH Proxy (Dohnut)
 # -------------------------
 setup_doh_proxy() {
-    log "Setting up DNS-over-HTTPS (DoH) proxy..."
+    log "Setting up DNS-over-HTTPS (DoH) proxy with Dohnut..."
 
-    # Install doh-proxy globally
-    if ! npm list -g doh-proxy >/dev/null 2>&1; then
-        log "Installing doh-proxy via npm..."
-        npm install -g doh-proxy || error_exit "Failed to install doh-proxy"
+    # Install dohnut globally
+    if ! npm list -g dohnut >/dev/null 2>&1; then
+        log "Installing dohnut via npm..."
+        npm install -g dohnut || error_exit "Failed to install dohnut"
     fi
 
     # Create config directory
-    DOH_CONFIG_DIR="/etc/doh-proxy"
+    DOH_CONFIG_DIR="/etc/dohnut"
     mkdir -p "$DOH_CONFIG_DIR"
+    chown "$DOH_USER":"$DOH_USER" "$DOH_CONFIG_DIR"
 
-    # Write config
+    # Write config (proxy to Unbound)
     cat > "$DOH_CONFIG_DIR/config.json" <<EOF
 {
-  "listen": "127.0.0.1:$DOH_PORT",
-  "upstream": "127.0.0.1:53",
+  "bind": "127.0.0.1:$DOH_PORT",
+  "dns": "127.0.0.1:53",
   "path": "/dns-query",
   "timeout": 5000,
-  "tries": 3,
-  "verbose": false
+  "fake": true,
+  "threads": 2
 }
 EOF
+    chown "$DOH_USER":"$DOH_USER" "$DOH_CONFIG_DIR/config.json"
 
     # Systemd service
     cat > "/etc/systemd/system/$DOH_SERVICE.service" <<EOF
 [Unit]
-Description=DoH Proxy for Unbound
+Description=DoH Proxy (Dohnut) for Unbound
 After=network.target unbound.service
 Wants=unbound.service
 
 [Service]
 Type=simple
 User=$DOH_USER
-ExecStart=/usr/bin/doh-proxy --config $DOH_CONFIG_DIR/config.json
+ExecStart=/usr/bin/dohnut --config $DOH_CONFIG_DIR/config.json
 Restart=always
 RestartSec=5
 AmbientCapabilities=CAP_NET_BIND_SERVICE
@@ -182,11 +185,12 @@ EOF
     systemctl daemon-reload
     systemctl enable "$DOH_SERVICE"
     systemctl start "$DOH_SERVICE"
+    sleep 2
     log "DoH proxy running on 127.0.0.1:$DOH_PORT"
 }
 
 # -------------------------
-# [NEW] Setup Nginx + Let's Encrypt
+# Setup Nginx + Let's Encrypt
 # -------------------------
 setup_nginx_ssl() {
     log "Configuring Nginx for DoH with SSL..."
@@ -217,10 +221,11 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_buffering off;
     }
 
     location / {
-        return 200 "DoH Endpoint: POST/GET /dns-query";
+        return 200 "DoH Endpoint: POST/GET https://$DOMAIN/dns-query";
         add_header Content-Type text/plain;
     }
 }
@@ -242,18 +247,17 @@ EOF
 }
 
 # -------------------------
-# [NEW] Final DoH Test
+# Final DoH Test
 # -------------------------
 test_doh_endpoint() {
     log "Testing DoH endpoint..."
-    sleep 3
 
-    local test_query=$(curl -s 'https://cloudflare-dns.com/dns-query?dns=q80BAAABAAAAAAAABmdvb2dsZQJjb20AAAEAAQ' -H 'accept: application/dns-message' --insecure)
+    # Binary DoH query (google.com A record)
+    local doh_query="q80BAAABAAAAAAAABmdvb2dsZQJjb20AAAEAAQ"
+    local response=$(curl -s --insecure "https://$DOMAIN/dns-query?dns=$doh_query" -H 'accept: application/dns-message' | hexdump -v -e '/1 "%02x"')
 
-    local response=$(curl -s --insecure "https://$DOMAIN/dns-query?dns=q80BAAABAAAAAAAABmdvb2dsZQJjb20AAAEAAQ" -H 'accept: application/dns-message')
-
-    if [[ -z "$response" ]]; then
-        error_exit "DoH endpoint returned empty response!"
+    if [[ ! "$response" =~ "c00c000100010000" ]]; then  # Check for valid DNS answer header
+        error_exit "DoH endpoint returned invalid response!"
     fi
 
     log "DoH test successful! Endpoint is live at https://$DOMAIN/dns-query"
@@ -292,7 +296,7 @@ main() {
     log " DNS + DoH Server Fully Installed!"
     log " • Plain DNS: 127.0.0.1:53"
     log " • DoH URL:   https://$DOMAIN/dns-query"
-    log " • Test: curl 'https://$DOMAIN/dns-query?dns=...' -H 'accept: application/dns-message'"
+    log " • Test: curl 'https://$DOMAIN/dns-query?dns=q80BAAABAAAAAAAABmdvb2dsZQJjb20AAAEAAQ' -H 'accept: application/dns-message'"
     log "============================================"
 }
 

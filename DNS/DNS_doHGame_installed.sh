@@ -42,11 +42,15 @@ install_dependencies() {
 }
 
 # -------------------------
-# Domain & Email
+# Domain & Email (MUST BE FIRST)
 # -------------------------
 get_domain_email() {
-    while [[ -z "$DOMAIN" ]]; do read -rp "Domain: " DOMAIN; done
-    while [[ -z "$EMAIL" ]]; do read -rp "Email: " EMAIL; done
+    while [[ -z "${DOMAIN:-}" ]]; do
+        read -rp "Enter your domain (e.g. dns.example.com): " DOMAIN
+    done
+    while [[ -z "${EMAIL:-}" ]]; do
+        read -rp "Enter email for Let's Encrypt: " EMAIL
+    done
     log "Domain: $DOMAIN | Email: $EMAIL"
 }
 
@@ -56,7 +60,7 @@ get_domain_email() {
 configure_unbound() {
     log "Configuring Unbound..."
     mkdir -p "$UNBOUND_CONF_DIR"
-    rm -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
+    rm -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf 2>/dev/null || true
 
     cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
@@ -137,15 +141,14 @@ EOF
 }
 
 # -------------------------
-# SSL + Nginx (CRITICAL ORDER)
+# SSL + Nginx
 # -------------------------
 setup_nginx_and_ssl() {
     log "Setting up Nginx + Let's Encrypt..."
 
-    # 1. Remove default
     rm -f /etc/nginx/sites-enabled/default
 
-    # 2. Minimal config for Certbot
+    # Minimal config for Certbot
     cat > /etc/nginx/sites-available/temp <<EOF
 server {
     listen 80;
@@ -157,96 +160,17 @@ EOF
     ln -sf /etc/nginx/sites-available/temp /etc/nginx/sites-enabled/
     systemctl restart nginx
 
-    # 3. Use --nginx → creates options-ssl-nginx.conf
-    log "Obtaining certificate with certbot --nginx..."
+    # Use --nginx → creates options-ssl-nginx.conf
+    log "Obtaining SSL certificate..."
     certbot --nginx -d "$DOMAIN" -m "$EMAIL" --agree-tos --non-interactive --redirect \
         || error_exit "Certbot failed"
 
-    # 4. Remove temp config
     rm -f /etc/nginx/sites-enabled/temp
     rm -f /etc/nginx/sites-available/temp
 
-    # 5. Final DoH config
+    # Final DoH config
     cat > /etc/nginx/sites-available/doh <<EOF
 server {
     listen 80;
     server_name $DOMAIN;
-    return 301 https://\$server_name\$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name $DOMAIN;
-
-    ssl_certificate /etc/letsencrypt/live/$DOMAIN/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/$DOMAIN/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-
-    location /dns-query {
-        proxy_pass http://127.0.0.1:$DOH_PORT;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_buffering off;
-    }
-
-    location / {
-        return 200 "DoH: https://$DOMAIN/dns-query";
-        add_header Content-Type text/plain;
-    }
-}
-EOF
-
-    ln -sf /etc/nginx/sites-available/doh /etc/nginx/sites-enabled/
-    nginx -t && systemctl restart nginx || error_exit "Nginx failed"
-    log "Nginx + SSL configured"
-}
-
-# -------------------------
-# Firewall
-# -------------------------
-configure_firewall() {
-    log "Opening firewall..."
-    ufw allow 22/tcp
-    ufw allow 53
-    ufw allow 80/tcp
-    ufw allow 443/tcp
-    ufw --force enable
-}
-
-# -------------------------
-# Test DoH
-# -------------------------
-test_doh_endpoint() {
-    log "Testing DoH..."
-    sleep 5
-    local resp=$(curl -s --insecure "https://$DOMAIN/dns-query?name=google.com" -H 'accept: application/dns-json')
-    echo "$resp" | grep -q '"Status":0' || error_exit "DoH test failed"
-    log "DoH LIVE: https://$DOMAIN/dns-query"
-}
-
-# -------------------------
-# Main
-# -------------------------
-main() {
-    run_as_root
-    install_dependencies
-    get_domain_email
-    configure_unbound
-    setup_dnssec
-    validate_and_restart_unbound
-    setup_doh_proxy
-    setup_nginx_and_ssl     # ← This now creates options-ssl-nginx.conf
-    configure_firewall
-    test_doh_endpoint
-
-    log "============================================"
-    log " DNS + DoH Server READY"
-    log " • Local: 127.0.0.1:53"
-    log " • DoH:   https://$DOMAIN/dns-query"
-    log "============================================"
-}
-
-main "$@"
+    return 301 https://\$

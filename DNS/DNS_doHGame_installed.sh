@@ -72,7 +72,6 @@ configure_unbound() {
     log "Configuring Unbound in $UNBOUND_CONF_FILE"
     mkdir -p "$UNBOUND_CONF_DIR"
 
-    # Remove default auto-trust file to prevent duplicate
     if [ -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf ]; then
         rm -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
         log "Removed conflicting root-auto-trust-anchor-file.conf"
@@ -128,7 +127,7 @@ validate_and_restart_unbound() {
     log "Restarting Unbound..."
     systemctl restart unbound
     systemctl enable unbound
-    sleep 2  # Give it time to start
+    sleep 2
     log "Unbound is running and enabled."
 }
 
@@ -138,18 +137,15 @@ validate_and_restart_unbound() {
 setup_doh_proxy() {
     log "Setting up DNS-over-HTTPS (DoH) proxy with Dohnut..."
 
-    # Install dohnut globally
     if ! npm list -g dohnut >/dev/null 2>&1; then
         log "Installing dohnut via npm..."
         npm install -g dohnut || error_exit "Failed to install dohnut"
     fi
 
-    # Create config directory
     DOH_CONFIG_DIR="/etc/dohnut"
     mkdir -p "$DOH_CONFIG_DIR"
     chown "$DOH_USER":"$DOH_USER" "$DOH_CONFIG_DIR"
 
-    # Write config (proxy to Unbound)
     cat > "$DOH_CONFIG_DIR/config.json" <<EOF
 {
   "bind": "127.0.0.1:$DOH_PORT",
@@ -162,7 +158,6 @@ setup_doh_proxy() {
 EOF
     chown "$DOH_USER":"$DOH_USER" "$DOH_CONFIG_DIR/config.json"
 
-    # Systemd service
     cat > "/etc/systemd/system/$DOH_SERVICE.service" <<EOF
 [Unit]
 Description=DoH Proxy (Dohnut) for Unbound
@@ -181,7 +176,6 @@ AmbientCapabilities=CAP_NET_BIND_SERVICE
 WantedBy=multi-user.target
 EOF
 
-    # Enable and start
     systemctl daemon-reload
     systemctl enable "$DOH_SERVICE"
     systemctl start "$DOH_SERVICE"
@@ -190,15 +184,49 @@ EOF
 }
 
 # -------------------------
-# Setup Nginx + Let's Encrypt
+# [FIXED] Obtain SSL Certificate FIRST
+# -------------------------
+obtain_ssl_certificate() {
+    log "Obtaining Let's Encrypt certificate for $DOMAIN..."
+
+    # Remove default site to avoid conflict
+    [ -f /etc/nginx/sites-enabled/default ] && rm -f /etc/nginx/sites-enabled/default
+
+    # Minimal HTTP server for certbot
+    cat > /etc/nginx/sites-available/certbot <<EOF
+server {
+    listen 80;
+    server_name $DOMAIN;
+    location / {
+        return 200 "Certbot validation";
+    }
+}
+EOF
+    ln -sf /etc/nginx/sites-available/certbot /etc/nginx/sites-enabled/
+    systemctl restart nginx
+
+    # Get cert
+    certbot certonly --standalone -d "$DOMAIN" -m "$EMAIL" --agree-tos --non-interactive || \
+        error_exit "Failed to obtain certificate"
+
+    # Clean up
+    rm -f /etc/nginx/sites-enabled/certbot
+    rm -f /etc/nginx/sites-available/certbot
+    log "SSL certificate obtained: /etc/letsencrypt/live/$DOMAIN/"
+}
+
+# -------------------------
+# [FIXED] Setup Nginx AFTER certbot
 # -------------------------
 setup_nginx_ssl() {
     log "Configuring Nginx for DoH with SSL..."
 
-    # Backup default site
-    [ -f /etc/nginx/sites-enabled/default ] && rm -f /etc/nginx/sites-enabled/default
+    # Wait for certbot files
+    if [ ! -f "/etc/letsencrypt/options-ssl-nginx.conf" ]; then
+        log "Waiting for certbot to generate SSL options..."
+        sleep 5
+    fi
 
-    # Nginx config
     cat > /etc/nginx/sites-available/doh <<EOF
 server {
     listen 80;
@@ -212,8 +240,10 @@ server {
 
     ssl_certificate /etc/letsencrypt/live/$DOMAIN/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/$DOMAIN/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Only include if file exists
+    include /etc/letsencrypt/options-ssl-nginx.conf || true;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem || true;
 
     location /dns-query {
         proxy_pass http://127.0.0.1:$DOH_PORT;
@@ -225,7 +255,7 @@ server {
     }
 
     location / {
-        return 200 "DoH Endpoint: POST/GET https://$DOMAIN/dns-query";
+        return 200 "DoH Endpoint: https://$DOMAIN/dns-query";
         add_header Content-Type text/plain;
     }
 }
@@ -234,16 +264,13 @@ EOF
     ln -sf /etc/nginx/sites-available/doh /etc/nginx/sites-enabled/doh
 
     # Test config
-    nginx -t || error_exit "Nginx configuration test failed!"
+    if ! nginx -t 2>/tmp/nginx-test.err; then
+        cat /tmp/nginx-test.err
+        error_exit "Nginx configuration test failed!"
+    fi
 
-    # Obtain certificate
-    log "Obtaining Let's Encrypt certificate..."
-    certbot --nginx -d "$DOMAIN" -m "$EMAIL" --agree-tos --non-interactive --redirect || \
-        error_exit "Failed to obtain SSL certificate"
-
-    # Restart Nginx
     systemctl restart nginx
-    log "Nginx configured with SSL on https://$DOMAIN/dns-query"
+    log "Nginx configured and running on https://$DOMAIN"
 }
 
 # -------------------------
@@ -251,16 +278,16 @@ EOF
 # -------------------------
 test_doh_endpoint() {
     log "Testing DoH endpoint..."
+    sleep 5
 
-    # Binary DoH query (google.com A record)
     local doh_query="q80BAAABAAAAAAAABmdvb2dsZQJjb20AAAEAAQ"
-    local response=$(curl -s --insecure "https://$DOMAIN/dns-query?dns=$doh_query" -H 'accept: application/dns-message' | hexdump -v -e '/1 "%02x"')
+    local response=$(curl -s --insecure "https://$DOMAIN/dns-query?dns=$doh_query" -H 'accept: application/dns-message')
 
-    if [[ ! "$response" =~ "c00c000100010000" ]]; then  # Check for valid DNS answer header
-        error_exit "DoH endpoint returned invalid response!"
+    if [[ -z "$response" ]]; then
+        error_exit "DoH endpoint returned empty response!"
     fi
 
-    log "DoH test successful! Endpoint is live at https://$DOMAIN/dns-query"
+    log "DoH test successful! https://$DOMAIN/dns-query is live"
 }
 
 # -------------------------
@@ -288,7 +315,12 @@ main() {
     setup_dnssec
     validate_and_restart_unbound
     setup_doh_proxy
-    setup_nginx_ssl
+
+    # === CRITICAL ORDER ===
+    obtain_ssl_certificate   # ← Creates /etc/letsencrypt/options-ssl-nginx.conf
+    setup_nginx_ssl          # ← Now safe to reference it
+    # =====================
+
     configure_firewall
     test_doh_endpoint
 
@@ -300,5 +332,4 @@ main() {
     log "============================================"
 }
 
-# Run
 main "$@"

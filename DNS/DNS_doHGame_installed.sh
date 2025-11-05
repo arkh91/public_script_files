@@ -16,66 +16,47 @@ DOH_USER="dohproxy"
 log() { echo -e "\e[32m[+] $1\e[0m"; }
 error_exit() { echo -e "\e[31m[!] $1\e[0m"; exit 1; }
 
-# -------------------------
-# Ensure script runs as root
-# -------------------------
 run_as_root() {
-    if [[ $EUID -ne 0 ]]; then
-        error_exit "This script must be run as root (use sudo)."
-    fi
+    [[ $EUID -eq 0 ]] || error_exit "Run as root (sudo)."
 }
 
 # -------------------------
 # Install dependencies
 # -------------------------
 install_dependencies() {
-    log "Updating package index..."
+    log "Updating and installing packages..."
     apt-get update -qq
-
-    log "Installing system packages..."
     apt-get install -y unbound dnsutils curl wget unzip ufw jq unbound-anchor \
         ca-certificates gnupg lsb-release nginx certbot python3-certbot-nginx \
-        build-essential || error_exit "Failed to install system packages"
+        build-essential
 
-    # Node.js 18 LTS
-    if ! command -v node >/dev/null 2>&1; then
-        log "Installing Node.js 18 LTS..."
+    # Node.js 18
+    if ! command -v node >/dev/null; then
+        log "Installing Node.js 18..."
         curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-        apt-get install -y nodejs || error_exit "Failed installing Node.js"
+        apt-get install -y nodejs
     fi
 
-    # Create dohproxy user
-    if ! id "$DOH_USER" &>/dev/null; then
-        useradd -r -s /usr/sbin/nologin "$DOH_USER"
-        log "Created system user: $DOH_USER"
-    fi
+    # Create user
+    id -u "$DOH_USER" &>/dev/null || useradd -r -s /usr/sbin/nologin "$DOH_USER"
 }
 
 # -------------------------
-# Ask for domain/email
+# Domain & Email
 # -------------------------
 get_domain_email() {
-    while [[ -z "${DOMAIN:-}" ]]; do
-        read -rp "Enter your domain name (e.g., dns.example.com): " DOMAIN
-    done
-    while [[ -z "${EMAIL:-}" ]]; do
-        read -rp "Enter your email for Let's Encrypt: " EMAIL
-    done
-
+    while [[ -z "$DOMAIN" ]]; do read -rp "Domain: " DOMAIN; done
+    while [[ -z "$EMAIL" ]]; do read -rp "Email: " EMAIL; done
     log "Domain: $DOMAIN | Email: $EMAIL"
 }
 
 # -------------------------
-# Configure Unbound
+# Unbound Setup
 # -------------------------
 configure_unbound() {
-    log "Configuring Unbound in $UNBOUND_CONF_FILE"
+    log "Configuring Unbound..."
     mkdir -p "$UNBOUND_CONF_DIR"
-
-    if [ -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf ]; then
-        rm -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
-        log "Removed conflicting root-auto-trust-anchor-file.conf"
-    fi
+    rm -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
 
     cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
@@ -95,81 +76,55 @@ server:
     harden-dnssec-stripped: yes
     rrset-cache-size: 256m
     msg-cache-size: 128m
-    outgoing-num-tcp: 64
-    incoming-num-tcp: 64
-    unwanted-reply-threshold: 10000
     hide-identity: yes
     hide-version: yes
     auto-trust-anchor-file: "$ROOT_KEY"
 EOF
-    log "Unbound config written."
 }
 
-# -------------------------
-# Setup DNSSEC trust anchor
-# -------------------------
 setup_dnssec() {
-    log "Initializing DNSSEC root trust anchor..."
+    log "Setting up DNSSEC..."
     mkdir -p /var/lib/unbound
     chown unbound:unbound /var/lib/unbound
-    chmod 755 /var/lib/unbound
-    unbound-anchor -a "$ROOT_KEY" -v || error_exit "Failed to fetch root key"
+    unbound-anchor -a "$ROOT_KEY" -v
     chown unbound:unbound "$ROOT_KEY"
 }
 
-# -------------------------
-# Validate and restart Unbound
-# -------------------------
 validate_and_restart_unbound() {
-    log "Validating Unbound configuration..."
-    unbound-checkconf >/dev/null || error_exit "Unbound config invalid!"
-
-    log "Restarting Unbound..."
+    unbound-checkconf >/dev/null || error_exit "Unbound config failed!"
     systemctl restart unbound
     systemctl enable unbound
     sleep 2
-    log "Unbound is running and enabled."
 }
 
 # -------------------------
-# Setup DoH Proxy (Dohnut)
+# DoH Proxy (Dohnut)
 # -------------------------
 setup_doh_proxy() {
-    log "Setting up DNS-over-HTTPS (DoH) proxy with Dohnut..."
+    log "Installing Dohnut DoH proxy..."
+    npm install -g dohnut
 
-    if ! npm list -g dohnut >/dev/null 2>&1; then
-        log "Installing dohnut via npm..."
-        npm install -g dohnut || error_exit "Failed to install dohnut"
-    fi
-
-    DOH_CONFIG_DIR="/etc/dohnut"
-    mkdir -p "$DOH_CONFIG_DIR"
-    chown "$DOH_USER":"$DOH_USER" "$DOH_CONFIG_DIR"
-
-    cat > "$DOH_CONFIG_DIR/config.json" <<EOF
+    mkdir -p /etc/dohnut
+    cat > /etc/dohnut/config.json <<EOF
 {
   "bind": "127.0.0.1:$DOH_PORT",
   "dns": "127.0.0.1:53",
   "path": "/dns-query",
   "timeout": 5000,
-  "fake": true,
-  "threads": 2
+  "fake": true
 }
 EOF
-    chown "$DOH_USER":"$DOH_USER" "$DOH_CONFIG_DIR/config.json"
+    chown -R "$DOH_USER:$DOH_USER" /etc/dohnut
 
     cat > "/etc/systemd/system/$DOH_SERVICE.service" <<EOF
 [Unit]
-Description=DoH Proxy (Dohnut) for Unbound
+Description=Dohnut DoH Proxy
 After=network.target unbound.service
-Wants=unbound.service
 
 [Service]
-Type=simple
 User=$DOH_USER
-ExecStart=/usr/bin/dohnut --config $DOH_CONFIG_DIR/config.json
+ExecStart=/usr/bin/dohnut --config /etc/dohnut/config.json
 Restart=always
-RestartSec=5
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 [Install]
@@ -177,56 +132,41 @@ WantedBy=multi-user.target
 EOF
 
     systemctl daemon-reload
-    systemctl enable "$DOH_SERVICE"
-    systemctl start "$DOH_SERVICE"
+    systemctl enable --now "$DOH_SERVICE"
     sleep 2
-    log "DoH proxy running on 127.0.0.1:$DOH_PORT"
 }
 
 # -------------------------
-# [FIXED] Obtain SSL Certificate FIRST
+# SSL + Nginx (CRITICAL ORDER)
 # -------------------------
-obtain_ssl_certificate() {
-    log "Obtaining Let's Encrypt certificate for $DOMAIN..."
+setup_nginx_and_ssl() {
+    log "Setting up Nginx + Let's Encrypt..."
 
-    # Remove default site to avoid conflict
-    [ -f /etc/nginx/sites-enabled/default ] && rm -f /etc/nginx/sites-enabled/default
+    # 1. Remove default
+    rm -f /etc/nginx/sites-enabled/default
 
-    # Minimal HTTP server for certbot
-    cat > /etc/nginx/sites-available/certbot <<EOF
+    # 2. Minimal config for Certbot
+    cat > /etc/nginx/sites-available/temp <<EOF
 server {
     listen 80;
     server_name $DOMAIN;
-    location / {
-        return 200 "Certbot validation";
-    }
+    location /.well-known/acme-challenge/ { allow all; }
+    location / { return 403; }
 }
 EOF
-    ln -sf /etc/nginx/sites-available/certbot /etc/nginx/sites-enabled/
+    ln -sf /etc/nginx/sites-available/temp /etc/nginx/sites-enabled/
     systemctl restart nginx
 
-    # Get cert
-    certbot certonly --standalone -d "$DOMAIN" -m "$EMAIL" --agree-tos --non-interactive || \
-        error_exit "Failed to obtain certificate"
+    # 3. Use --nginx → creates options-ssl-nginx.conf
+    log "Obtaining certificate with certbot --nginx..."
+    certbot --nginx -d "$DOMAIN" -m "$EMAIL" --agree-tos --non-interactive --redirect \
+        || error_exit "Certbot failed"
 
-    # Clean up
-    rm -f /etc/nginx/sites-enabled/certbot
-    rm -f /etc/nginx/sites-available/certbot
-    log "SSL certificate obtained: /etc/letsencrypt/live/$DOMAIN/"
-}
+    # 4. Remove temp config
+    rm -f /etc/nginx/sites-enabled/temp
+    rm -f /etc/nginx/sites-available/temp
 
-# -------------------------
-# [FIXED] Setup Nginx AFTER certbot
-# -------------------------
-setup_nginx_ssl() {
-    log "Configuring Nginx for DoH with SSL..."
-
-    # Wait for certbot files
-    if [ ! -f "/etc/letsencrypt/options-ssl-nginx.conf" ]; then
-        log "Waiting for certbot to generate SSL options..."
-        sleep 5
-    fi
-
+    # 5. Final DoH config
     cat > /etc/nginx/sites-available/doh <<EOF
 server {
     listen 80;
@@ -240,10 +180,8 @@ server {
 
     ssl_certificate /etc/letsencrypt/live/$DOMAIN/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/$DOMAIN/privkey.pem;
-
-    # Only include if file exists
-    include /etc/letsencrypt/options-ssl-nginx.conf || true;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem || true;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     location /dns-query {
         proxy_pass http://127.0.0.1:$DOH_PORT;
@@ -255,53 +193,38 @@ server {
     }
 
     location / {
-        return 200 "DoH Endpoint: https://$DOMAIN/dns-query";
+        return 200 "DoH: https://$DOMAIN/dns-query";
         add_header Content-Type text/plain;
     }
 }
 EOF
 
-    ln -sf /etc/nginx/sites-available/doh /etc/nginx/sites-enabled/doh
-
-    # Test config
-    if ! nginx -t 2>/tmp/nginx-test.err; then
-        cat /tmp/nginx-test.err
-        error_exit "Nginx configuration test failed!"
-    fi
-
-    systemctl restart nginx
-    log "Nginx configured and running on https://$DOMAIN"
+    ln -sf /etc/nginx/sites-available/doh /etc/nginx/sites-enabled/
+    nginx -t && systemctl restart nginx || error_exit "Nginx failed"
+    log "Nginx + SSL configured"
 }
 
 # -------------------------
-# Final DoH Test
-# -------------------------
-test_doh_endpoint() {
-    log "Testing DoH endpoint..."
-    sleep 5
-
-    local doh_query="q80BAAABAAAAAAAABmdvb2dsZQJjb20AAAEAAQ"
-    local response=$(curl -s --insecure "https://$DOMAIN/dns-query?dns=$doh_query" -H 'accept: application/dns-message')
-
-    if [[ -z "$response" ]]; then
-        error_exit "DoH endpoint returned empty response!"
-    fi
-
-    log "DoH test successful! https://$DOMAIN/dns-query is live"
-}
-
-# -------------------------
-# Open Firewall
+# Firewall
 # -------------------------
 configure_firewall() {
-    log "Configuring firewall..."
-    ufw allow 22/tcp    comment 'SSH'
-    ufw allow 53/udp    comment 'DNS'
-    ufw allow 53/tcp    comment 'DNS'
-    ufw allow 80/tcp    comment 'HTTP'
-    ufw allow 443/tcp   comment 'HTTPS'
+    log "Opening firewall..."
+    ufw allow 22/tcp
+    ufw allow 53
+    ufw allow 80/tcp
+    ufw allow 443/tcp
     ufw --force enable
-    log "Firewall rules applied."
+}
+
+# -------------------------
+# Test DoH
+# -------------------------
+test_doh_endpoint() {
+    log "Testing DoH..."
+    sleep 5
+    local resp=$(curl -s --insecure "https://$DOMAIN/dns-query?name=google.com" -H 'accept: application/dns-json')
+    echo "$resp" | grep -q '"Status":0' || error_exit "DoH test failed"
+    log "DoH LIVE: https://$DOMAIN/dns-query"
 }
 
 # -------------------------
@@ -315,20 +238,14 @@ main() {
     setup_dnssec
     validate_and_restart_unbound
     setup_doh_proxy
-
-    # === CRITICAL ORDER ===
-    obtain_ssl_certificate   # ← Creates /etc/letsencrypt/options-ssl-nginx.conf
-    setup_nginx_ssl          # ← Now safe to reference it
-    # =====================
-
+    setup_nginx_and_ssl     # ← This now creates options-ssl-nginx.conf
     configure_firewall
     test_doh_endpoint
 
     log "============================================"
-    log " DNS + DoH Server Fully Installed!"
-    log " • Plain DNS: 127.0.0.1:53"
-    log " • DoH URL:   https://$DOMAIN/dns-query"
-    log " • Test: curl 'https://$DOMAIN/dns-query?dns=q80BAAABAAAAAAAABmdvb2dsZQJjb20AAAEAAQ' -H 'accept: application/dns-message'"
+    log " DNS + DoH Server READY"
+    log " • Local: 127.0.0.1:53"
+    log " • DoH:   https://$DOMAIN/dns-query"
     log "============================================"
 }
 

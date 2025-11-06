@@ -107,52 +107,31 @@ EOF
 # Configure Public Unbound
 # -------------------------
 configure_public_unbound() {
-    log "Starting public Unbound configuration..."
+    log "Configuring public Unbound for Ubuntu..."
 
     UNBOUND_CONF_DIR="/etc/unbound/unbound.conf.d"
     UNBOUND_CONF_FILE="$UNBOUND_CONF_DIR/gamedns.conf"
-    ROOT_KEY_FILE="/etc/unbound/root.key"
+    ROOT_KEY_FILE="/var/lib/unbound/root.key"
 
     mkdir -p "$UNBOUND_CONF_DIR"
 
-    # --- Fix /etc/hosts for hostname resolution ---
-    HOSTNAME=$(hostname)
-    if ! grep -q "$HOSTNAME" /etc/hosts; then
-        echo "127.0.1.1 $HOSTNAME" | sudo tee -a /etc/hosts
-        log "/etc/hosts updated to resolve hostname $HOSTNAME"
-    fi
-
-    # --- Remove default trust anchor file to avoid duplicates ---
-    DEFAULT_ANCHOR="$UNBOUND_CONF_DIR/root-auto-trust-anchor-file.conf"
-    if [ -f "$DEFAULT_ANCHOR" ]; then
-        rm -f "$DEFAULT_ANCHOR"
-        log "Removed default root-auto-trust-anchor-file.conf"
-    fi
-
-    # --- Ensure root.key exists ---
+    # Generate root.key in the default location
     if [ ! -f "$ROOT_KEY_FILE" ]; then
-        log "root.key not found, generating with unbound-anchor..."
+        log "Generating root.key..."
         sudo unbound-anchor -a "$ROOT_KEY_FILE"
         sudo chown unbound:unbound "$ROOT_KEY_FILE"
         sudo chmod 644 "$ROOT_KEY_FILE"
-        log "root.key generated and permissions set"
     fi
 
-    # --- Backup existing config ---
+    # Backup existing config
     if [ -f "$UNBOUND_CONF_FILE" ]; then
-        BACKUP_FILE="$UNBOUND_CONF_FILE.bak.$(date +%s)"
-        cp "$UNBOUND_CONF_FILE" "$BACKUP_FILE"
-        log "Backup saved: $BACKUP_FILE"
-    else
-        BACKUP_FILE=""
-        log "No existing config found, skipping backup"
+        cp "$UNBOUND_CONF_FILE" "$UNBOUND_CONF_FILE.bak.$(date +%s)"
     fi
 
-    # --- Write new public Unbound configuration ---
+    # Write public config
     cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
     verbosity: 1
-    num-threads: 2
     interface: 0.0.0.0
     port: 53
     access-control: 0.0.0.0/0 allow
@@ -176,21 +155,14 @@ server:
     auto-trust-anchor-file: "$ROOT_KEY_FILE"
 EOF
 
-    # --- Validate configuration ---
+    # Validate and restart
     if sudo unbound-checkconf; then
         log "Configuration valid, restarting Unbound..."
         sudo systemctl restart unbound
         sudo ss -tunlp | grep 53
-        log "Public Unbound is now running on 0.0.0.0:53"
+        log "Public Unbound running on 0.0.0.0:53"
     else
-        log "Error: Invalid Unbound configuration!"
-        if [ -n "$BACKUP_FILE" ] && [ -f "$BACKUP_FILE" ]; then
-            log "Restoring backup..."
-            cp "$BACKUP_FILE" "$UNBOUND_CONF_FILE"
-            sudo systemctl restart unbound
-        else
-            log "No backup available to restore. Check $UNBOUND_CONF_FILE manually."
-        fi
+        log "Error: Invalid configuration! Check $UNBOUND_CONF_FILE"
     fi
 }
 

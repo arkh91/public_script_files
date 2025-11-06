@@ -109,17 +109,27 @@ EOF
 configure_public_unbound() {
     log "Starting public Unbound configuration..."
 
+    UNBOUND_CONF_DIR="/etc/unbound/unbound.conf.d"
+    UNBOUND_CONF_FILE="$UNBOUND_CONF_DIR/gamedns.conf"
+    ROOT_KEY_FILE="/etc/unbound/root.key"
+
     mkdir -p "$UNBOUND_CONF_DIR"
 
-    # Remove default trust anchor file to prevent duplicates
-    DEFAULT_ANCHOR="/etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf"
-    if [ -f "$DEFAULT_ANCHOR" ]; then
-        rm -f "$DEFAULT_ANCHOR"
-        log "Removed default root-auto-trust-anchor-file.conf to avoid duplicate trust anchors"
+    # --- Fix /etc/hosts for hostname resolution ---
+    HOSTNAME=$(hostname)
+    if ! grep -q "$HOSTNAME" /etc/hosts; then
+        echo "127.0.1.1 $HOSTNAME" | sudo tee -a /etc/hosts
+        log "/etc/hosts updated to resolve hostname $HOSTNAME"
     fi
 
-    # Ensure root.key exists and is valid using unbound-anchor
-    ROOT_KEY_FILE="/etc/unbound/root.key"
+    # --- Remove default trust anchor file to avoid duplicates ---
+    DEFAULT_ANCHOR="$UNBOUND_CONF_DIR/root-auto-trust-anchor-file.conf"
+    if [ -f "$DEFAULT_ANCHOR" ]; then
+        rm -f "$DEFAULT_ANCHOR"
+        log "Removed default root-auto-trust-anchor-file.conf"
+    fi
+
+    # --- Ensure root.key exists ---
     if [ ! -f "$ROOT_KEY_FILE" ]; then
         log "root.key not found, generating with unbound-anchor..."
         sudo unbound-anchor -a "$ROOT_KEY_FILE"
@@ -128,7 +138,7 @@ configure_public_unbound() {
         log "root.key generated and permissions set"
     fi
 
-    # Backup existing config if it exists
+    # --- Backup existing config ---
     if [ -f "$UNBOUND_CONF_FILE" ]; then
         BACKUP_FILE="$UNBOUND_CONF_FILE.bak.$(date +%s)"
         cp "$UNBOUND_CONF_FILE" "$BACKUP_FILE"
@@ -138,7 +148,7 @@ configure_public_unbound() {
         log "No existing config found, skipping backup"
     fi
 
-    # Write new public Unbound configuration
+    # --- Write new public Unbound configuration ---
     cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
     verbosity: 1
@@ -166,7 +176,7 @@ server:
     auto-trust-anchor-file: "$ROOT_KEY_FILE"
 EOF
 
-    # Validate configuration and restart
+    # --- Validate configuration ---
     if sudo unbound-checkconf; then
         log "Configuration valid, restarting Unbound..."
         sudo systemctl restart unbound
@@ -183,6 +193,7 @@ EOF
         fi
     fi
 }
+
 
 
 # -------------------------

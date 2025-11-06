@@ -51,7 +51,16 @@ get_domain_email() {
         error_exit "Domain and email cannot be empty."
     fi
 }
-
+# Function to set default hostname in /etc/hosts
+set_default_hostname() {
+    local default_name="Default"
+    if ! grep -q "127.0.0.1\s\+$default_name" /etc/hosts; then
+        echo "127.0.0.1   $default_name" | sudo tee -a /etc/hosts > /dev/null
+        echo "Default hostname added to /etc/hosts"
+    else
+        echo "Default hostname already exists in /etc/hosts"
+    fi
+}
 # -------------------------
 # Configure Unbound
 # -------------------------
@@ -126,6 +135,7 @@ main() {
     run_as_root
     install_dependencies
     get_domain_email
+    set_default_hostname
     configure_unbound
     setup_dnssec
     validate_and_restart

@@ -102,32 +102,38 @@ EOF
     log "Unbound config saved to $UNBOUND_CONF_FILE"
 }
 
-# -------------------------
-# Configure Public Unbound
-# -------------------------
 configure_public_unbound() {
     log "Starting public Unbound configuration..."
 
     mkdir -p "$UNBOUND_CONF_DIR"
 
-    # Only back up if the current config exists
+    # Ensure root trust anchor exists
+    if [ ! -f "/etc/unbound/root.key" ]; then
+        log "root.key not found, downloading..."
+        sudo curl -s -o /etc/unbound/root.key https://www.internic.net/domain/named.root
+        sudo chown unbound:unbound /etc/unbound/root.key
+        sudo chmod 644 /etc/unbound/root.key
+        log "root.key downloaded and permissions set"
+    fi
+
+    # Backup existing config if it exists
     if [ -f "$UNBOUND_CONF_FILE" ]; then
         BACKUP_FILE="$UNBOUND_CONF_FILE.bak.$(date +%s)"
         cp "$UNBOUND_CONF_FILE" "$BACKUP_FILE"
-        log "Backup of current config saved: $BACKUP_FILE"
+        log "Backup saved: $BACKUP_FILE"
     else
         BACKUP_FILE=""
         log "No existing config found, skipping backup"
     fi
 
-    log "Writing new public Unbound configuration to $UNBOUND_CONF_FILE"
-
+    # Write new public Unbound configuration
     cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
     verbosity: 1
     num-threads: 2
     interface: 0.0.0.0
     port: 53
+    access-control: 0.0.0.0/0 allow
     do-ip4: yes
     do-ip6: no
     do-udp: yes
@@ -145,27 +151,27 @@ server:
     unwanted-reply-threshold: 10000
     hide-identity: yes
     hide-version: yes
-    auto-trust-anchor-file: "$ROOT_KEY"
-    access-control: 0.0.0.0/0 allow
+    auto-trust-anchor-file: "/etc/unbound/root.key"
 EOF
 
-    # Validate config
+    # Validate configuration and restart
     if sudo unbound-checkconf; then
-        log "Configuration is valid. Restarting Unbound..."
+        log "Configuration valid, restarting Unbound..."
         sudo systemctl restart unbound
         sudo ss -tunlp | grep 53
         log "Public Unbound is now running on 0.0.0.0:53"
     else
-        log "Error: Invalid Unbound config!"
+        log "Error: Invalid Unbound configuration!"
         if [ -n "$BACKUP_FILE" ] && [ -f "$BACKUP_FILE" ]; then
             log "Restoring backup..."
             cp "$BACKUP_FILE" "$UNBOUND_CONF_FILE"
             sudo systemctl restart unbound
         else
-            log "No backup available to restore. Please check $UNBOUND_CONF_FILE manually."
+            log "No backup available to restore. Check $UNBOUND_CONF_FILE manually."
         fi
     fi
 }
+
 
 
 

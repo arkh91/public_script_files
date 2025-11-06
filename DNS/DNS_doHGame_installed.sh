@@ -102,17 +102,29 @@ EOF
     log "Unbound config saved to $UNBOUND_CONF_FILE"
 }
 
+
+# -------------------------
+# Configure Public Unbound
+# -------------------------
 configure_public_unbound() {
     log "Starting public Unbound configuration..."
 
     mkdir -p "$UNBOUND_CONF_DIR"
 
-    # Ensure root trust anchor exists
-    if [ ! -f "/etc/unbound/root.key" ]; then
+    # Remove default trust anchor file to prevent duplicates
+    DEFAULT_ANCHOR="/etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf"
+    if [ -f "$DEFAULT_ANCHOR" ]; then
+        rm -f "$DEFAULT_ANCHOR"
+        log "Removed default root-auto-trust-anchor-file.conf to avoid duplicate trust anchors"
+    fi
+
+    # Ensure root.key exists and is valid
+    ROOT_KEY_FILE="/etc/unbound/root.key"
+    if [ ! -f "$ROOT_KEY_FILE" ]; then
         log "root.key not found, downloading..."
-        sudo curl -s -o /etc/unbound/root.key https://www.internic.net/domain/named.root
-        sudo chown unbound:unbound /etc/unbound/root.key
-        sudo chmod 644 /etc/unbound/root.key
+        sudo curl -s -o "$ROOT_KEY_FILE" https://www.internic.net/domain/named.root
+        sudo chown unbound:unbound "$ROOT_KEY_FILE"
+        sudo chmod 644 "$ROOT_KEY_FILE"
         log "root.key downloaded and permissions set"
     fi
 
@@ -151,7 +163,7 @@ server:
     unwanted-reply-threshold: 10000
     hide-identity: yes
     hide-version: yes
-    auto-trust-anchor-file: "/etc/unbound/root.key"
+    auto-trust-anchor-file: "$ROOT_KEY_FILE"
 EOF
 
     # Validate configuration and restart

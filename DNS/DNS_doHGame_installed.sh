@@ -106,14 +106,22 @@ EOF
 # Configure Public Unbound
 # -------------------------
 configure_public_unbound() {
-    log "Backing up current Unbound config"
+    log "Starting public Unbound configuration..."
+
     mkdir -p "$UNBOUND_CONF_DIR"
+
+    # Only back up if the current config exists
     if [ -f "$UNBOUND_CONF_FILE" ]; then
-        cp "$UNBOUND_CONF_FILE" "$UNBOUND_CONF_FILE.bak.$(date +%s)"
-        log "Backup saved: $UNBOUND_CONF_FILE.bak.$(date +%s)"
+        BACKUP_FILE="$UNBOUND_CONF_FILE.bak.$(date +%s)"
+        cp "$UNBOUND_CONF_FILE" "$BACKUP_FILE"
+        log "Backup of current config saved: $BACKUP_FILE"
+    else
+        BACKUP_FILE=""
+        log "No existing config found, skipping backup"
     fi
 
-    log "Writing Public Unbound configuration to $UNBOUND_CONF_FILE"
+    log "Writing new public Unbound configuration to $UNBOUND_CONF_FILE"
+
     cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
     verbosity: 1
@@ -143,16 +151,22 @@ EOF
 
     # Validate config
     if sudo unbound-checkconf; then
-        log "Public Unbound config valid, restarting service..."
+        log "Configuration is valid. Restarting Unbound..."
         sudo systemctl restart unbound
         sudo ss -tunlp | grep 53
-        log "Public Unbound is now enabled on 0.0.0.0:53"
+        log "Public Unbound is now running on 0.0.0.0:53"
     else
-        log "Error: invalid Unbound config, restoring backup..."
-        cp "$UNBOUND_CONF_FILE.bak"* "$UNBOUND_CONF_FILE"
-        sudo systemctl restart unbound
+        log "Error: Invalid Unbound config!"
+        if [ -n "$BACKUP_FILE" ] && [ -f "$BACKUP_FILE" ]; then
+            log "Restoring backup..."
+            cp "$BACKUP_FILE" "$UNBOUND_CONF_FILE"
+            sudo systemctl restart unbound
+        else
+            log "No backup available to restore. Please check $UNBOUND_CONF_FILE manually."
+        fi
     fi
 }
+
 
 
 # -------------------------

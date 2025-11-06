@@ -102,6 +102,58 @@ EOF
     log "Unbound config saved to $UNBOUND_CONF_FILE"
 }
 
+# -------------------------
+# Configure Public Unbound
+# -------------------------
+configure_public_unbound() {
+    log "Backing up current Unbound config"
+    mkdir -p "$UNBOUND_CONF_DIR"
+    if [ -f "$UNBOUND_CONF_FILE" ]; then
+        cp "$UNBOUND_CONF_FILE" "$UNBOUND_CONF_FILE.bak.$(date +%s)"
+        log "Backup saved: $UNBOUND_CONF_FILE.bak.$(date +%s)"
+    fi
+
+    log "Writing Public Unbound configuration to $UNBOUND_CONF_FILE"
+    cat > "$UNBOUND_CONF_FILE" <<EOF
+server:
+    verbosity: 1
+    num-threads: 2
+    interface: 0.0.0.0
+    port: 53
+    do-ip4: yes
+    do-ip6: no
+    do-udp: yes
+    do-tcp: yes
+    prefetch: yes
+    prefetch-key: yes
+    cache-min-ttl: 300
+    cache-max-ttl: 86400
+    so-reuseport: yes
+    harden-dnssec-stripped: yes
+    rrset-cache-size: 256m
+    msg-cache-size: 128m
+    outgoing-num-tcp: 64
+    incoming-num-tcp: 64
+    unwanted-reply-threshold: 10000
+    hide-identity: yes
+    hide-version: yes
+    auto-trust-anchor-file: "$ROOT_KEY"
+    access-control: 0.0.0.0/0 allow
+EOF
+
+    # Validate config
+    if sudo unbound-checkconf; then
+        log "Public Unbound config valid, restarting service..."
+        sudo systemctl restart unbound
+        sudo ss -tunlp | grep 53
+        log "Public Unbound is now enabled on 0.0.0.0:53"
+    else
+        log "Error: invalid Unbound config, restoring backup..."
+        cp "$UNBOUND_CONF_FILE.bak"* "$UNBOUND_CONF_FILE"
+        sudo systemctl restart unbound
+    fi
+}
+
 
 # -------------------------
 # Setup DNSSEC trust anchor
@@ -136,7 +188,8 @@ main() {
     install_dependencies
     get_domain_email
     set_default_hostname
-    configure_unbound
+    #configure_unbound
+    configure_public_unbound   # always sets Unbound to public 0.0.0.0:53
     setup_dnssec
     validate_and_restart
     log "Installation complete. Unbound is running with DNSSEC enabled."

@@ -45,7 +45,7 @@ apt-get install -y unbound dnsutils curl wget unzip ufw jq unbound-anchor \
 
 if ! command -v node >/dev/null; then
     log "Installing Node.js 18..."
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
     apt-get install -y nodejs
 fi
 

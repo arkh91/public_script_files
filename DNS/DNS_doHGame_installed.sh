@@ -118,14 +118,14 @@ configure_public_unbound() {
         log "Removed default root-auto-trust-anchor-file.conf to avoid duplicate trust anchors"
     fi
 
-    # Ensure root.key exists and is valid
+    # Ensure root.key exists and is valid using unbound-anchor
     ROOT_KEY_FILE="/etc/unbound/root.key"
     if [ ! -f "$ROOT_KEY_FILE" ]; then
-        log "root.key not found, downloading..."
-        sudo curl -s -o "$ROOT_KEY_FILE" https://www.internic.net/domain/named.root
+        log "root.key not found, generating with unbound-anchor..."
+        sudo unbound-anchor -a "$ROOT_KEY_FILE"
         sudo chown unbound:unbound "$ROOT_KEY_FILE"
         sudo chmod 644 "$ROOT_KEY_FILE"
-        log "root.key downloaded and permissions set"
+        log "root.key generated and permissions set"
     fi
 
     # Backup existing config if it exists
@@ -183,8 +183,6 @@ EOF
         fi
     fi
 }
-
-
 
 
 # -------------------------

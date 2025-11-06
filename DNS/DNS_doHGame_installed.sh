@@ -107,7 +107,7 @@ EOF
 # Configure Public Unbound
 # -------------------------
 configure_public_unbound() {
-    log "[+] Configuring Unbound as public DNS server"
+    log "[+] Configuring Unbound for public access on 0.0.0.0:53"
 
     UNBOUND_CONF_DIR="/etc/unbound/unbound.conf.d"
     UNBOUND_CONF_FILE="$UNBOUND_CONF_DIR/gamedns.conf"
@@ -115,65 +115,66 @@ configure_public_unbound() {
 
     mkdir -p "$UNBOUND_CONF_DIR"
 
-    # Remove default root trust anchor if exists
-    if [ -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf ]; then
-        rm -f /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
-        log "[+] Removed default root-auto-trust-anchor-file.conf to avoid duplicate trust anchors"
+    # Remove default Unbound trust anchor file to avoid duplicates
+    if [ -f "$UNBOUND_CONF_DIR/root-auto-trust-anchor-file.conf" ]; then
+        rm -f "$UNBOUND_CONF_DIR/root-auto-trust-anchor-file.conf"
+        log "[+] Removed default root-auto-trust-anchor-file.conf"
     fi
 
-    # Download root.key if missing
+    # Ensure root.key exists
     if [ ! -f "$ROOT_KEY" ]; then
-        log "[+] root.key not found, downloading..."
+        log "[+] root.key not found, generating with unbound-anchor..."
         sudo unbound-anchor -a "$ROOT_KEY"
         sudo chown unbound:unbound "$ROOT_KEY"
         sudo chmod 644 "$ROOT_KEY"
-        log "[+] root.key downloaded and permissions set"
+        log "[+] root.key generated and permissions set"
     fi
 
-    # Backup existing config
+    # Backup existing config if exists
     if [ -f "$UNBOUND_CONF_FILE" ]; then
-        cp "$UNBOUND_CONF_FILE" "$UNBOUND_CONF_FILE.bak.$(date +%s)"
-        log "[+] Backup saved: $UNBOUND_CONF_FILE.bak"
+        cp "$UNBOUND_CONF_FILE" "${UNBOUND_CONF_FILE}.bak.$(date +%s)"
+        log "[+] Backup saved: ${UNBOUND_CONF_FILE}.bak"
     fi
 
-    # Write public Unbound configuration
+    # Write public Unbound config
     cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
     verbosity: 1
     interface: 0.0.0.0
+    access-control: 0.0.0.0/0 allow
     port: 53
     do-ip4: yes
     do-ip6: no
     do-udp: yes
     do-tcp: yes
-    access-control: 0.0.0.0/0 allow
     prefetch: yes
     prefetch-key: yes
     cache-min-ttl: 60
     cache-max-ttl: 86400
     rrset-cache-size: 256m
     msg-cache-size: 128m
-    so-reuseport: yes
     hide-identity: yes
     hide-version: yes
-    harden-dnssec-stripped: yes
     auto-trust-anchor-file: "$ROOT_KEY"
 EOF
 
-    # Set correct permissions
-    chown -R unbound:unbound /etc/unbound
-    chmod 644 "$UNBOUND_CONF_FILE"
-
-    # Test configuration
+    # Check config
     if ! unbound-checkconf "$UNBOUND_CONF_FILE"; then
-        log "[!] Error: Invalid Unbound config!"
+        log "[!] Error: Invalid Unbound configuration, restoring backup..."
+        [ -f "${UNBOUND_CONF_FILE}.bak" ] && cp "${UNBOUND_CONF_FILE}.bak" "$UNBOUND_CONF_FILE"
         return 1
     fi
 
-    log "[+] Public Unbound configuration written successfully"
+    # Restart Unbound
+    sudo systemctl daemon-reload
+    sudo systemctl restart unbound
+    if systemctl is-active --quiet unbound; then
+        log "[+] Unbound restarted successfully and is running publicly"
+    else
+        log "[!] Failed to restart Unbound, check journalctl -xeu unbound.service"
+        return 1
+    fi
 }
-
-
 
 
 # -------------------------

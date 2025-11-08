@@ -13,7 +13,20 @@ fi
 echo "Testing DNS server: $YOUR_DNS"
 echo ""
 
-TEST_DOMAINS=("activision.com" "callofduty.com" "codmobile.com")
+TEST_DOMAINS=(
+    # Gaming
+    "activision.com" "callofduty.com" "codmobile.com"
+    "steampowered.com" "xbox.com" "playstation.com" "epicgames.com" 
+    "roblox.com" "minecraft.net" "discord.com" "twitch.tv"
+    
+    # Streaming
+    "netflix.com" "youtube.com" "disneyplus.com" "hulu.com"
+    "spotify.com" "amazon.com" "primevideo.com"
+    
+    # Social Media
+    #"facebook.com" "twitter.com" "instagram.com" "tiktok.com"
+    #"reddit.com" "linkedin.com"
+)
 
 for domain in "${TEST_DOMAINS[@]}"; do
     echo -e "\n=== Testing: $domain ==="

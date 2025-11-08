@@ -109,71 +109,165 @@ EOF
 configure_public_unbound() {
     log "[+] Configuring Unbound for public access on 0.0.0.0:53"
 
-    UNBOUND_CONF_DIR="/etc/unbound/unbound.conf.d"
-    UNBOUND_CONF_FILE="$UNBOUND_CONF_DIR/gamedns.conf"
-    ROOT_KEY="/var/lib/unbound/root.key"
-
+    # Create config directory
     mkdir -p "$UNBOUND_CONF_DIR"
 
-    # Remove default Unbound trust anchor file to avoid duplicates
-    if [ -f "$UNBOUND_CONF_DIR/root-auto-trust-anchor-file.conf" ]; then
-        rm -f "$UNBOUND_CONF_DIR/root-auto-trust-anchor-file.conf"
-        log "[+] Removed default root-auto-trust-anchor-file.conf"
+    # Stop Unbound first to ensure clean restart
+    systemctl stop unbound 2>/dev/null || true
+
+    # Remove any conflicting default configs
+    if [ -f "/etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf" ]; then
+        rm -f "/etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf"
+        log "[+] Removed conflicting trust anchor config"
     fi
 
-    # Ensure root.key exists
-    if [ ! -f "$ROOT_KEY" ]; then
-        log "[+] root.key not found, generating with unbound-anchor..."
-        sudo unbound-anchor -a "$ROOT_KEY"
-        sudo chown unbound:unbound "$ROOT_KEY"
-        sudo chmod 644 "$ROOT_KEY"
-        log "[+] root.key generated and permissions set"
-    fi
-
-    # Backup existing config if exists
+    # Backup existing config
     if [ -f "$UNBOUND_CONF_FILE" ]; then
-        cp "$UNBOUND_CONF_FILE" "${UNBOUND_CONF_FILE}.bak.$(date +%s)"
-        log "[+] Backup saved: ${UNBOUND_CONF_FILE}.bak"
+        backup_file="${UNBOUND_CONF_FILE}.bak.$(date +%s)"
+        cp "$UNBOUND_CONF_FILE" "$backup_file"
+        log "[+] Backup created: $backup_file"
     fi
 
-    # Write public Unbound config
+    # Ensure root.key exists with proper permissions
+    if [ ! -f "$ROOT_KEY" ]; then
+        log "[+] Generating root.key..."
+        mkdir -p /var/lib/unbound
+        unbound-anchor -a "$ROOT_KEY" || {
+            log "[!] Failed to generate root.key, creating empty file..."
+            touch "$ROOT_KEY"
+        }
+        chown unbound:unbound "$ROOT_KEY"
+        chmod 644 "$ROOT_KEY"
+    fi
+
+    # Write comprehensive Unbound configuration
+    log "[+] Writing Unbound configuration..."
     cat > "$UNBOUND_CONF_FILE" <<EOF
 server:
+    # Network settings
     verbosity: 1
     interface: 0.0.0.0
-    access-control: 0.0.0.0/0 allow
+    interface: 127.0.0.1
     port: 53
+    access-control: 0.0.0.0/0 allow
+    access-control: 127.0.0.0/8 allow
+    
+    # Protocol settings
     do-ip4: yes
     do-ip6: no
     do-udp: yes
     do-tcp: yes
-    prefetch: yes
-    prefetch-key: yes
+    tcp-upstream: yes
+    
+    # Performance settings
+    num-threads: 2
+    msg-cache-size: 128m
+    rrset-cache-size: 256m
+    outgoing-range: 4096
+    incoming-num-tcp: 100
+    outgoing-num-tcp: 100
+    
+    # Cache settings
     cache-min-ttl: 60
     cache-max-ttl: 86400
-    rrset-cache-size: 256m
-    msg-cache-size: 128m
+    prefetch: yes
+    prefetch-key: yes
+    
+    # Security settings
     hide-identity: yes
     hide-version: yes
+    harden-glue: yes
+    harden-dnssec-stripped: yes
+    use-caps-for-id: yes
+    
+    # DNSSEC
     auto-trust-anchor-file: "$ROOT_KEY"
+    trust-anchor-signaling: yes
+    
+    # Resource limits
+    outgoing-port-permit: 1024-65535
+    outgoing-port-avoid: 0-1023
+    
+    # Additional hardening
+    unwanted-reply-threshold: 10000000
+    private-address: 10.0.0.0/8
+    private-address: 172.16.0.0/12
+    private-address: 192.168.0.0/16
+    private-address: 169.254.0.0/16
+    private-address: fd00::/8
+    private-address: fe80::/10
+
+# Forwarders for better performance (optional)
+forward-zone:
+    name: "."
+    forward-addr: 8.8.8.8
+    forward-addr: 8.8.4.4
+    forward-addr: 1.1.1.1
+    forward-addr: 1.0.0.1
 EOF
 
-    # Check config
-    if ! unbound-checkconf "$UNBOUND_CONF_FILE"; then
-        log "[!] Error: Invalid Unbound configuration, restoring backup..."
-        [ -f "${UNBOUND_CONF_FILE}.bak" ] && cp "${UNBOUND_CONF_FILE}.bak" "$UNBOUND_CONF_FILE"
+    # Set proper permissions
+    chown unbound:unbound "$UNBOUND_CONF_FILE"
+    chmod 644 "$UNBOUND_CONF_FILE"
+
+    # Validate configuration
+    log "[+] Validating Unbound configuration..."
+    if ! unbound-checkconf; then
+        log "[!] Configuration validation failed!"
+        log "[!] Checking specific config file..."
+        unbound-checkconf "$UNBOUND_CONF_FILE"
         return 1
     fi
 
-    # Restart Unbound
-    sudo systemctl daemon-reload
-    sudo systemctl restart unbound
+    # Reload systemd and restart Unbound
+    log "[+] Starting Unbound service..."
+    systemctl daemon-reload
+    systemctl enable unbound
+    systemctl restart unbound
+
+    # Wait a moment for service to start
+    sleep 3
+
+    # Verify service is running
     if systemctl is-active --quiet unbound; then
-        log "[+] Unbound restarted successfully and is running publicly"
+        log "[✓] Unbound is running successfully"
     else
-        log "[!] Failed to restart Unbound, check journalctl -xeu unbound.service"
+        log "[!] Unbound failed to start"
+        systemctl status unbound --no-pager -l
         return 1
     fi
+
+    # Verify listening ports
+    log "[+] Checking listening ports..."
+    if netstat -tulpn | grep -E ":53.*unbound" > /dev/null; then
+        log "[✓] Unbound is listening on port 53"
+        netstat -tulpn | grep :53
+    else
+        log "[!] Unbound is not listening on port 53"
+        return 1
+    fi
+
+    # Test internal resolution
+    log "[+] Testing internal DNS resolution..."
+    if dig @127.0.0.1 google.com +short +time=3 +tries=2 > /dev/null 2>&1; then
+        log "[✓] Internal DNS resolution working"
+    else
+        log "[!] Internal DNS resolution failed"
+        return 1
+    fi
+
+    # Get external IP for testing
+    EXTERNAL_IP=$(hostname -I | awk '{print $1}')
+    log "[+] Testing external DNS resolution on $EXTERNAL_IP..."
+    
+    if dig @"$EXTERNAL_IP" google.com +short +time=3 +tries=2 > /dev/null 2>&1; then
+        log "[✓] External DNS resolution working"
+    else
+        log "[!] External DNS resolution test failed (this might be expected from localhost)"
+    fi
+
+    log "[✓] Unbound configuration completed successfully"
+    log "[+] Unbound is listening on: 0.0.0.0:53 (external) and 127.0.0.1:53 (internal)"
 }
 
 

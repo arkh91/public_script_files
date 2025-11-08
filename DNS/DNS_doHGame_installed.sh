@@ -27,9 +27,25 @@ fi
 install_dependencies() {
     log "Installing dependencies..."
     apt-get update -qq
-    apt-get install -y unbound dnsutils curl wget unzip ufw jq unbound-anchor \
-        ca-certificates gnupg lsb-release nginx certbot python3-certbot-nginx || \
-        error_exit "Failed to install required packages"
+    
+    # Install essential packages including net-tools for netstat
+    apt-get install -y \
+        unbound \
+        dnsutils \
+        curl \
+        wget \
+        unzip \
+        ufw \
+        jq \
+        unbound-anchor \
+        ca-certificates \
+        gnupg \
+        lsb-release \
+        nginx \
+        certbot \
+        python3-certbot-nginx \
+        net-tools \
+        || error_exit "Failed to install required packages"
 
 
     # Node.js 18 LTS

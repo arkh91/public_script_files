@@ -30,3 +30,6 @@ for domain in "${TEST_DOMAINS[@]}"; do
     echo -n "Cloudflare DNS: "
     dig @1.1.1.1 $domain +stats 2>/dev/null | grep "Query time"
 done
+
+
+# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/DNS/DNS_doHGame_installed.sh)

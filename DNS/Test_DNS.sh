@@ -32,4 +32,4 @@ for domain in "${TEST_DOMAINS[@]}"; do
 done
 
 
-# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/DNS/DNS_doHGame_installed.sh)
+# bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/DNS/Test_DNS.sh)

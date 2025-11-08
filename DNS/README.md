@@ -7,3 +7,5 @@ flowchart TD
     U -->|binary DNS response| P
     P -->|HTTPS response<br>(application/dns-message)| C
     C -->|Receives DNS answer| C
+
+bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/DNS/DNS_doHGame_installed.sh)

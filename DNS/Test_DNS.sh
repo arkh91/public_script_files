@@ -61,7 +61,7 @@ your_dns_avg=$(echo "${your_dns_times[@]}" | awk '{sum=0; for(i=1;i<=NF;i++) sum
 cloudflare_avg=$(echo "${cloudflare_times[@]}" | awk '{sum=0; for(i=1;i<=NF;i++) sum+=$i; print sum/NF}')
 google_avg=$(echo "${google_times[@]}" | awk '{sum=0; for(i=1;i<=NF;i++) sum+=$i; print sum/NF}')
 
-echo "Your DNS ($YOUR_DNS): ${your_dns_avg} ms average"
+echo "Current DNS ($YOUR_DNS): ${your_dns_avg} ms average"
 echo "Cloudflare DNS (1.1.1.1): ${cloudflare_avg} ms average"
 echo "Google DNS (8.8.8.8): ${google_avg} ms average"
 

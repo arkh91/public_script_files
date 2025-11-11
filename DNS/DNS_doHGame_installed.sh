@@ -286,6 +286,18 @@ EOF
     log "[+] Unbound is listening on: 0.0.0.0:53 (external) and 127.0.0.1:53 (internal)"
 }
 
+# -------------------------
+# unbound log folder
+# -------------------------
+configure_unbound_log_dir() {
+    local dir="/var/log/unbound"
+
+    sudo mkdir -p "$dir" || error_exit "Failed to create the folder"
+    sudo chown unbound:unbound "$dir" || error_exit "Failed to change owner to unbound"
+    sudo chmod 750 "$dir" || error_exit "Failed to set permissions to 750"
+
+    echo "Directory $dir configured successfully."
+}
 
 # -------------------------
 # Setup DNSSEC trust anchor
@@ -322,6 +334,7 @@ main() {
     set_default_hostname
     #configure_unbound
     configure_public_unbound   # always sets Unbound to public 0.0.0.0:53
+    configure_unbound_log_dir
     setup_dnssec
     validate_and_restart
     log "Installation complete. Unbound is running with DNSSEC enabled."

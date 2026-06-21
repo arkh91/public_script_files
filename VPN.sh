@@ -542,7 +542,7 @@ echo1
     echo "** 3) Install VPN Dependencies                           **"
     echo "** 4) BBR Management                                     **"
     echo "** 5) Other tools                                        **"
-    echo "** 6)                                                    **"
+    echo "** 6) WireGuard                                          **"
     echo "** 7) Create a New Sudo User                             **"
     echo "** 8) SSL setup                                          **"
     echo "** 9) Exit - Done for Now                                **"
@@ -595,7 +595,7 @@ main() {
                 read -p "Press enter to continue"
                 ;;
             6)
-                
+                bash <(curl -Ls https://raw.githubusercontent.com/arkh91/Arkh91_WireGuard/refs/heads/main/install-wg.sh)
                 read -p "Press enter to continue"
                 ;;
             7)

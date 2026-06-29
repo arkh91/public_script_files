@@ -595,7 +595,7 @@ main() {
                 read -p "Press enter to continue"
                 ;;
             6)
-                bash <(curl -Ls https://raw.githubusercontent.com/arkh91/Arkh91_WireGuard/refs/heads/main/install-wg.sh)
+                bash <(curl -Ls https://raw.githubusercontent.com/arkh91/Arkh91_WireGuard/refs/heads/main/install-wg3.sh)
                 read -p "Press enter to continue"
                 ;;
             7)

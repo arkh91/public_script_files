@@ -71,7 +71,86 @@ alias_vpn() {
   fi  
 }
 
-
+extend_ssh_timeout() {
+  echo -e "\033[32mExtending idle timeout to 10 hours...\033[m"
+  echo
+ 
+  local seconds=36000   # 10 hours
+  local sshd_conf="/etc/ssh/sshd_config"
+  local backup="${sshd_conf}.bak.$(date +%Y%m%d%H%M%S)"
+ 
+  ############################
+  # 1) Shell-level TMOUT
+  ############################
+  if grep -q "^export TMOUT=" /etc/profile 2>/dev/null; then
+    sudo sed -i "s/^export TMOUT=.*/export TMOUT=${seconds}/" /etc/profile
+  else
+    echo "export TMOUT=${seconds}" | sudo tee -a /etc/profile > /dev/null
+  fi
+  echo -e "\033[32mTMOUT set to ${seconds}s in /etc/profile\033[m"
+ 
+  ############################
+  # 2) SSH server keepalive
+  ############################
+  if [ ! -f "$sshd_conf" ]; then
+    echo -e "\033[31mCould not find $sshd_conf — skipping sshd keepalive step.\033[m"
+  else
+    sudo cp "$sshd_conf" "$backup"
+    echo "Backed up sshd_config to $backup"
+ 
+    # Interval * CountMax = seconds before a truly unresponsive client is dropped
+    local interval=600
+    local countmax=$((seconds / interval))
+ 
+    if grep -q "^ClientAliveInterval" "$sshd_conf"; then
+      sudo sed -i "s/^ClientAliveInterval.*/ClientAliveInterval ${interval}/" "$sshd_conf"
+    else
+      echo "ClientAliveInterval ${interval}" | sudo tee -a "$sshd_conf" > /dev/null
+    fi
+ 
+    if grep -q "^ClientAliveCountMax" "$sshd_conf"; then
+      sudo sed -i "s/^ClientAliveCountMax.*/ClientAliveCountMax ${countmax}/" "$sshd_conf"
+    else
+      echo "ClientAliveCountMax ${countmax}" | sudo tee -a "$sshd_conf" > /dev/null
+    fi
+ 
+    echo -e "\033[32mClientAliveInterval=${interval}, ClientAliveCountMax=${countmax} set in sshd_config\033[m"
+ 
+    # Restart whichever ssh service name this distro uses
+    if systemctl list-unit-files 2>/dev/null | grep -q "^sshd.service"; then
+      sudo systemctl restart sshd
+    elif systemctl list-unit-files 2>/dev/null | grep -q "^ssh.service"; then
+      sudo systemctl restart ssh
+    else
+      echo -e "\033[31mCould not detect ssh service name — restart it manually (systemctl restart sshd|ssh).\033[m"
+    fi
+  fi
+ 
+  ############################
+  # 3) tmux (survives drops even if timeout is hit)
+  ############################
+  if ! command -v tmux &> /dev/null; then
+    echo -e "\033[32mInstalling tmux...\033[m"
+    if command -v apt &> /dev/null; then
+      sudo apt update -y && sudo apt install -y tmux
+    elif command -v dnf &> /dev/null; then
+      sudo dnf install -y tmux
+    elif command -v yum &> /dev/null; then
+      sudo yum install -y tmux
+    elif command -v pacman &> /dev/null; then
+      sudo pacman -Sy --noconfirm tmux
+    else
+      echo -e "\033[31mUnrecognized package manager — install tmux manually.\033[m"
+    fi
+  else
+    echo -e "\033[32mtmux already installed.\033[m"
+  fi
+ 
+  echo
+  echo -e "\033[0;35mDone. Idle timeout extended to 10 hours. Re-login (or run 'source /etc/profile') for TMOUT to take effect.\033[m"
+  echo
+  read -p "Press enter to continue"
+}
 
 
 # Install x-ui Sanaei
@@ -455,7 +534,8 @@ other_tools (){
         echo "** 4) MySQL backup                                       **"
         echo "** 5) Auto Reboot                                        **"
         echo "** 6) Set timezone                                       **"
-        echo "** 7) Back                                               **"
+        echo "** 7) Extend SSH idle timeout (10h)                      **"
+        echo "** 8) Back                                               **"
         echo "**                                                       **"
         echo "***********************************************************"
         echo "***********************************************************"
@@ -493,7 +573,11 @@ other_tools (){
                 read -p "Press enter to continue"
                 main
                 ;;
-            7)
+            7)                              
+                extend_ssh_timeout          
+                main                        
+                ;;                          
+            8)                              
                 main
                 ;;
             *)

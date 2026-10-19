@@ -6,3 +6,7 @@ fl.conf
 wget https://raw.githubusercontent.com/arkh91/public_script_files/main/fl.conf
 
 bash <(curl -Ls https://bit.ly/arkh91_VPN)
+
+```Bash
+bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/check_ports.sh)
+```

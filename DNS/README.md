@@ -74,7 +74,9 @@ Choose **1) Install / full setup**. You will be asked:
 Your answers are saved in `/etc/unbound/gamedns.settings` and reused by the menu.
 
 **Command-line shortcuts**
-
+```bash
+bash <(curl -Ls [https://raw.githubusercontent.com/arkh91/Arkh91_WireGuard/refs/heads/main/install-wg-full.sh](https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/DNS/DNS_doHGame_installed.sh))
+```
 ```bash
 sudo bash DNS_doHGame_installed_fixed.sh            # menu
 sudo bash DNS_doHGame_installed_fixed.sh install    # straight to full install

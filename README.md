@@ -10,3 +10,7 @@ bash <(curl -Ls https://bit.ly/arkh91_VPN)
 ```Bash
 bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/check_ports.sh)
 ```
+
+```Bash
+bash <(curl -Ls https://raw.githubusercontent.com/arkh91/public_script_files/refs/heads/main/outline-health.sh) --fix-all
+```
